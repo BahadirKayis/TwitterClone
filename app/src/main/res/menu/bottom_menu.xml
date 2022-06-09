@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/home"
+        android:title="Home" />
+
+    <item
+        android:id="@+id/searchFragment"
+        android:icon="@drawable/ic_baseline_search_24"
+        android:title="Search" />
+
+    <item
+        android:id="@+id/notificationsFragment"
+        android:icon="@drawable/notifications"
+        android:title="Notifications" />
+
+    <item
+        android:id="@+id/directMessageFragment"
+        android:icon="@drawable/dm"
+        android:title="Direct Messages" />
+</menu>
