@@ -23,4 +23,9 @@
             android:id="@+id/action_signUpFragment_to_logInFragment"
             app:destination="@id/logInFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/sigInFragment"
+        android:name="com.bhdr.twitterclone.LogInUpFragments.SigInFragment"
+        android:label="fragment_sig_in"
+        tools:layout="@layout/fragment_sig_in" />
 </navigation>
