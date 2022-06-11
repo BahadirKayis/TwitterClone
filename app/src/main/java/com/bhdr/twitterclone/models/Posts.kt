@@ -1,4 +1,4 @@
-package com.bhdr.twitterclone.Models
+package com.bhdr.twitterclone.models
 
 import android.nfc.Tag
 import com.squareup.moshi.Json

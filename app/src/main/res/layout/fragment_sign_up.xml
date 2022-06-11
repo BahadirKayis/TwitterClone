@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".LogInUpFragments.SignUpFragment">
+    tools:context=".loginupfragments.SignUpFragment">
 
     <ImageView
         android:id="@+id/imageView"
@@ -85,7 +85,7 @@
             android:minHeight="48dp" />
 
         <EditText
-            android:id="@+id/nicknameEditText"
+            android:id="@+id/usernameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -107,18 +107,7 @@
             android:minHeight="48dp" />
 
         <EditText
-            android:id="@+id/birthdayEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:ems="10"
-            android:fontFamily="@font/roboto_medium"
-            android:hint="Doğum tarihi"
-            android:inputType="datetime"
-            android:minHeight="48dp" />
-
-        <EditText
-            android:id="@+id/mailEditText"
+            android:id="@+id/emailEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"

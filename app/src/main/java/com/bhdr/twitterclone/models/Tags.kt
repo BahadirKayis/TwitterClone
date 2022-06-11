@@ -1,4 +1,4 @@
-package com.bhdr.twitterclone.Models
+package com.bhdr.twitterclone.models
 
 import com.squareup.moshi.Json
 import java.util.*

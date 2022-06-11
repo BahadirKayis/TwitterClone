@@ -1,10 +1,8 @@
-package com.bhdr.twitterclone.LogInUpFragments
+package com.bhdr.twitterclone.loginupfragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentSigInBinding
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
