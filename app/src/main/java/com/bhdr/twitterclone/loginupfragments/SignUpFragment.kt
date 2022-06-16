@@ -19,6 +19,8 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentSignUpBinding
+import com.bhdr.twitterclone.helperclasses.LoadingDialog
+import com.bhdr.twitterclone.repos.LoginRepository
 import com.bhdr.twitterclone.viewmodels.SignUpViewModel
 import com.bhdr.twitterclone.viewmodels.UserNameEmailViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -41,6 +43,9 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
     var selectedBitmap: Bitmap? = null
     var userSaved: Boolean? = null
 
+
+    private val loadingDialog by lazy { LoadingDialog() }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.back.setOnClickListener {
@@ -53,13 +58,9 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         binding.signUpButton.setOnClickListener {
 
             val current = LocalDateTime.now()
-
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
             val formatted = current.format(formatter)
-
-            println("Current Date and Time is: $formatted")
-            Log.e("TAG", formatted.toString() )
-            signUp(
+            createUser(
                 binding.usernameEditText.text.toString(),
                 binding.passwordEditText.text.toString(),
                 binding.nameEditText.text.toString(),
@@ -68,10 +69,12 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                 formatted.toString()
             )
         }
+
+
         registerLauncher()
 
         viewModelGetUserNE
-
+        createUserObservable()
     }
 
     fun selectImage() {
@@ -145,31 +148,26 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             }
     }
 
-    private fun signUp(
-        userName: String,
-        password: String,
-        name: String,
-        email: String,
-        phone: String,
-        date: String
-    ) {
+    private fun createUser(userName: String, password: String, name: String, email: String, phone: String, date: String) {
 
         if (name.isNotEmpty() && password.isNotEmpty() && email.isNotEmpty() && phone.isNotEmpty() && userName.isNotEmpty()) {
             val uuid = UUID.randomUUID()
             val imageName = "$uuid.jpg"
 
             if (selectedPicture != null) {
-                viewModelGetUserNE.userData.observe(viewLifecycleOwner) {
-                    var controlU = it.find { it!!.userName == userName }
+                viewModelGetUserNE.userData.observe(viewLifecycleOwner) {it->
 
-                    if (controlU != null) {
+                    var control = it.find { it.userName == userName }
+
+                    if (control != null) {
                         Snackbar.make(requireView(), "Bu Kullanıcı Adı mevcut!", 1500).show()
                     } else {
-                        var control = it.find { it!!.email == email }
+
+                         control = it.find { it.email == email }
                         if (control != null) {
                             Snackbar.make(requireView(), "Bu Email  mevcut!", 1500).show()
                         } else {
-                            viewModelSignUp.SignUp(
+                            viewModelSignUp.SignUpview(
                                 userName,
                                 password,
                                 name,
@@ -178,7 +176,9 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                                 date,
                                 imageName,
                                 selectedPicture
+
                             )
+
                         }
                     }
 
@@ -187,8 +187,44 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             } else {
                 Snackbar.make(requireView(), "Lütfen profil resmi seçiniz!", 1000).show()
             }
+
+
         } else {
             Snackbar.make(requireView(), "Lütfen tüm boşlukları doldurun!", 1000).show()
+        }
+    }
+
+    private fun createUserObservable() {
+//        viewModelSignUp.userSaved.observe(viewLifecycleOwner){ ret->
+//            if (ret == true) {
+//                Snackbar.make(requireView(), "Giriş Başarılı", 1000).show()
+//            }
+//            else {
+//                Snackbar.make(requireView(), "Giriş Başarısız", 1000).show()
+//            }
+//        }
+
+        viewModelSignUp.userSavedStatus.observe(viewLifecycleOwner) {
+            when (it!!) {
+                LoginRepository.LogInUpStatus.LOADING -> loadingDialog.loadingDialogStart(
+                    requireActivity()
+                )
+                LoginRepository.LogInUpStatus.ERROR -> {
+                    loadingDialog.loadingDialogClose();Snackbar.make(
+                        requireView(),
+                        "Hata Oluştu Tekrar Deneyiniz",
+                        3000
+                    ).show()
+                }
+                LoginRepository.LogInUpStatus.DONE -> {
+                    loadingDialog.loadingDialogClose();Snackbar.make(
+                        requireView(),
+                        "Giriş Başarılı",
+                        3000
+                    ).show()
+                }
+            }
+
         }
     }
 }

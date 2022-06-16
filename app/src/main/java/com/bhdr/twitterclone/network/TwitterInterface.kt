@@ -1,15 +1,16 @@
 package com.bhdr.twitterclone.network
 
 import com.bhdr.twitterclone.models.UsernameAndEmailControl
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Headers
-import retrofit2.http.POST
+import retrofit2.Call
+import retrofit2.http.*
 import java.util.*
 
 interface TwitterInterface {
+
+
     @POST("postSignUp")
-    suspend fun createUser(userName: String, password: String,name:String,email:String,phone:String,photoUrl:String,date: String?):Boolean
+      fun createUser(@Query("user_name") userName: String,@Query("user_password") password: String,@Query("name") name:String
+                           ,@Query("email") email:String,@Query("phone") phone:String,@Query("photo_url") photoUrl:String,@Query("date") date: String?):Call<Boolean>
     @GET("getUserNameAndEmail")
-    suspend fun getUsernameAndEmail():List<UsernameAndEmailControl>
+     fun getUsernameAndEmail():Call<List<UsernameAndEmailControl>>
 }

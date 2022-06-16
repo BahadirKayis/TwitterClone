@@ -1,6 +1,7 @@
 package com.bhdr.twitterclone.viewmodels
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,26 +10,20 @@ import com.bhdr.twitterclone.network.CallApi
 import com.bhdr.twitterclone.repos.LoginRepository
 import com.bumptech.glide.Glide.init
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
-class UserNameEmailViewModel: ViewModel() {
-  // private var loginrepo = LoginRepository()
-     var userData = MutableLiveData<List<UsernameAndEmailControl?>>()
+class UserNameEmailViewModel : ViewModel() {
+    private var loginrepo = LoginRepository()
+    var userData = MutableLiveData<List<UsernameAndEmailControl>>()
+
 
     init {
-     // userData=loginrepo.getUsernameAndEmail()
-      users()
-    }
-fun users(){
-    viewModelScope.launch {
-        try {
-            userData.value = CallApi.retrofitService.getUsernameAndEmail();
 
-        } catch (e: Exception) {
-            userData.value=null;
-            Log.e("userNE.value", e.toString())
-        }
-        Log.e("userNE.value", userData.value.toString() )
+        getUsersData()
+        userData = loginrepo.userData
     }
-}
 
+    fun getUsersData() {
+        loginrepo.getUsersData()
+    }
 }
