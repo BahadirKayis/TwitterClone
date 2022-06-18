@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_logInFragment_to_signUpFragment"
             app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_logInFragment_to_sigInFragment"
+            app:destination="@id/sigInFragment" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -25,7 +28,51 @@
     </fragment>
     <fragment
         android:id="@+id/sigInFragment"
-        android:name="com.bhdr.twitterclone.loginupfragments.SigInFragment"
+        android:name="com.bhdr.twitterclone.loginupfragments.SignInFragment"
         android:label="fragment_sig_in"
-        tools:layout="@layout/fragment_sig_in" />
+        tools:layout="@layout/fragment_sig_in" >
+        <action
+            android:id="@+id/action_sigInFragment_to_sigInSecondPageFragment"
+            app:destination="@id/sigInSecondPageFragment" />
+        <action
+            android:id="@+id/action_sigInFragment_to_sigInForgetPasswordFragment"
+            app:destination="@id/sigInForgetPasswordFragment" />
+        <action
+            android:id="@+id/action_sigInFragment_to_sigInForgetPasswordFragment2"
+            app:destination="@id/sigInForgetPasswordFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/sigInSecondPageFragment"
+        android:name="com.bhdr.twitterclone.loginupfragments.SignInSecondPageFragment"
+        android:label="fragment_sig_in_second_page"
+        tools:layout="@layout/fragment_sig_in_second_page" >
+        <action
+            android:id="@+id/action_sigInSecondPageFragment_to_sigInForgetPasswordFragment"
+            app:destination="@id/sigInForgetPasswordFragment" />
+        <argument
+            android:name="userName"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/sigInForgetPasswordFragment"
+        android:name="com.bhdr.twitterclone.loginupfragments.SignInForgetPasswordFragment"
+        android:label="fragment_sig_in_forget_password"
+        tools:layout="@layout/fragment_sig_in_forget_password" >
+
+        <action
+            android:id="@+id/action_sigInForgetPasswordFragment_to_signInForgetPasswordSecondFragment"
+            app:destination="@id/signInForgetPasswordSecondFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signInForgetPasswordSecondFragment"
+        android:name="com.bhdr.twitterclone.loginupfragments.SignInForgetPasswordSecondFragment"
+        android:label="fragment_sign_in_forget_password_second"
+        tools:layout="@layout/fragment_sign_in_forget_password_second" >
+        <argument
+            android:name="userId"
+            app:argType="integer"
+            />
+    </fragment>
 </navigation>

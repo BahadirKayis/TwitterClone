@@ -81,6 +81,7 @@
             android:ems="10"
             android:fontFamily="@font/roboto_medium"
             android:hint="İsim"
+
             android:inputType="textPersonName"
             android:minHeight="48dp" />
 
@@ -90,6 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:ems="10"
+            android:maxLength="15"
             android:fontFamily="@font/roboto_medium"
             android:hint="Kullanıcı adı"
             android:inputType="textPersonName"
@@ -101,9 +103,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:ems="10"
+            android:maxLength="10"
             android:fontFamily="@font/roboto_medium"
             android:hint="Telefon"
-            android:inputType="textPersonName"
+            android:inputType="phone"
             android:minHeight="48dp" />
 
         <EditText
@@ -114,19 +117,22 @@
             android:ems="10"
             android:fontFamily="@font/roboto_medium"
             android:hint="E-mail"
-            android:inputType="textPersonName"
-            android:minHeight="48dp" />
+
+            android:inputType="textEmailAddress"
+            android:minHeight="48dp"
+            tools:ignore="TextFields" />
 
         <EditText
             android:id="@+id/passwordEditText"
-            style=""
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:ems="10"
+            android:maxLength="20"
             android:fontFamily="@font/roboto_medium"
             android:hint="Şifre"
-            android:inputType="textPersonName"
+
             android:minHeight="48dp" />
     </LinearLayout>
 
@@ -153,5 +159,7 @@
         app:cornerRadius="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

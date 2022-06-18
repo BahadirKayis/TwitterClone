@@ -10,14 +10,16 @@ import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 
 
 class LogInFragment : Fragment(R.layout.fragment_log_in) {
-private  val binding by viewBinding(FragmentLogInBinding::bind)
+    private val binding by viewBinding(FragmentLogInBinding::bind)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.signUpButton.setOnClickListener {
-findNavController().navigate(R.id.action_logInFragment_to_signUpFragment)
+            findNavController().navigate(R.id.action_logInFragment_to_signUpFragment)
         }
 
+        binding.signInText.setOnClickListener {
+            findNavController().navigate(R.id.action_logInFragment_to_sigInFragment) }
     }
 
 }

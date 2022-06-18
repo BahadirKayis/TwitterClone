@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
@@ -148,62 +149,65 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             }
     }
 
-    private fun createUser(userName: String, password: String, name: String, email: String, phone: String, date: String) {
+    private fun createUser(
+        userName: String,
+        password: String,
+        name: String,
+        email: String,
+        phone: String,
+        date: String
+    ) {
+        if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            if (name.isNotEmpty() && password.isNotEmpty() && email.isNotEmpty() && phone.isNotEmpty() && userName.isNotEmpty()) {
+                val uuid = UUID.randomUUID()
+                val imageName = "$uuid.jpg"
 
-        if (name.isNotEmpty() && password.isNotEmpty() && email.isNotEmpty() && phone.isNotEmpty() && userName.isNotEmpty()) {
-            val uuid = UUID.randomUUID()
-            val imageName = "$uuid.jpg"
+                if (selectedPicture != null) {
+                    viewModelGetUserNE.userData.observe(viewLifecycleOwner) { it ->
 
-            if (selectedPicture != null) {
-                viewModelGetUserNE.userData.observe(viewLifecycleOwner) {it->
+                        var control = it.find { it.userName == userName }
 
-                    var control = it.find { it.userName == userName }
-
-                    if (control != null) {
-                        Snackbar.make(requireView(), "Bu Kullanıcı Adı mevcut!", 1500).show()
-                    } else {
-
-                         control = it.find { it.email == email }
                         if (control != null) {
-                            Snackbar.make(requireView(), "Bu Email  mevcut!", 1500).show()
+                            Snackbar.make(requireView(), "Bu Kullanıcı Adı mevcut!", 1500).show()
                         } else {
-                            viewModelSignUp.SignUpview(
-                                userName,
-                                password,
-                                name,
-                                email,
-                                phone,
-                                date,
-                                imageName,
-                                selectedPicture
 
-                            )
+                            control = it.find { it.email == email }
+                            if (control != null) {
+                                Snackbar.make(requireView(), "Bu Email  mevcut!", 1500).show()
+                            } else {
+                                viewModelSignUp.SignUpview(
+                                    userName,
+                                    password,
+                                    name,
+                                    email,
+                                    phone,
+                                    date,
+                                    imageName,
+                                    selectedPicture
 
+                                )
+
+                            }
                         }
+
                     }
 
+                } else {
+                    Snackbar.make(requireView(), "Lütfen profil resmi seçiniz!", 1000).show()
                 }
 
+
             } else {
-                Snackbar.make(requireView(), "Lütfen profil resmi seçiniz!", 1000).show()
+                Snackbar.make(requireView(), "Lütfen tüm boşlukları doldurun!", 1000).show()
             }
 
-
         } else {
-            Snackbar.make(requireView(), "Lütfen tüm boşlukları doldurun!", 1000).show()
+            Snackbar.make(requireView(), "Geçerli Bir Email Adresi giriniz", 1500).show()
         }
+
     }
 
     private fun createUserObservable() {
-//        viewModelSignUp.userSaved.observe(viewLifecycleOwner){ ret->
-//            if (ret == true) {
-//                Snackbar.make(requireView(), "Giriş Başarılı", 1000).show()
-//            }
-//            else {
-//                Snackbar.make(requireView(), "Giriş Başarısız", 1000).show()
-//            }
-//        }
-
         viewModelSignUp.userSavedStatus.observe(viewLifecycleOwner) {
             when (it!!) {
                 LoginRepository.LogInUpStatus.LOADING -> loadingDialog.loadingDialogStart(

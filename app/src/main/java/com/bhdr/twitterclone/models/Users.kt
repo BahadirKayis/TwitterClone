@@ -1,19 +1,31 @@
 package com.bhdr.twitterclone.models
 
+
 import com.squareup.moshi.Json
-import java.util.*
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class Users(
-    @Json(name="Id") var id:Int,
-    @Json(name="UserName") var userName:String,
-    @Json(name="UserPassword") var password:String,
-    @Json(name="Name") var name:String,
-    @Json(name="Email") var eMail:String,
-    @Json(name="Phone") var phone:String,
-    @Json(name="PhotoUrl") var imgUrl:String,
-    @Json(name="Date") var date:Date,
-    @Json(name="Followers") var followers:List<Followers>,
-    @Json(name="Messages") var messages:List<Messages>,
-    @Json(name="Posts") var posts:List<Posts>,
-
-    )
+    @Json(name = "date")
+    val date: String?,
+    @Json(name = "email")
+    val email: String?,
+    @Json(name = "followers")
+    val followers: List<Followers>?,
+    @Json(name = "id")
+    val id: Int?,
+    @Json(name = "messages")
+    val messages: List<Messages>?,
+    @Json(name = "name")
+    val name: String?,
+    @Json(name = "phone")
+    val phone: String?,
+    @Json(name = "photoUrl")
+    val photoUrl: String?,
+    @Json(name = "posts")
+    val posts: List<Posts>?,
+    @Json(name = "userName")
+    val userName: String?,
+    @Json(name = "userPassword")
+    val userPassword: String?
+)

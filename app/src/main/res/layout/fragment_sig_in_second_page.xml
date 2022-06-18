@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingStart="15dp"
     android:paddingEnd="15dp"
-    tools:context=".loginupfragments.SigInSecondPageFragment">
+    tools:context=".loginupfragments.SignInSecondPageFragment">
     <ImageView
         android:id="@+id/twitterLogo"
         android:layout_width="match_parent"
@@ -23,7 +23,6 @@
         android:layout_height="0dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
-        android:onClick="@{() -> signInSecondPageFragmentObject.cancel()}"
         android:src="@drawable/cancel"
         app:layout_constraintBottom_toBottomOf="@+id/twitterLogo"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,7 +73,6 @@
         android:id="@+id/forgetPasswordText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="@{() -> signInSecondPageFragmentObject.forgetPasswordText()}"
         android:text="Şifreni mi unuttun?"
         android:textColor="#03A9F4"
         app:layout_constraintBottom_toBottomOf="@+id/signInButton"
@@ -87,7 +85,6 @@
         android:layout_height="48dp"
         android:backgroundTint="#03A9F4"
         android:fontFamily="@font/roboto"
-        android:onClick="@{() -> signInSecondPageFragmentObject.signInButton(emailphonenickname, passwordInput.getText().toString())}"
         android:text="Giriş yap"
         android:textSize="12sp"
         app:cornerRadius="100dp"
