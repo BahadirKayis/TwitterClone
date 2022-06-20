@@ -1,4 +1,4 @@
-package com.bhdr.twitterclone.loginupfragments
+package com.bhdr.twitterclone.fragments.loginupfragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

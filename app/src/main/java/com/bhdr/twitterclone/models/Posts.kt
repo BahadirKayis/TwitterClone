@@ -1,10 +1,13 @@
 package com.bhdr.twitterclone.models
 
 
+import android.os.Parcelable
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.Parcelize
 
 @JsonClass(generateAdapter = true)
+@Parcelize
 data class Posts(
     @Json(name = "date")
     val date: String?,
@@ -24,4 +27,4 @@ data class Posts(
     val user: String?,
     @Json(name = "userId")
     val userId: Int?
-)
+):Parcelable

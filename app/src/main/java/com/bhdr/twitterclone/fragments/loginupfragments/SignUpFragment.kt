@@ -1,4 +1,4 @@
-package com.bhdr.twitterclone.loginupfragments
+package com.bhdr.twitterclone.fragments.loginupfragments
 
 import android.app.Activity
 import android.content.Intent
@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.View
@@ -22,8 +21,8 @@ import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentSignUpBinding
 import com.bhdr.twitterclone.helperclasses.LoadingDialog
 import com.bhdr.twitterclone.repos.LoginRepository
-import com.bhdr.twitterclone.viewmodels.SignUpViewModel
-import com.bhdr.twitterclone.viewmodels.UserNameEmailViewModel
+import com.bhdr.twitterclone.viewmodels.loginıupviewmodel.SignUpViewModel
+import com.bhdr.twitterclone.viewmodels.loginıupviewmodel.UserNameEmailViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import java.io.IOException

@@ -1,10 +1,15 @@
 package com.bhdr.twitterclone.models
 
 
+import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.Parcelize
+import retrofit2.Call
 
 @JsonClass(generateAdapter = true)
+@Parcelize
 data class Users(
     @Json(name = "date")
     val date: String?,
@@ -28,4 +33,4 @@ data class Users(
     val userName: String?,
     @Json(name = "userPassword")
     val userPassword: String?
-)
+):Parcelable

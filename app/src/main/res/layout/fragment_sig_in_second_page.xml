@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingStart="15dp"
     android:paddingEnd="15dp"
-    tools:context=".loginupfragments.SignInSecondPageFragment">
+    tools:context=".fragments.loginupfragments.SignInSecondPageFragment">
     <ImageView
         android:id="@+id/twitterLogo"
         android:layout_width="match_parent"

@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/logInFragment"
-        android:name="com.bhdr.twitterclone.loginupfragments.LogInFragment"
+        android:name="com.bhdr.twitterclone.fragments.loginupfragments.LogInFragment"
         android:label="fragment_log_in"
-        tools:layout="@layout/fragment_log_in" >
+        tools:layout="@layout/fragment_log_in">
         <action
             android:id="@+id/action_logInFragment_to_signUpFragment"
             app:destination="@id/signUpFragment" />
@@ -19,18 +19,18 @@
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.bhdr.twitterclone.loginupfragments.SignUpFragment"
+        android:name="com.bhdr.twitterclone.fragments.loginupfragments.SignUpFragment"
         android:label="fragment_sign_up"
-        tools:layout="@layout/fragment_sign_up" >
+        tools:layout="@layout/fragment_sign_up">
         <action
             android:id="@+id/action_signUpFragment_to_logInFragment"
             app:destination="@id/logInFragment" />
     </fragment>
     <fragment
         android:id="@+id/sigInFragment"
-        android:name="com.bhdr.twitterclone.loginupfragments.SignInFragment"
+        android:name="com.bhdr.twitterclone.fragments.loginupfragments.SignInFragment"
         android:label="fragment_sig_in"
-        tools:layout="@layout/fragment_sig_in" >
+        tools:layout="@layout/fragment_sig_in">
         <action
             android:id="@+id/action_sigInFragment_to_sigInSecondPageFragment"
             app:destination="@id/sigInSecondPageFragment" />
@@ -44,22 +44,27 @@
     </fragment>
     <fragment
         android:id="@+id/sigInSecondPageFragment"
-        android:name="com.bhdr.twitterclone.loginupfragments.SignInSecondPageFragment"
+        android:name="com.bhdr.twitterclone.fragments.loginupfragments.SignInSecondPageFragment"
         android:label="fragment_sig_in_second_page"
-        tools:layout="@layout/fragment_sig_in_second_page" >
+        tools:layout="@layout/fragment_sig_in_second_page">
         <action
             android:id="@+id/action_sigInSecondPageFragment_to_sigInForgetPasswordFragment"
             app:destination="@id/sigInForgetPasswordFragment" />
         <argument
-            android:name="userName"
-            app:argType="string"
+            android:name="userModel"
+            app:argType="com.bhdr.twitterclone.models.Users"
             app:nullable="true" />
+        <action
+            android:id="@+id/xml"
+            app:destination="@id/main_nav.xml" />
+
+
     </fragment>
     <fragment
         android:id="@+id/sigInForgetPasswordFragment"
-        android:name="com.bhdr.twitterclone.loginupfragments.SignInForgetPasswordFragment"
+        android:name="com.bhdr.twitterclone.fragments.loginupfragments.SignInForgetPasswordFragment"
         android:label="fragment_sig_in_forget_password"
-        tools:layout="@layout/fragment_sig_in_forget_password" >
+        tools:layout="@layout/fragment_sig_in_forget_password">
 
         <action
             android:id="@+id/action_sigInForgetPasswordFragment_to_signInForgetPasswordSecondFragment"
@@ -67,12 +72,16 @@
     </fragment>
     <fragment
         android:id="@+id/signInForgetPasswordSecondFragment"
-        android:name="com.bhdr.twitterclone.loginupfragments.SignInForgetPasswordSecondFragment"
+        android:name="com.bhdr.twitterclone.fragments.loginupfragments.SignInForgetPasswordSecondFragment"
         android:label="fragment_sign_in_forget_password_second"
-        tools:layout="@layout/fragment_sign_in_forget_password_second" >
+        tools:layout="@layout/fragment_sign_in_forget_password_second">
         <argument
             android:name="userId"
-            app:argType="integer"
-            />
+            app:argType="integer" />
     </fragment>
+    <include app:graph="@navigation/main_nav">
+        <argument
+            android:name="userId"
+            app:argType="integer" />
+    </include>
 </navigation>

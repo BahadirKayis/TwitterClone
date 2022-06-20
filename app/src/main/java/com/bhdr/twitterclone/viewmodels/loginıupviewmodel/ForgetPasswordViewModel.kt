@@ -1,16 +1,16 @@
-package com.bhdr.twitterclone.viewmodels
+package com.bhdr.twitterclone.viewmodels.loginıupviewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bhdr.twitterclone.repos.LoginRepository
 
 class ForgetPasswordViewModel : ViewModel() {
     private var loginrepo = LoginRepository()
-    var userId = MutableLiveData<Int>()
+    val userId : LiveData<Int> = loginrepo._userIdForget
     var userChangePassword=MutableLiveData<Boolean>()
     var executeStatus=MutableLiveData<LoginRepository.LogInUpStatus>()
     init {
-        userId = loginrepo.userIdForget
         userChangePassword=loginrepo.userChangePassword
         executeStatus=loginrepo.userStatus
     }

@@ -5,6 +5,8 @@ plugins {
     id 'kotlin-android'
     id 'androidx.navigation.safeargs.kotlin'
     id 'com.google.gms.google-services'
+    id 'kotlin-parcelize'
+
 }
 
 android {
@@ -68,7 +70,7 @@ dependencies {
     //ViewModel
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
     implementation 'androidx.activity:activity-ktx:1.4.0'
-   // implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
+    // implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
     //LiveData
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.4.1"
 
@@ -92,4 +94,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation 'com.google.firebase:firebase-storage-ktx'
+
+    //Inject
+    implementation "com.google.dagger:hilt-android:2.42"
+
 }

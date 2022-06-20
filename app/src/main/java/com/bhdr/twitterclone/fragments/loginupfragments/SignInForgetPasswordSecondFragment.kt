@@ -1,17 +1,14 @@
-package com.bhdr.twitterclone.loginupfragments
+package com.bhdr.twitterclone.fragments.loginupfragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.navigation.fragment.navArgs
 import com.bhdr.twitterclone.R
-import com.bhdr.twitterclone.databinding.FragmentSigInForgetPasswordBinding
 import com.bhdr.twitterclone.databinding.FragmentSignInForgetPasswordSecondBinding
 import com.bhdr.twitterclone.helperclasses.LoadingDialog
 import com.bhdr.twitterclone.repos.LoginRepository
-import com.bhdr.twitterclone.viewmodels.ForgetPasswordViewModel
+import com.bhdr.twitterclone.viewmodels.loginıupviewmodel.ForgetPasswordViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 
@@ -28,6 +25,7 @@ class SignInForgetPasswordSecondFragment :
         binding.passwordUpdateButton.setOnClickListener {
             passwordUpdate()
         }
+
     }
 
     private fun passwordUpdate() {

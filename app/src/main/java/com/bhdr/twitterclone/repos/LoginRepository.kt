@@ -2,15 +2,19 @@ package com.bhdr.twitterclone.repos
 
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.bhdr.twitterclone.models.UsernameAndEmailControl
 import com.bhdr.twitterclone.models.Users
 import com.bhdr.twitterclone.network.CallApi
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.*
+
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 
 class LoginRepository {
 
@@ -22,14 +26,18 @@ class LoginRepository {
     val userSaved = MutableLiveData<Boolean>()
     val userStatus = MutableLiveData<LogInUpStatus>()
 
-    val userModel = MutableLiveData<Users>()
+    private var _userModel = MutableLiveData<Users>()
 
-    val userIdForget = MutableLiveData<Int>()
+    val userModel: LiveData<Users>
+        get() = _userModel
+    private var userIdForget = MutableLiveData<Int>()
+    val _userIdForget: LiveData<Int>
+        get() = userIdForget
     val userChangePassword = MutableLiveData<Boolean>()
 
     fun userForgetId(userName: String) {
         userStatus.value = LogInUpStatus.LOADING
-        CallApi.retrofitService.getForgetPassword(userName).enqueue(object : Callback<Int> {
+        CallApi.retrofitServiceLogInUp.getForgetPassword(userName).enqueue(object : Callback<Int> {
             override fun onResponse(call: Call<Int>, response: Response<Int>) {
                 userIdForget.value = response.body()
                 userStatus.value = LogInUpStatus.DONE
@@ -45,7 +53,7 @@ class LoginRepository {
 
     fun userChangePassword(userId: Int, password: String) {
         userStatus.value = LogInUpStatus.LOADING
-        CallApi.retrofitService.getForgetChangePassword(userId, password)
+        CallApi.retrofitServiceLogInUp.getForgetChangePassword(userId, password)
             .enqueue(object : Callback<Boolean> {
                 override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
                     userChangePassword.value = response.body()
@@ -59,20 +67,18 @@ class LoginRepository {
             })
     }
 
-    fun signIn(userName: String) {
-        CallApi.retrofitService.signIn(userName).enqueue(object : Callback<Users> {
-            override fun onResponse(call: Call<Users>, response: Response<Users>) {
-                userModel.value = response.body()
-            }
 
-            override fun onFailure(call: Call<Users>, t: Throwable) {
-                Log.e("repLogSignIn", t.toString())
-                userModel.value = null
-            }
-        })
+    fun signIn(userName: String) {//kullanıcı ekranında kontrol edip model göndereceğim yada uyarı mesajı verdireceğim
+
+        runBlocking {
+            _userModel.value = CallApi.retrofitServiceLogInUp.signIn(userName).body()
+        }
+
+
     }
 
-    //SignUpViewModel
+
+//SignUpViewModel
 
     fun signUP(
         userName: String,
@@ -84,7 +90,7 @@ class LoginRepository {
         imageName: String,
         selectedPicture: Uri?
     ) {
-        userStatus.value = LogInUpStatus.LOADING
+        userStatus.value = LoginRepository.LogInUpStatus.LOADING
         val reference = db.reference
         val imagesReference = reference.child("profilpictures").child(imageName)
         imagesReference.putFile(selectedPicture!!).addOnSuccessListener { taskComplet ->
@@ -93,7 +99,7 @@ class LoginRepository {
             uploadedPictureReference.downloadUrl.addOnSuccessListener { uri ->
                 val profilePictureUrl = uri.toString()
 
-                CallApi.retrofitService.createUser(
+                CallApi.retrofitServiceLogInUp.createUser(
                     userName,
                     password,
                     name,
@@ -106,14 +112,14 @@ class LoginRepository {
                         call: Call<Boolean>,
                         response: Response<Boolean>
                     ) {
-                        userStatus.value = LogInUpStatus.DONE
+                        userStatus.value = LoginRepository.LogInUpStatus.DONE
                         val tempList = response.body()
                         userSaved.value = tempList
                     }
 
                     override fun onFailure(call: Call<Boolean>, t: Throwable) {
                         Log.e("repLogSignUp", t.toString())
-                        userStatus.value = LogInUpStatus.ERROR
+                        userStatus.value = LoginRepository.LogInUpStatus.ERROR
                         userSaved.value = false
                     }
                 })
@@ -124,7 +130,7 @@ class LoginRepository {
 
     //UserNameEmailViewModel
     fun getUsersData() {
-        CallApi.retrofitService.getUsernameAndEmail()
+        CallApi.retrofitServiceLogInUp.getUsernameAndEmail()
             .enqueue(object : Callback<List<UsernameAndEmailControl>> {
                 override fun onResponse(
                     call: Call<List<UsernameAndEmailControl>>,
@@ -137,11 +143,17 @@ class LoginRepository {
                 override fun onFailure(call: Call<List<UsernameAndEmailControl>>, t: Throwable) {
                     userData.value = null
                     Log.e("userData", t.toString())
-                    userStatus.value = LogInUpStatus.ERROR
+                    userStatus.value = LoginRepository.LogInUpStatus.ERROR
                 }
 
             })
 
     }
+
+    val dinlenenVeri: MutableLiveData<Users> by lazy {
+        MutableLiveData<Users>()
+    }
+
+
 }
 
