@@ -13,7 +13,7 @@ class LogInFragment : Fragment(R.layout.fragment_log_in) {
     private val binding by viewBinding(FragmentLogInBinding::bind)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+findNavController().navigate(R.id.xml2)
         binding.signUpButton.setOnClickListener {
             findNavController().navigate(R.id.action_logInFragment_to_signUpFragment)
         }

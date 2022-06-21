@@ -25,6 +25,7 @@ import com.bhdr.twitterclone.viewmodels.loginıupviewmodel.SignUpViewModel
 import com.bhdr.twitterclone.viewmodels.loginıupviewmodel.UserNameEmailViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
+import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -77,7 +78,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         createUserObservable()
     }
 
-    fun selectImage() {
+    private fun selectImage() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 android.Manifest.permission.READ_EXTERNAL_STORAGE
@@ -174,7 +175,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                             if (control != null) {
                                 Snackbar.make(requireView(), "Bu Email  mevcut!", 1500).show()
                             } else {
-                                viewModelSignUp.SignUpview(
+                                viewModelSignUp.createUser(
                                     userName,
                                     password,
                                     name,
@@ -220,14 +221,27 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     ).show()
                 }
                 LoginRepository.LogInUpStatus.DONE -> {
-                    loadingDialog.loadingDialogClose();Snackbar.make(
-                        requireView(),
-                        "Giriş Başarılı",
-                        3000
-                    ).show()
+                    loadingDialog.loadingDialogClose();
                 }
             }
 
+        }
+        viewModelSignUp.userSaved.observe(viewLifecycleOwner) {
+            when (it) {
+
+                true -> Snackbar.make(
+                    requireView(),
+                    "Hesap Oluşturuldu",
+                    3000
+                ).show()
+
+
+                false -> Snackbar.make(
+                    requireView(),
+                    "Hata oluştu lütfen tekrar deneyiniz",
+                    3000
+                ).show()
+            }
         }
     }
 }

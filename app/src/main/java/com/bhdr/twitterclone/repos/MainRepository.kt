@@ -5,12 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.bhdr.twitterclone.models.Posts
 import com.bhdr.twitterclone.network.CallApi
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class MainRepository {
     enum class MainStatus { LOADING, ERROR, DONE }
@@ -22,17 +18,19 @@ class MainRepository {
     private val _sharedFlowPost = MutableSharedFlow<List<Posts>>()
     val sharedFlow = _sharedFlowPost.asSharedFlow()
 
-    fun getPosts(id: Int) {
-        CoroutineScope(Dispatchers.IO).launch {
+    suspend fun getPosts(id: Int) {
+        try {
             _mainStatus.value = MainStatus.LOADING
-            val requset = CallApi.retrofitServiceMain.getPosts(id)
-            if (requset.isSuccessful) {
+            val request = CallApi.retrofitServiceMain.getPosts(id)
+            if (request.isSuccessful) {
                 _mainStatus.value = MainStatus.DONE
-                _sharedFlowPost.emit(requset.body()!!)
-                Log.e("TAG", _sharedFlowPost.toString())
-            } else if (!requset.isSuccessful) {
+                _sharedFlowPost.emit(request.body()!!)
+                Log.e("TAG", request.body().toString())
+            } else if (!request.isSuccessful) {
                 _mainStatus.value = MainStatus.ERROR
             }
+        } catch (e: Exception) {
+            Log.e("ex", e.toString())
         }
 
     }

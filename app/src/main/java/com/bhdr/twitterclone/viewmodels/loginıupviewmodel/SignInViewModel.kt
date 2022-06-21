@@ -1,5 +1,6 @@
 package com.bhdr.twitterclone.viewmodels.loginıupviewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,10 +14,13 @@ import kotlinx.coroutines.launch
 class SignInViewModel : ViewModel() {
     private var loginrepo = LoginRepository()
     val userModel: LiveData<Users> = loginrepo.userModel
+    var userModelMutable: MutableLiveData<Users> = loginrepo._userModel
+
 
     fun getUserSigIn(userName: String) {
-
-        loginrepo.signIn(userName)
+        viewModelScope.launch {
+            loginrepo.signIn(userName)
+        }
 
 
     }

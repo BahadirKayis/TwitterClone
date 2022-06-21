@@ -12,7 +12,7 @@ data class Posts(
     @Json(name = "date")
     val date: String?,
     @Json(name = "followers")
-    val followers: List<String>?,
+    val followers: List<Followers?>?,
     @Json(name = "id")
     val id: Int?,
     @Json(name = "postContent")
@@ -22,7 +22,7 @@ data class Posts(
     @Json(name = "postLike")
     val postLike: Int?,
     @Json(name = "tags")
-    val tags: List<Tags>?,
+    val tags: List<Tags?>?,
     @Json(name = "user")
     val user: String?,
     @Json(name = "userId")

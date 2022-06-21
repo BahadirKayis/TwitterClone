@@ -8,5 +8,7 @@
         android:id="@+id/mainScreenFragment"
         android:name="com.bhdr.twitterclone.fragments.mainfragments.MainScreenFragment"
         android:label="fragment_main_screen"
-        tools:layout="@layout/fragment_main_screen" />
+        tools:layout="@layout/fragment_main_screen">
+    </fragment>
+
 </navigation>

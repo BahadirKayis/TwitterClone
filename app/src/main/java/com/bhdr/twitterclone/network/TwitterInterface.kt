@@ -12,7 +12,7 @@ interface TwitterInterface {
 
 
     @POST("postSignUp")
-    fun createUser(
+    suspend  fun createUser(
         @Query("user_name") userName: String,
         @Query("user_password") password: String,
         @Query("name") name: String,
@@ -20,23 +20,24 @@ interface TwitterInterface {
         @Query("phone") phone: String,
         @Query("photo_url") photoUrl: String,
         @Query("date") date: String?
-    ): Call<Boolean>
+    ): Response<Boolean>
 
     @GET("getUserNameAndEmail")
-    fun getUsernameAndEmail(): Call<List<UsernameAndEmailControl>>
+    suspend fun getUsernameAndEmail(): Response<List<UsernameAndEmailControl>>
 
     @GET("getLoginUserName")
     suspend fun signIn(@Query("userControl") userName: String): Response<Users>
 
     @GET("getForgetPassword")
-    fun getForgetPassword(@Query("userControl") userName: String): Call<Int>
+    suspend  fun getForgetPassword(@Query("userControl") userName: String): Response<Int>
 
     @POST("updatePassword")
-    fun getForgetChangePassword(
+    suspend  fun getForgetChangePassword(
         @Query("user_id") userId: Int,
         @Query("password") password: String
-    ): Call<Boolean>
+    ): Response<Boolean>
 
+    @GET("getPosts")
     suspend fun getPosts(@Query("id")id:Int):Response<List<Posts>>
 
 }

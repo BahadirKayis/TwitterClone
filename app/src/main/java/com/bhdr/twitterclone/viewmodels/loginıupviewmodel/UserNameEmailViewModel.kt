@@ -14,16 +14,17 @@ import kotlin.math.log
 
 class UserNameEmailViewModel : ViewModel() {
     private var loginrepo = LoginRepository()
-    var userData = MutableLiveData<List<UsernameAndEmailControl>>()
+    var userData: LiveData<List<UsernameAndEmailControl>> = loginrepo.userData
 
 
     init {
-
         getUsersData()
-        userData = loginrepo.userData
     }
 
-    fun getUsersData() {
-        loginrepo.getUsersData()
+    private fun getUsersData() {
+        viewModelScope.launch{
+            loginrepo.getUsersData()
+        }
+
     }
 }
