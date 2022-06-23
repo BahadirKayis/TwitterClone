@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bhdr.twitterclone.repos.LoginRepository
-import com.bumptech.glide.Glide.init
+
 import kotlinx.coroutines.launch
 
 class ForgetPasswordViewModel : ViewModel() {

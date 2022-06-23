@@ -27,9 +27,9 @@ class SignInFragment : Fragment(R.layout.fragment_sig_in) {
                 Snackbar.make(requireView(), "Kullanıcı Adı Giriniz", 1500).show()
             }
         }
-binding.cancel.setOnClickListener {
-    findNavController().popBackStack()
-}
+        binding.cancel.setOnClickListener {
+            findNavController().popBackStack()
+        }
         binding.forgetPasswordText.setOnClickListener {
             findNavController().navigate(R.id.action_sigInFragment_to_sigInForgetPasswordFragment2)
         }

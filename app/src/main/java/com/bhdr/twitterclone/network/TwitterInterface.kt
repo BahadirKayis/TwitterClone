@@ -1,6 +1,7 @@
 package com.bhdr.twitterclone.network
 
 import com.bhdr.twitterclone.models.Posts
+import com.bhdr.twitterclone.models.Tags
 import com.bhdr.twitterclone.models.UsernameAndEmailControl
 import com.bhdr.twitterclone.models.Users
 import retrofit2.Call
@@ -12,7 +13,7 @@ interface TwitterInterface {
 
 
     @POST("postSignUp")
-    suspend  fun createUser(
+    suspend fun createUser(
         @Query("user_name") userName: String,
         @Query("user_password") password: String,
         @Query("name") name: String,
@@ -29,15 +30,22 @@ interface TwitterInterface {
     suspend fun signIn(@Query("userControl") userName: String): Response<Users>
 
     @GET("getForgetPassword")
-    suspend  fun getForgetPassword(@Query("userControl") userName: String): Response<Int>
+    suspend fun getForgetPassword(@Query("userControl") userName: String): Response<Int>
 
     @POST("updatePassword")
-    suspend  fun getForgetChangePassword(
+    suspend fun getForgetChangePassword(
         @Query("user_id") userId: Int,
         @Query("password") password: String
     ): Response<Boolean>
 
     @GET("getPosts")
-    suspend fun getPosts(@Query("id")id:Int):Response<List<Posts>>
+    suspend fun getPosts(@Query("id") id: Int): Response<List<Posts>>
+
+    @POST("postLiked")
+    suspend fun postLiked(@Query("Id") id: Int, @Query("count") count: Int): Response<Int>
+
+    @GET("getTags")
+    suspend fun getPopularTags(): Response<List<Tags>>
+    //@GET("getsearchUserName")()
 
 }

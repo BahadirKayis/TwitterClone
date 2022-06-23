@@ -2,13 +2,26 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_nav.xml"
+    android:id="@+id/main_nav"
     app:startDestination="@id/mainScreenFragment">
     <fragment
         android:id="@+id/mainScreenFragment"
         android:name="com.bhdr.twitterclone.fragments.mainfragments.MainScreenFragment"
-        android:label="fragment_main_screen"
-        tools:layout="@layout/fragment_main_screen">
+        android:label="MainScreenFragment"
+        tools:layout="@layout/fragment_main_screen"
+        >
+        <action
+            android:id="@+id/action_mainScreenFragment_to_tweetBottomDialog"
+            app:destination="@id/tweetBottomDialog" />
     </fragment>
-
+    <dialog
+        android:id="@+id/tweetBottomDialog"
+        android:name="com.bhdr.twitterclone.fragments.dialogfragments.TweetBottomDialog"
+        android:label="TweetBottomDialog"
+        tools:layout="@layout/fragment_tweet_bottom_dialog"
+        >
+        <argument
+            android:name="userName"
+            app:argType="string" />
+    </dialog>
 </navigation>

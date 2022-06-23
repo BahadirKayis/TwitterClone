@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.bhdr.twitterclone.models.UsernameAndEmailControl
 import com.bhdr.twitterclone.network.CallApi
 import com.bhdr.twitterclone.repos.LoginRepository
-import com.bumptech.glide.Glide.init
 import kotlinx.coroutines.launch
 import kotlin.math.log
 
@@ -22,7 +21,7 @@ class UserNameEmailViewModel : ViewModel() {
     }
 
     private fun getUsersData() {
-        viewModelScope.launch{
+        viewModelScope.launch {
             loginrepo.getUsersData()
         }
 

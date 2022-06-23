@@ -16,9 +16,6 @@
         <action
             android:id="@+id/action_logInFragment_to_sigInFragment"
             app:destination="@id/sigInFragment" />
-        <action
-            android:id="@+id/xml2"
-            app:destination="@id/main_nav.xml" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -57,9 +54,6 @@
             android:name="userModel"
             app:argType="com.bhdr.twitterclone.models.Users"
             app:nullable="true" />
-        <action
-            android:id="@+id/xml"
-            app:destination="@id/main_nav.xml" />
 
 
     </fragment>
@@ -82,6 +76,5 @@
             android:name="userId"
             app:argType="integer" />
     </fragment>
-    <include app:graph="@navigation/main_nav"/>
 
 </navigation>

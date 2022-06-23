@@ -44,7 +44,7 @@ class SignInSecondPageFragment : Fragment(R.layout.fragment_sig_in_second_page) 
             if (userModel?.userPassword.toString() == binding.passwordInput.text.toString()) {
                 Snackbar.make(requireView(), "Giriş Başarılı ", 1000).show()
 
-                findNavController().navigate(R.id.xml)
+             //   findNavController().navigate(R.id.xml)
 
             } else {
                 Snackbar.make(requireView(), "Girilen Şifre Yanlış", 2000).show()

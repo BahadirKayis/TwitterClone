@@ -20,11 +20,11 @@ data class Posts(
     @Json(name = "postImageUrl")
     val postImageUrl: String?,
     @Json(name = "postLike")
-    val postLike: Int?,
+    var postLike: Int?,
     @Json(name = "tags")
     val tags: List<Tags?>?,
     @Json(name = "user")
-    val user: String?,
+    val user: Users?,
     @Json(name = "userId")
     val userId: Int?
 ):Parcelable
