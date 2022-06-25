@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 class PostViewModel : ViewModel() {
     private var mainrepo = TweetRepository()
-    val sharedFlowPost:LiveData<List<Posts>> =mainrepo.sharedFlow
+    val sharedFlowPost:LiveData<List<Posts>> =mainrepo.sharedFlowPost
     val mainStatus: LiveData<TweetRepository.MainStatus> = mainrepo.mainStatus
 
     val liked: LiveData<Int> = mainrepo.liked

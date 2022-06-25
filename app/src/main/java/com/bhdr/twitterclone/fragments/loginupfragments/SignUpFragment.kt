@@ -19,13 +19,13 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentSignUpBinding
-import com.bhdr.twitterclone.helperclasses.LoadingDialog
+import com.bhdr.twitterclone.helperclasses.loadingDialogStart
+import com.bhdr.twitterclone.helperclasses.snackBar
 import com.bhdr.twitterclone.repos.LoginRepository
-import com.bhdr.twitterclone.viewmodels.loginıupviewmodel.SignUpViewModel
-import com.bhdr.twitterclone.viewmodels.loginıupviewmodel.UserNameEmailViewModel
+import com.bhdr.twitterclone.viewmodels.loginupviewmodel.SignUpViewModel
+import com.bhdr.twitterclone.viewmodels.loginupviewmodel.UserNameEmailViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
-import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -44,8 +44,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
     var selectedBitmap: Bitmap? = null
     var userSaved: Boolean? = null
 
-
-    private val loadingDialog by lazy { LoadingDialog() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -168,12 +166,13 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                         var control = it.find { it.userName == userName }
 
                         if (control != null) {
-                            Snackbar.make(requireView(), "Bu Kullanıcı Adı mevcut!", 1500).show()
+
+                            snackBar(requireView(), "Bu Kullanıcı Adı mevcut!", 1500)
                         } else {
 
                             control = it.find { it.email == email }
                             if (control != null) {
-                                Snackbar.make(requireView(), "Bu Email  mevcut!", 1500).show()
+                                snackBar(requireView(), "Bu Email  mevcut!", 1500)
                             } else {
                                 viewModelSignUp.createUser(
                                     userName,
@@ -193,16 +192,18 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     }
 
                 } else {
-                    Snackbar.make(requireView(), "Lütfen profil resmi seçiniz!", 1000).show()
+                    snackBar(requireView(), "Lütfen profil resmi seçiniz!", 1000)
+
                 }
 
 
             } else {
-                Snackbar.make(requireView(), "Lütfen tüm boşlukları doldurun!", 1000).show()
+                snackBar(requireView(), "Lütfen tüm boşlukları doldurun!", 1000)
+
             }
 
         } else {
-            Snackbar.make(requireView(), "Geçerli Bir Email Adresi giriniz", 1500).show()
+            snackBar(requireView(), "Geçerli Bir Email Adresi giriniz", 1000)
         }
 
     }
@@ -210,18 +211,13 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
     private fun createUserObservable() {
         viewModelSignUp.userSavedStatus.observe(viewLifecycleOwner) {
             when (it!!) {
-                LoginRepository.LogInUpStatus.LOADING -> loadingDialog.loadingDialogStart(
-                    requireActivity()
-                )
+                LoginRepository.LogInUpStatus.LOADING -> loadingDialogStart(requireActivity())
                 LoginRepository.LogInUpStatus.ERROR -> {
-                    loadingDialog.loadingDialogClose();Snackbar.make(
-                        requireView(),
-                        "Hata Oluştu Tekrar Deneyiniz",
-                        3000
-                    ).show()
+                    loadingDialogStart(requireActivity()).dismiss()
+                    snackBar(requireView(), "Hata oluştu lütfen daha sonra tekrar deneyiniz", 2000)
                 }
                 LoginRepository.LogInUpStatus.DONE -> {
-                    loadingDialog.loadingDialogClose();
+                    loadingDialogStart(requireActivity()).dismiss()
                 }
             }
 
@@ -229,18 +225,20 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         viewModelSignUp.userSaved.observe(viewLifecycleOwner) {
             when (it) {
 
-                true -> Snackbar.make(
-                    requireView(),
-                    "Hesap Oluşturuldu",
-                    3000
-                ).show()
+                true -> {
+                    snackBar(requireView(), "Hesap Oluşturuldu", 2000)
+                    loadingDialogStart(requireActivity()).dismiss()
+                }
 
 
-                false -> Snackbar.make(
-                    requireView(),
-                    "Hata oluştu lütfen tekrar deneyiniz",
-                    3000
-                ).show()
+                false -> {
+                    loadingDialogStart(requireActivity()).dismiss()
+                    snackBar(
+                        requireView(),
+                        "Hata oluştu lütfen tekrar deneyiniz",
+                        2000
+                    )
+                }
             }
         }
     }

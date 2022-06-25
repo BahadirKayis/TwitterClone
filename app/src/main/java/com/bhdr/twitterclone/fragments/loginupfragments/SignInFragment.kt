@@ -7,8 +7,8 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentSigInBinding
-import com.bhdr.twitterclone.viewmodels.loginıupviewmodel.SignInViewModel
-import com.google.android.material.snackbar.Snackbar
+import com.bhdr.twitterclone.helperclasses.snackBar
+import com.bhdr.twitterclone.viewmodels.loginupviewmodel.SignInViewModel
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 
 
@@ -24,7 +24,8 @@ class SignInFragment : Fragment(R.layout.fragment_sig_in) {
                 sigInModelView.getUserSigIn(binding.emailphonenicknameEditText.text.toString())
 
             } else {
-                Snackbar.make(requireView(), "Kullanıcı Adı Giriniz", 1500).show()
+
+                snackBar(requireView(),"Kullanıcı Adı Giriniz",1500)
             }
         }
         binding.cancel.setOnClickListener {
@@ -42,8 +43,7 @@ class SignInFragment : Fragment(R.layout.fragment_sig_in) {
                     SignInFragmentDirections.actionSigInFragmentToSigInSecondPageFragment(it)
                 )
             } else {
-                Snackbar.make(requireView(), "Girilen kullanıcı adı bulunamadı", 1500)
-                    .show()
+                snackBar(requireView(),"Girilen kullanıcı adı bulunamadı",1500)
             }
 
         })

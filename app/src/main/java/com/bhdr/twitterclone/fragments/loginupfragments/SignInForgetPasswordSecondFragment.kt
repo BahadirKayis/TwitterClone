@@ -6,10 +6,10 @@ import android.view.View
 import androidx.navigation.fragment.navArgs
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentSignInForgetPasswordSecondBinding
-import com.bhdr.twitterclone.helperclasses.LoadingDialog
+import com.bhdr.twitterclone.helperclasses.loadingDialogStart
+import com.bhdr.twitterclone.helperclasses.snackBar
 import com.bhdr.twitterclone.repos.LoginRepository
-import com.bhdr.twitterclone.viewmodels.loginıupviewmodel.ForgetPasswordViewModel
-import com.google.android.material.snackbar.Snackbar
+import com.bhdr.twitterclone.viewmodels.loginupviewmodel.ForgetPasswordViewModel
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 
 
@@ -18,7 +18,7 @@ class SignInForgetPasswordSecondFragment :
     private val binding by viewBinding(FragmentSignInForgetPasswordSecondBinding::bind)
     private val args: SignInForgetPasswordSecondFragmentArgs by navArgs()
     private val forgetViewModel by lazy { ForgetPasswordViewModel() }
-    private val loadingDialog by lazy { LoadingDialog() }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -34,35 +34,31 @@ class SignInForgetPasswordSecondFragment :
             forgetViewModel.userChangePassword(args.userId, binding.passwordInput.text.toString())
 
         } else {
-            Snackbar.make(requireView(), "Şifreler uyuşmuyor", 1000).show()
+            snackBar(requireView(),"Şifreler uyuşmuyor",1000)
         }
     }
 
     private fun passwordObservable() {
         forgetViewModel.userChangePassword.observe(viewLifecycleOwner) {
             when (it) {
-                true -> Snackbar.make(requireView(), "Şifre Değiştirildi", 1500).show()
-                false -> Snackbar.make(
-                    requireView(),
-                    "Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz",
-                    1500
-                ).show()
+                true -> snackBar(requireView(),"Şifre Değiştirildi",1500)
+                false -> snackBar(requireView(),"Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz",1500)
             }
         }
         forgetViewModel.executeStatus.observe(viewLifecycleOwner) {
             when (it!!) {
-                LoginRepository.LogInUpStatus.LOADING -> loadingDialog.loadingDialogStart(
+                LoginRepository.LogInUpStatus.LOADING -> loadingDialogStart(
                     requireActivity()
                 )
                 LoginRepository.LogInUpStatus.ERROR -> {
-                    loadingDialog.loadingDialogClose()
-                    Snackbar.make(
-                        requireView(),
-                        "Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz",
-                        1500
-                    ).show()
+                    loadingDialogStart(
+                        requireActivity()
+                    ).dismiss()
+                    snackBar(requireView(),"Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz",1500)
                 }
-                LoginRepository.LogInUpStatus.DONE -> loadingDialog.loadingDialogClose()
+                LoginRepository.LogInUpStatus.DONE -> loadingDialogStart(
+                    requireActivity()
+                ).dismiss()
             }
         }
     }

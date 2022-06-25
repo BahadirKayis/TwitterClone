@@ -1,8 +1,7 @@
-package com.bhdr.twitterclone.viewmodels.loginıupviewmodel
+package com.bhdr.twitterclone.viewmodels.loginupviewmodel
 
 import android.net.Uri
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bhdr.twitterclone.repos.LoginRepository

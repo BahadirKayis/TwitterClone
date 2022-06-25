@@ -4,6 +4,7 @@ import com.bhdr.twitterclone.models.Posts
 import com.bhdr.twitterclone.models.Tags
 import com.bhdr.twitterclone.models.UsernameAndEmailControl
 import com.bhdr.twitterclone.models.Users
+import com.google.firebase.firestore.auth.User
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
@@ -46,6 +47,7 @@ interface TwitterInterface {
 
     @GET("getTags")
     suspend fun getPopularTags(): Response<List<Tags>>
-    //@GET("getsearchUserName")()
+    @GET("getSearchNotFollow")
+    suspend fun getSearchNotFollow(@Query("id") id: Int): Response<User>
 
 }

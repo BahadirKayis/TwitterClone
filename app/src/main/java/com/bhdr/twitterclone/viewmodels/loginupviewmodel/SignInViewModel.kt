@@ -1,4 +1,4 @@
-package com.bhdr.twitterclone.viewmodels.loginıupviewmodel
+package com.bhdr.twitterclone.viewmodels.loginupviewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel

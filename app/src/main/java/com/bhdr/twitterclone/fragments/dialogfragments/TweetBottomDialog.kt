@@ -25,7 +25,11 @@ class TweetBottomDialog : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(com.bhdr.twitterclone.R.layout.fragment_tweet_bottom_dialog, container, false)
+        return inflater.inflate(
+            com.bhdr.twitterclone.R.layout.fragment_tweet_bottom_dialog,
+            container,
+            false
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
