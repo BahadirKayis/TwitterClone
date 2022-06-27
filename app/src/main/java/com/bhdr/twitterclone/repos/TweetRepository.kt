@@ -29,11 +29,12 @@ class TweetRepository {
                 mainStatus.value = MainStatus.ERROR
             }
         } catch (e: Exception) {
+            mainStatus.value = MainStatus.ERROR
             Log.e("ex", e.toString())
             if (e.message == "timeout") {
                 getPosts(id)
             }
-            mainStatus.value = MainStatus.ERROR
+
         }
 
     }

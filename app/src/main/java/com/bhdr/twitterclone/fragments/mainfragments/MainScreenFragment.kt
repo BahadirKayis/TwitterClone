@@ -24,8 +24,6 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
     private val postViewModel by lazy { PostViewModel() }
     private var userModel: Users? = null
 
-
-    //var tweetAdapter: TweetsAdapter? = null
    private val tweetAdapter by lazy { TweetsAdapter(this) }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -46,13 +44,13 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
 
         postViewModel.mainStatus.observe(viewLifecycleOwner) {
             Log.e("viewLifecycleOwner", it.toString())
-            when (it!!) {
-
-                TweetRepository.MainStatus.LOADING -> loadingDialogStart(requireActivity())
-
-                TweetRepository.MainStatus.ERROR -> loadingDialogStart(requireActivity()).dismiss()
-                TweetRepository.MainStatus.DONE -> loadingDialogStart(requireActivity()).dismiss()
-            }
+//            when (it!!) {
+//
+//                TweetRepository.MainStatus.LOADING -> loadingDialogStart(requireActivity()).show()
+//
+//                TweetRepository.MainStatus.ERROR -> loadingDialogStart(requireActivity()).dismiss()
+//                TweetRepository.MainStatus.DONE -> loadingDialogStart(requireActivity()).dismiss()
+//            }
         }
 
         postViewModel.sharedFlowPost.observe(viewLifecycleOwner) {
