@@ -15,7 +15,7 @@ import com.bhdr.twitterclone.viewmodels.mainviewmodel.SearchViewModel
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 
 
-class SearchFragment : Fragment(R.layout.fragment_search) {
+class SearchFragment : Fragment(R.layout.fragment_search),WhoToFollowAdapter.ClickedUserFollow {
     private val searchModel by lazy { SearchViewModel() }
     private val binding by viewBinding(FragmentSearchBinding::bind)
 
@@ -36,8 +36,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     }
 
     private fun observeViewModel() {
-        try {
-
 
         searchModel.status.observe(viewLifecycleOwner) {
             when (it!!) {
@@ -58,16 +56,19 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         }
 
         searchModel.followUser.observe(viewLifecycleOwner) {
-            Log.e("TAG", it.toString() )
-            val users = WhoToFollowAdapter(it)
+
+            val users = WhoToFollowAdapter(this,it)
             binding.whoToFollowRecyclerView.adapter = users
 
         }
-        }
-        catch (e: Exception)  {
-            Log.e("TAG", e.toString() )
+
+        searchModel.followedUser.observe(viewLifecycleOwner) {
+            Log.e("TAG", it.toString())
         }
 
     }
 
+    override fun followButtonsListener(followId: Int) {
+        searchModel.getSearchFollowUser(1,followId)
+    }
 }

@@ -49,5 +49,7 @@ interface TwitterInterface {
     suspend fun getPopularTags(): Response<List<Tags>>
     @GET("getSearchNotFollow")
     suspend fun getSearchNotFollow(@Query("id") id: Int): Response<List<Users>>
+    @POST("postUserFollow")
+    suspend fun postUserFollow(@Query("userId")userId: Int, @Query("followId")followId: Int): Response<Boolean>
 
 }

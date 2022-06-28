@@ -14,23 +14,34 @@ class SearchViewModel : ViewModel() {
 
     val status: LiveData<SearchRepository.MainStatus> = searchRepository.searchStatus
     val followUser: LiveData<List<Users>>
-    get() = searchRepository.followUser
+        get() = searchRepository.followUser
+
+    val followedUser: LiveData<Boolean>
+        get() = searchRepository.followedUser
 
     val tags: LiveData<List<Tags>>
         get() = searchRepository.tags
 
 
     init {
-    //    getTags()
+        //    getTags()
     }
+
     fun getSearchFollowUser(id: Int) {
         viewModelScope.launch {
             searchRepository.getSearchFollowUser(id)
         }
     }
-   private fun getTags(){
+    fun getSearchFollowUser(userId:Int,followId:Int) {
+        viewModelScope.launch {
+            searchRepository.postUserFollow(userId,followId)
+        }
+    }
+
+    private fun getTags() {
         viewModelScope.launch {
             searchRepository.getTags()
         }
     }
+
 }

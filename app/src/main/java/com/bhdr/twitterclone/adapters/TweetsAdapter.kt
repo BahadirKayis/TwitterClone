@@ -87,10 +87,7 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
 
         }
     }
-
     interface ClickedTweetListener {
         fun crfButtonsListener(commentrtfav: String, tweetId: Int, currentlyCRFNumber: Int)
     }
-
-
 }
