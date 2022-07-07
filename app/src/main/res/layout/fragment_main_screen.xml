@@ -21,6 +21,8 @@
             app:buttonGravity="center_vertical"
             app:layout_scrollFlags="scroll|enterAlways">
 
+
+
             <ImageView
                 android:id="@+id/twitterLogo"
                 android:layout_width="25dp"
@@ -96,10 +98,23 @@
             android:backgroundTint="#03A9F4"
             android:clickable="true"
             android:contentDescription="Add Tweet"
-
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_baseline_add_24" />
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottiAnim"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            app:lottie_autoPlay="true"
+            android:visibility="gone"
+            app:lottie_loop="true"
+            android:backgroundTint="@color/white"
+            app:lottie_rawRes="@raw/twitter_loading"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

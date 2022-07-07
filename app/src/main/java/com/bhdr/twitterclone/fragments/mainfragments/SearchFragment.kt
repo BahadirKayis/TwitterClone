@@ -9,7 +9,9 @@ import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.adapters.TagsAdapter
 import com.bhdr.twitterclone.adapters.WhoToFollowAdapter
 import com.bhdr.twitterclone.databinding.FragmentSearchBinding
+import com.bhdr.twitterclone.helperclasses.gone
 import com.bhdr.twitterclone.helperclasses.loadingDialogStart
+import com.bhdr.twitterclone.helperclasses.visible
 import com.bhdr.twitterclone.repos.SearchRepository
 import com.bhdr.twitterclone.viewmodels.mainviewmodel.SearchViewModel
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
@@ -39,9 +41,9 @@ class SearchFragment : Fragment(R.layout.fragment_search),WhoToFollowAdapter.Cli
 
         searchModel.status.observe(viewLifecycleOwner) {
             when (it!!) {
-                SearchRepository.MainStatus.LOADING -> loadingDialogStart(requireActivity())
-                SearchRepository.MainStatus.ERROR -> loadingDialogStart(requireActivity()).dismiss()
-                SearchRepository.MainStatus.DONE -> loadingDialogStart(requireActivity()).dismiss()
+                SearchRepository.MainStatus.LOADING -> binding.lottiAnim.visible()
+                SearchRepository.MainStatus.ERROR -> binding.lottiAnim.gone()
+                SearchRepository.MainStatus.DONE -> binding.lottiAnim.gone()
             }
         }
         searchModel.tags.observe(viewLifecycleOwner) {

@@ -8,6 +8,7 @@ import androidx.navigation.fragment.findNavController
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentSigInForgetPasswordBinding
 import com.bhdr.twitterclone.helperclasses.loadingDialogStart
+
 import com.bhdr.twitterclone.helperclasses.snackBar
 import com.bhdr.twitterclone.repos.LoginRepository.LogInUpStatus.*
 import com.bhdr.twitterclone.viewmodels.loginupviewmodel.ForgetPasswordViewModel
