@@ -18,7 +18,7 @@ class SearchRepository {
 
     val followUser = MutableLiveData<List<Users>>()
     val followedUser = MutableLiveData<Boolean>()
-    val tags = MutableLiveData<List<Tags>>()
+    val tags = MutableLiveData<List<String>>()
 
 
     suspend fun getSearchFollowUser(id: Int) {

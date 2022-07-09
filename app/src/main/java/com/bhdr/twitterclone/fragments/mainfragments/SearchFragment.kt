@@ -17,7 +17,7 @@ import com.bhdr.twitterclone.viewmodels.mainviewmodel.SearchViewModel
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 
 
-class SearchFragment : Fragment(R.layout.fragment_search),WhoToFollowAdapter.ClickedUserFollow {
+class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.ClickedUserFollow {
     private val searchModel by lazy { SearchViewModel() }
     private val binding by viewBinding(FragmentSearchBinding::bind)
 
@@ -47,19 +47,20 @@ class SearchFragment : Fragment(R.layout.fragment_search),WhoToFollowAdapter.Cli
             }
         }
         searchModel.tags.observe(viewLifecycleOwner) {
-            Log.e("TAG", it.toString() )
-            binding.topContentContentText.text = "Naruto"
-            binding.topContentSubjectText.text = it[0].tagName.also {
+            Log.e("TAG", it.toString())
+            binding.topContentContentText.text = "Hello"
+            binding.topContentSubjectText.text = "#" + it[0].also {
                 it?.drop(0)
-                Log.e("TAG", it.toString() )
+                Log.e("TAG", it.toString())
             }
+
             val tags = TagsAdapter(it)
             binding.agendasRecyclerView.adapter = tags
         }
 
         searchModel.followUser.observe(viewLifecycleOwner) {
 
-            val users = WhoToFollowAdapter(this,it)
+            val users = WhoToFollowAdapter(this, it)
             binding.whoToFollowRecyclerView.adapter = users
 
         }
@@ -71,6 +72,6 @@ class SearchFragment : Fragment(R.layout.fragment_search),WhoToFollowAdapter.Cli
     }
 
     override fun followButtonsListener(followId: Int) {
-        searchModel.getSearchFollowUser(1,followId)
+        searchModel.getSearchFollowUser(1, followId)
     }
 }

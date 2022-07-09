@@ -19,12 +19,12 @@ class SearchViewModel : ViewModel() {
     val followedUser: LiveData<Boolean>
         get() = searchRepository.followedUser
 
-    val tags: LiveData<List<Tags>>
+    val tags: LiveData<List<String>>
         get() = searchRepository.tags
 
 
     init {
-        //    getTags()
+         getTags()
     }
 
     fun getSearchFollowUser(id: Int) {

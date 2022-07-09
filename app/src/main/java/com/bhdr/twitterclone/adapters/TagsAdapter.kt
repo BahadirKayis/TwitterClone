@@ -5,9 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bhdr.twitterclone.databinding.AgendaCardBinding
 
+
 import com.bhdr.twitterclone.models.Tags
 
-class TagsAdapter(private  val tagsList:List<Tags>): RecyclerView.Adapter<TagsAdapter.TagsViewHolder>() {
+class TagsAdapter(private val tagsList: List<String>) :
+    RecyclerView.Adapter<TagsAdapter.TagsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TagsViewHolder {
         val binding =
@@ -17,15 +19,16 @@ class TagsAdapter(private  val tagsList:List<Tags>): RecyclerView.Adapter<TagsAd
 
     override fun onBindViewHolder(holder: TagsViewHolder, position: Int) {
         holder.binding.categoryText.text = "Türkiye konumunda gündemde"
-        holder.binding.hashtagText.text= tagsList[position].tagName
-      //  holder.binding.tweetNumberText.text=tagsList[position].TweetSayısı
+        holder.binding.hashtagText.text = "#"+tagsList[position+1]
+        //  holder.binding.tweetNumberText.text=tagsList[position].TweetSayısı
         //tage tıklanınca başka sayfada o tagli postları açacak
 
     }
 
     override fun getItemCount(): Int {
-        return tagsList.size
+        return tagsList.size - 1
     }
+
     inner class TagsViewHolder(val binding: AgendaCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
