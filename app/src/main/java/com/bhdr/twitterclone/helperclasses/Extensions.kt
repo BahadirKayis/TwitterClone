@@ -10,16 +10,16 @@ import com.bhdr.twitterclone.R
 import com.google.android.material.snackbar.Snackbar
 
 
-fun loadingDialogStart(activity: Activity): Dialog {
-
-    val loadingScreen = LayoutInflater.from(activity).inflate(R.layout.loading_screen, null)
-    val builder = AlertDialog.Builder(activity)
-    builder.setView(loadingScreen)
-    builder.setCancelable(false)
-    val dialog = builder.create()
-    dialog.show()
-    return dialog
-}
+//fun loadingDialogStart(activity: Activity): Dialog {
+//
+//    val loadingScreen = LayoutInflater.from(activity).inflate(R.layout.loading_screen, null)
+//    val builder = AlertDialog.Builder(activity)
+//    builder.setView(loadingScreen)
+//    builder.setCancelable(false)
+//    val dialog = builder.create()
+//    dialog.show()
+//    return dialog
+//}
 
 fun View.gone() {
     visibility=View.GONE

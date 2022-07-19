@@ -7,9 +7,11 @@ import android.view.View
 import androidx.navigation.fragment.findNavController
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentSigInForgetPasswordBinding
-import com.bhdr.twitterclone.helperclasses.loadingDialogStart
+import com.bhdr.twitterclone.helperclasses.gone
+
 
 import com.bhdr.twitterclone.helperclasses.snackBar
+import com.bhdr.twitterclone.helperclasses.visible
 import com.bhdr.twitterclone.repos.LoginRepository.LogInUpStatus.*
 import com.bhdr.twitterclone.viewmodels.loginupviewmodel.ForgetPasswordViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -30,7 +32,7 @@ class SignInForgetPasswordFragment : Fragment(R.layout.fragment_sig_in_forget_pa
                 forgetViewModel.userForgetId(binding.emailphonenicknameEditText.text.toString())
 
             } else {
-                snackBar(requireView(),"Kullanıcı Bilgisini  Giriniz",1000)
+                snackBar(requireView(), "Kullanıcı Bilgisini  Giriniz", 1000)
             }
 
         }
@@ -45,7 +47,7 @@ class SignInForgetPasswordFragment : Fragment(R.layout.fragment_sig_in_forget_pa
         forgetViewModel.userId.observe(viewLifecycleOwner) {
             Log.e("UserId", it.toString())
             when (it!!) {
-                0 -> snackBar(requireView(),"Girilen Bilgiye Ait Hesap Bulunamadı",1500)
+                0 -> snackBar(requireView(), "Girilen Bilgiye Ait Hesap Bulunamadı", 1500)
                 else -> {
                     try {
                         findNavController().navigate(
@@ -53,7 +55,7 @@ class SignInForgetPasswordFragment : Fragment(R.layout.fragment_sig_in_forget_pa
                                 it
                             )
                         )
-                        loadingDialogStart(requireActivity()).dismiss()
+                       binding.lottiAnim.gone()
                     } catch (e: Exception) {
                         Log.e("ErrorGetUserIdObserve", e.toString())
                     }
@@ -63,15 +65,15 @@ class SignInForgetPasswordFragment : Fragment(R.layout.fragment_sig_in_forget_pa
         }
         forgetViewModel.executeStatus.observe(viewLifecycleOwner) {
             when (it!!) {
-                LOADING -> loadingDialogStart(requireActivity())
+                LOADING -> binding.lottiAnim.visible()
                 ERROR -> {
-                    loadingDialogStart(requireActivity()).dismiss();Snackbar.make(
+                    binding.lottiAnim.gone();Snackbar.make(
                         requireView(),
                         "Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz",
                         1500
                     ).show()
                 }
-                DONE -> loadingDialogStart(requireActivity()).dismiss()
+                DONE ->  binding.lottiAnim.gone()
             }
         }
 

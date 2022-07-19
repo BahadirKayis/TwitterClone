@@ -7,8 +7,8 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-     const val BASE_URL_LOGIN = "http://192.168.1.111:9009/api/LogInUp/"
-     const val BASE_URL_MAIN = "http://192.168.1.111:9009/api/Main/"
+     const val BASE_URL_LOGIN = "http://192.168.3.136:9009/api/LogInUp/"
+     const val BASE_URL_MAIN = "http://192.168.3.136:9009/api/Main/"
 
      val moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())

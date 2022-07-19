@@ -12,7 +12,8 @@ import kotlinx.coroutines.launch
 class SearchViewModel : ViewModel() {
     private var searchRepository = SearchRepository()
 
-    val status: LiveData<SearchRepository.MainStatus> = searchRepository.searchStatus
+    val status: LiveData<SearchRepository.MainStatus>
+        get() = searchRepository.searchStatus
     val followUser: LiveData<List<Users>>
         get() = searchRepository.followUser
 
@@ -24,7 +25,7 @@ class SearchViewModel : ViewModel() {
 
 
     init {
-         getTags()
+        getTags()
     }
 
     fun getSearchFollowUser(id: Int) {
@@ -32,9 +33,10 @@ class SearchViewModel : ViewModel() {
             searchRepository.getSearchFollowUser(id)
         }
     }
-    fun getSearchFollowUser(userId:Int,followId:Int) {
+
+    fun getSearchFollowUser(userId: Int, followId: Int) {
         viewModelScope.launch {
-            searchRepository.postUserFollow(userId,followId)
+            searchRepository.postUserFollow(userId, followId)
         }
     }
 

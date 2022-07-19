@@ -24,7 +24,7 @@ data class Posts(
     @Json(name = "tags")
     val tags: List<Tags?>?,
     @Json(name = "user")
-    val user: Users?,
+    var user: Users?,
     @Json(name = "userId")
     val userId: Int?
 ):Parcelable

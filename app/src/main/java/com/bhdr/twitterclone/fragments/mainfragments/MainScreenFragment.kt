@@ -1,10 +1,12 @@
 package com.bhdr.twitterclone.fragments.mainfragments
 
-import android.app.ProgressDialog.show
+
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bhdr.twitterclone.R
@@ -14,13 +16,14 @@ import com.bhdr.twitterclone.databinding.FragmentMainScreenBinding
 
 import com.bhdr.twitterclone.fragments.loginupfragments.SignInForgetPasswordSecondFragmentArgs
 import com.bhdr.twitterclone.helperclasses.gone
-import com.bhdr.twitterclone.helperclasses.loadingDialogStart
+
 import com.bhdr.twitterclone.helperclasses.visible
 import com.bhdr.twitterclone.models.Users
 import com.bhdr.twitterclone.repos.TweetRepository
-import com.bhdr.twitterclone.viewmodels.mainviewmodel.PostViewModel
+import com.bhdr.twitterclone.viewmodels.loginupviewmodel.SignInViewModel
+import com.bhdr.twitterclone.viewmodels.mainviewmodel.TweetViewModel
+import com.google.gson.Gson
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
-import kotlinx.coroutines.NonCancellable.cancel
 
 class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
     TweetsAdapter.ClickedTweetListener {
@@ -28,21 +31,40 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
 
 
     private val args: SignInForgetPasswordSecondFragmentArgs by navArgs()//
-    private val postViewModel by lazy { PostViewModel() }
+    private val postViewModel by lazy { TweetViewModel() }
+    private val signInViewModel by lazy { SignInViewModel() }
     private var userModel: Users? = null
 
     private val tweetAdapter by lazy { TweetsAdapter(this) }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        signInViewModel.getUserSigIn("testname")
+        val shared =
+            requireContext().getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
 
-
+//        signInViewModel.userModel.observe(viewLifecycleOwner) {
+//            val edit = shared.edit()
+//            edit.putInt("user_Id", it.id!!)
+//            edit.putString("user_name", it.name!!)
+//            edit.putString("user_photoUrl", it.photoUrl!!)
+//            edit.putString("user_userName", it.userName!!)
+//            edit.apply()
+//            Log.e("user_ıd", shared.getInt("user_ıd", 0).toString())
+//        }
         // userModel = SignInViewModel.userModelCompanion.value
+
+
         viewModelObservable()
         try {
             postViewModel.getPosts(1)
 
         } catch (e: Exception) {
             Log.e("MainScreenFragment", e.toString())
+        }
+
+        binding.addTweetFAB.setOnClickListener {
+            Navigation.findNavController(requireView())
+                .navigate(R.id.action_mainScreenFragment_to_addTweetFragment)
         }
     }
 
@@ -77,6 +99,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
             )
             adapter = tweetAdapter
         }
+
 
     }
 

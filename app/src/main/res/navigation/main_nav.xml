@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_mainScreenFragment_to_tweetBottomDialog"
             app:destination="@id/tweetBottomDialog" />
+        <action
+            android:id="@+id/action_mainScreenFragment_to_addTweetFragment"
+            app:destination="@id/addTweetFragment" />
     </fragment>
     <dialog
         android:id="@+id/tweetBottomDialog"
@@ -28,5 +31,18 @@
         android:id="@+id/searchFragment"
         android:name="com.bhdr.twitterclone.fragments.mainfragments.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_addTweetFragment"
+            app:destination="@id/addTweetFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addTweetFragment"
+        android:name="com.bhdr.twitterclone.fragments.mainfragments.AddTweetFragment"
+        android:label="fragment_add_tweet"
+        tools:layout="@layout/fragment_add_tweet" >
+        <action
+            android:id="@+id/action_addTweetFragment_to_mainScreenFragment"
+            app:destination="@id/mainScreenFragment" />
+    </fragment>
 </navigation>

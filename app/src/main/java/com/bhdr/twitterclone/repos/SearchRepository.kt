@@ -52,22 +52,29 @@ class SearchRepository {
     }
 
     suspend fun postUserFollow(userId: Int, followId: Int) {
-        val response = CallApi.retrofitServiceMain.postUserFollow(userId, followId)
-        searchStatus.value = MainStatus.LOADING
+        try {
+            searchStatus.value = MainStatus.LOADING
 
-        if (response.isSuccessful) {
-            followedUser.value = response.body()
-            searchStatus.value = MainStatus.DONE
+            val response = CallApi.retrofitServiceMain.postUserFollow(userId, followId)
 
-        } else {
+
+            if (response.isSuccessful) {
+                followedUser.value = response.body()
+                searchStatus.value = MainStatus.DONE
+
+            } else {
+                searchStatus.value = MainStatus.ERROR
+                followedUser.value = false
+
+            }
+            Log.e("TAG", response.errorBody().toString())
+            Log.e("TAG", response.toString())
+            Log.e("TAG", response.code().toString())
+            Log.e("TAG", response.headers().toString())
+        } catch (e: Exception) {
             searchStatus.value = MainStatus.ERROR
-            followedUser.value = null
-
+            followedUser.value = false
+            Log.e("TAG", e.toString())
         }
-        Log.e("TAG", response.errorBody().toString())
-        Log.e("TAG", response.toString())
-        Log.e("TAG", response.code().toString())
-        Log.e("TAG", response.headers().toString())
-
     }
 }

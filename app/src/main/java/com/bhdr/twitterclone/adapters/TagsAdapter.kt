@@ -19,7 +19,7 @@ class TagsAdapter(private val tagsList: List<String>) :
 
     override fun onBindViewHolder(holder: TagsViewHolder, position: Int) {
         holder.binding.categoryText.text = "Türkiye konumunda gündemde"
-        holder.binding.hashtagText.text = "#"+tagsList[position+1]
+        holder.binding.hashtagText.text = tagsList[position+1]
         //  holder.binding.tweetNumberText.text=tagsList[position].TweetSayısı
         //tage tıklanınca başka sayfada o tagli postları açacak
 

@@ -13,9 +13,8 @@ import com.squareup.picasso.Picasso
 
 class WhoToFollowAdapter(
     private val clickedUserFollow: ClickedUserFollow,
-    private val userFollow: List<Users>
-) : RecyclerView.Adapter<WhoToFollowAdapter.ViewHolder>() {
-
+    private val userFollow: List<Users>, val onClickDelete: (Int) -> Unit) : RecyclerView.Adapter<WhoToFollowAdapter.ViewHolder>() {
+    private var listData = userFollow
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
@@ -24,19 +23,20 @@ class WhoToFollowAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val user = userFollow[position]
+        val user = listData[position]
         Picasso.get().load(user.photoUrl).into(holder.binding.profilePicture)
         holder.binding.nameText.text = user.name
         holder.binding.followButton.setOnClickListener {
+            onClickDelete(position)
             clickedUserFollow.followButtonsListener(user.id!!)
-            Log.e("Click", user.id.toString() )
+
         }
         holder.binding.idText.text = "@" + user.userName
 
     }
 
     override fun getItemCount(): Int {
-        return userFollow.size
+        return listData.size
     }
 
     inner class ViewHolder(val binding: WhoToFollowCardBinding) :
@@ -47,5 +47,14 @@ class WhoToFollowAdapter(
     interface ClickedUserFollow {
         fun followButtonsListener(followId: Int)
     }
+
+    fun setItem(items: List<Users>) {
+        listData = items
+        notifyDataSetChanged()
+    }
+//    fun deleteItem(index: Int) {
+//          listData.removeAt(index)
+//        notifyDataSetChanged()
+//    }
 }
 

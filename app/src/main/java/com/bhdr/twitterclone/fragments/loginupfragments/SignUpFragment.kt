@@ -19,8 +19,10 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentSignUpBinding
-import com.bhdr.twitterclone.helperclasses.loadingDialogStart
+import com.bhdr.twitterclone.helperclasses.gone
+
 import com.bhdr.twitterclone.helperclasses.snackBar
+import com.bhdr.twitterclone.helperclasses.visible
 import com.bhdr.twitterclone.repos.LoginRepository
 import com.bhdr.twitterclone.viewmodels.loginupviewmodel.SignUpViewModel
 import com.bhdr.twitterclone.viewmodels.loginupviewmodel.UserNameEmailViewModel
@@ -211,13 +213,13 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
     private fun createUserObservable() {
         viewModelSignUp.userSavedStatus.observe(viewLifecycleOwner) {
             when (it!!) {
-                LoginRepository.LogInUpStatus.LOADING -> loadingDialogStart(requireActivity())
+                LoginRepository.LogInUpStatus.LOADING -> binding.lottiAnim.visible()
                 LoginRepository.LogInUpStatus.ERROR -> {
-                    loadingDialogStart(requireActivity()).dismiss()
+                    binding.lottiAnim.gone()
                     snackBar(requireView(), "Hata oluştu lütfen daha sonra tekrar deneyiniz", 2000)
                 }
                 LoginRepository.LogInUpStatus.DONE -> {
-                    loadingDialogStart(requireActivity()).dismiss()
+                    binding.lottiAnim.gone()
                 }
             }
 
@@ -227,12 +229,12 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
                 true -> {
                     snackBar(requireView(), "Hesap Oluşturuldu", 2000)
-                    loadingDialogStart(requireActivity()).dismiss()
+                    binding.lottiAnim.gone()
                 }
 
 
                 false -> {
-                    loadingDialogStart(requireActivity()).dismiss()
+                    binding.lottiAnim.gone()
                     snackBar(
                         requireView(),
                         "Hata oluştu lütfen tekrar deneyiniz",

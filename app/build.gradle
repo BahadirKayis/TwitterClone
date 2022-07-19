@@ -96,9 +96,12 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation 'com.google.firebase:firebase-storage-ktx'
 
+    //ExoPlayer
+    implementation 'com.google.android.exoplayer:exoplayer:2.18.0'
+
+
 
     //ktor Interceptor
-
     implementation "io.ktor:ktor-client-core:1.6.3"
     implementation "io.ktor:ktor-client-android:1.6.3"
     implementation "io.ktor:ktor-client-serialization:1.6.3"

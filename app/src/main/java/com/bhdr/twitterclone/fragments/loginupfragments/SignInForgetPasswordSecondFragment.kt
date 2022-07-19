@@ -6,8 +6,9 @@ import android.view.View
 import androidx.navigation.fragment.navArgs
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentSignInForgetPasswordSecondBinding
-import com.bhdr.twitterclone.helperclasses.loadingDialogStart
+import com.bhdr.twitterclone.helperclasses.gone
 import com.bhdr.twitterclone.helperclasses.snackBar
+import com.bhdr.twitterclone.helperclasses.visible
 import com.bhdr.twitterclone.repos.LoginRepository
 import com.bhdr.twitterclone.viewmodels.loginupviewmodel.ForgetPasswordViewModel
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
@@ -34,31 +35,30 @@ class SignInForgetPasswordSecondFragment :
             forgetViewModel.userChangePassword(args.userId, binding.passwordInput.text.toString())
 
         } else {
-            snackBar(requireView(),"Şifreler uyuşmuyor",1000)
+            snackBar(requireView(), "Şifreler uyuşmuyor", 1000)
         }
     }
 
     private fun passwordObservable() {
         forgetViewModel.userChangePassword.observe(viewLifecycleOwner) {
             when (it) {
-                true -> snackBar(requireView(),"Şifre Değiştirildi",1500)
-                false -> snackBar(requireView(),"Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz",1500)
+                true -> snackBar(requireView(), "Şifre Değiştirildi", 1500)
+                false -> snackBar(
+                    requireView(),
+                    "Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz",
+                    1500
+                )
             }
         }
         forgetViewModel.executeStatus.observe(viewLifecycleOwner) {
             when (it!!) {
-                LoginRepository.LogInUpStatus.LOADING -> loadingDialogStart(
-                    requireActivity()
-                )
+                LoginRepository.LogInUpStatus.LOADING -> binding.lottiAnim.visible()
+
                 LoginRepository.LogInUpStatus.ERROR -> {
-                    loadingDialogStart(
-                        requireActivity()
-                    ).dismiss()
-                    snackBar(requireView(),"Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz",1500)
+                    binding.lottiAnim.gone()
+                    snackBar(requireView(), "Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz", 1500)
                 }
-                LoginRepository.LogInUpStatus.DONE -> loadingDialogStart(
-                    requireActivity()
-                ).dismiss()
+                LoginRepository.LogInUpStatus.DONE -> binding.lottiAnim.gone()
             }
         }
     }
