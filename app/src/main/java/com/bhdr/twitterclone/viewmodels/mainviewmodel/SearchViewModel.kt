@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.bhdr.twitterclone.models.Tags
 import com.bhdr.twitterclone.models.Users
 import com.bhdr.twitterclone.repos.SearchRepository
-import com.google.firebase.firestore.auth.User
+
 import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {

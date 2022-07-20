@@ -163,35 +163,34 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                 val imageName = "$uuid.jpg"
 
                 if (selectedPicture != null) {
-                    viewModelGetUserNE.userData.observe(viewLifecycleOwner) { it ->
+                    viewModelSignUp.createUser(
+                        userName,
+                        password,
+                        name,
+                        email,
+                        phone,
+                        date,
+                        imageName,
+                        selectedPicture
 
-                        var control = it.find { it.userName == userName }
-
-                        if (control != null) {
-
-                            snackBar(requireView(), "Bu Kullanıcı Adı mevcut!", 1500)
-                        } else {
-
-                            control = it.find { it.email == email }
-                            if (control != null) {
-                                snackBar(requireView(), "Bu Email  mevcut!", 1500)
-                            } else {
-                                viewModelSignUp.createUser(
-                                    userName,
-                                    password,
-                                    name,
-                                    email,
-                                    phone,
-                                    date,
-                                    imageName,
-                                    selectedPicture
-
-                                )
-
-                            }
-                        }
-
-                    }
+                    )
+//                    viewModelGetUserNE.userData.observe(viewLifecycleOwner) { it ->
+//                        var control = it.find { it.userName == userName }
+//
+//                        if (control != null) {
+//
+//                            snackBar(requireView(), "Bu Kullanıcı Adı mevcut!", 1500)
+//                        } else {
+//
+//                            control = it.find { it.email == email }
+//                            if (control != null) {
+//                                snackBar(requireView(), "Bu Email  mevcut!", 1500)
+//                            } else {
+//
+//                            }
+//                        }
+//
+//                    }
 
                 } else {
                     snackBar(requireView(), "Lütfen profil resmi seçiniz!", 1000)
@@ -237,7 +236,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     binding.lottiAnim.gone()
                     snackBar(
                         requireView(),
-                        "Hata oluştu lütfen tekrar deneyiniz",
+                        "Girilen bilgiler mevcut",
                         2000
                     )
                 }

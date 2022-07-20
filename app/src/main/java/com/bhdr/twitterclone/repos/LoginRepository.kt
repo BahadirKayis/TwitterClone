@@ -7,8 +7,9 @@ import com.bhdr.twitterclone.models.UsernameAndEmailControl
 import com.bhdr.twitterclone.models.Users
 import com.bhdr.twitterclone.network.CallApi
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 
 
 class LoginRepository {
@@ -78,8 +79,6 @@ class LoginRepository {
             userStatus.value = LogInUpStatus.ERROR
 
         }
-
-
     }
 
 
@@ -117,11 +116,19 @@ class LoginRepository {
                     )
 
                     if (signUp.isSuccessful) {
+
                         userStatus.value = LogInUpStatus.DONE
                         userSaved.value = signUp.body()
+                        if (userSaved.value == false) {
+                             deleteImage(profilePictureUrl)
+                        }
+
                     } else if (!signUp.isSuccessful) {
                         userStatus.value = LogInUpStatus.ERROR
-                        userSaved.value = false
+                        deleteImage(profilePictureUrl)
+                        Log.e("TAG", signUp.message() )
+                        Log.e("TAG", signUp.errorBody().toString() )
+
                     }
                 }
 
@@ -129,6 +136,23 @@ class LoginRepository {
         }
     }
 
+    private  fun deleteImage(filename: String){//apiden false döndüğünde firebase yüklenen fotoğrafı siliyorum
+        try {
+            val photoRef: StorageReference = db.getReferenceFromUrl(filename)
+            photoRef.delete().addOnSuccessListener {
+                // File deleted successfully
+                Log.e("TAG", "Photo is delete")
+            }.addOnFailureListener { // Uh-oh, an error occurred!
+
+            }
+        }
+        catch (e: Exception) {
+            userStatus.value = LogInUpStatus.ERROR
+            Log.e("TAG", e.toString())
+
+        }
+
+    }
     //UserNameEmailViewModel
     suspend fun getUsersData() {
 

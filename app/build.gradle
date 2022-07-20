@@ -92,12 +92,8 @@ dependencies {
 
     //Firebase
     implementation platform('com.google.firebase:firebase-bom:28.3.0')
-    implementation 'com.google.firebase:firebase-auth-ktx'
-    implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation 'com.google.firebase:firebase-storage-ktx'
 
-    //ExoPlayer
-    implementation 'com.google.android.exoplayer:exoplayer:2.18.0'
 
 
 

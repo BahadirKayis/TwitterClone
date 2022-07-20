@@ -6,7 +6,7 @@ import com.bhdr.twitterclone.models.Tags
 import com.bhdr.twitterclone.models.Users
 import com.bhdr.twitterclone.network.BASE_URL_MAIN
 import com.bhdr.twitterclone.network.CallApi
-import com.google.firebase.firestore.auth.User
+
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*

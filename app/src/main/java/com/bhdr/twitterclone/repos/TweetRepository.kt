@@ -64,7 +64,7 @@ class TweetRepository {
         if  (tweetImage!= null) {
 
         val imagesReference = reference.child("tweetpictures").child(tweetImageName)
-        imagesReference.putFile(tweetImage!!).addOnSuccessListener {
+        imagesReference.putFile(tweetImage).addOnSuccessListener {
 
             val uploadedPictureReference = db.reference.child("tweetpictures").child(tweetImageName)
             uploadedPictureReference.downloadUrl.addOnSuccessListener { uri ->

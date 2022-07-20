@@ -8,7 +8,7 @@ import com.bhdr.twitterclone.databinding.TweetCardBinding
 import com.bhdr.twitterclone.databinding.WhoToFollowCardBinding
 import com.bhdr.twitterclone.models.Posts
 import com.bhdr.twitterclone.models.Users
-import com.google.firebase.firestore.auth.User
+
 import com.squareup.picasso.Picasso
 
 class WhoToFollowAdapter(

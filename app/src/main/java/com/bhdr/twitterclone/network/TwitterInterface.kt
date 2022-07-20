@@ -4,7 +4,7 @@ import com.bhdr.twitterclone.models.Posts
 import com.bhdr.twitterclone.models.Tags
 import com.bhdr.twitterclone.models.UsernameAndEmailControl
 import com.bhdr.twitterclone.models.Users
-import com.google.firebase.firestore.auth.User
+
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
