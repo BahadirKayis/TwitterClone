@@ -94,7 +94,8 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.3.0')
     implementation 'com.google.firebase:firebase-storage-ktx'
 
-
+//SignalR
+    implementation 'com.microsoft.signalr:signalr:1.0.0'
 
 
     //ktor Interceptor

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/login_nav"
-    app:startDestination="@id/logInFragment">
+    app:startDestination="@id/splashFragment">
 
     <fragment
         android:id="@+id/logInFragment"
@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_logInFragment_to_sigInFragment"
             app:destination="@id/sigInFragment" />
+        <action
+            android:id="@+id/action_logInFragment_to_main_nav"
+            app:destination="@id/main_nav" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -54,6 +57,9 @@
             android:name="userModel"
             app:argType="com.bhdr.twitterclone.models.Users"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_sigInSecondPageFragment_to_main_nav"
+            app:destination="@id/main_nav" />
 
 
     </fragment>
@@ -75,6 +81,20 @@
         <argument
             android:name="userId"
             app:argType="integer" />
+    </fragment>
+    <include app:graph="@navigation/main_nav" />
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.bhdr.twitterclone.fragments.splashscreen.SplashFragment"
+        android:label="SplashFragment"
+        tools:layout="@layout/fragment_splash"
+        >
+        <action
+            android:id="@+id/action_splashFragment_to_logInFragment"
+            app:destination="@id/logInFragment" />
+        <action
+            android:id="@+id/action_splashFragment_to_main_nav"
+            app:destination="@id/main_nav" />
     </fragment>
 
 </navigation>

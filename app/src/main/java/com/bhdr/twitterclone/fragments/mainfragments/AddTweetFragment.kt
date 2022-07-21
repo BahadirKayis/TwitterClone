@@ -41,13 +41,13 @@ class AddTweetFragment : Fragment(R.layout.fragment_add_tweet) {
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
     var selectedBitmap: Bitmap? = null
     var tweetImage: Uri? = null
-    var preferences: SharedPreferences? = null
+    var shared: SharedPreferences? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        preferences =
+        shared =
             requireActivity().getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
-        Picasso.get().load(preferences?.getString("profilepic", "null"))
+        Picasso.get().load(shared?.getString("user_photoUrl", "null"))
             .into(binding.profilePicture)
 
         registerLauncher()
@@ -72,11 +72,11 @@ class AddTweetFragment : Fragment(R.layout.fragment_add_tweet) {
         if (tweetText.isNotEmpty()) {
             if (tweetImage != null) {
 
-                tweetViewModel.addTweet(1, tweetText, tweetImageName, tweetImage!!)
+                tweetViewModel.addTweet(shared?.getInt("user_Id",0)!!, tweetText, tweetImageName, tweetImage!!)
                 //    Navigation.findNavController(requireView()).navigate(R.id.action_addTweetFragment_to_homeFragment)
 
             } else {
-                tweetViewModel.addTweet(1, tweetText, "null", null)
+                tweetViewModel.addTweet(shared?.getInt("user_Id",0)!!, tweetText, "null", null)
                 //  Navigation.findNavController(requireView()).navigate(R.id.action_addTweetFragment_to_homeFragment)
             }
         } else {

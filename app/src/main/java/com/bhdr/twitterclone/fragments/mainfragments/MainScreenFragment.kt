@@ -2,6 +2,7 @@ package com.bhdr.twitterclone.fragments.mainfragments
 
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -18,11 +19,15 @@ import com.bhdr.twitterclone.fragments.loginupfragments.SignInForgetPasswordSeco
 import com.bhdr.twitterclone.helperclasses.gone
 
 import com.bhdr.twitterclone.helperclasses.visible
+import com.bhdr.twitterclone.models.FollowedId
 import com.bhdr.twitterclone.models.Users
 import com.bhdr.twitterclone.repos.TweetRepository
 import com.bhdr.twitterclone.viewmodels.loginupviewmodel.SignInViewModel
 import com.bhdr.twitterclone.viewmodels.mainviewmodel.TweetViewModel
 import com.google.gson.Gson
+import com.microsoft.signalr.HubConnection
+import com.microsoft.signalr.HubConnectionBuilder
+import com.microsoft.signalr.HubConnectionState
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 
 class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
@@ -35,28 +40,19 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
     private val signInViewModel by lazy { SignInViewModel() }
     private var userModel: Users? = null
 
+    private  val followList: FollowedId?=null
     private val tweetAdapter by lazy { TweetsAdapter(this) }
+    lateinit var shared : SharedPreferences
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         signInViewModel.getUserSigIn("testname")
-        val shared =
-            requireContext().getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
-
-//        signInViewModel.userModel.observe(viewLifecycleOwner) {
-//            val edit = shared.edit()
-//            edit.putInt("user_Id", it.id!!)
-//            edit.putString("user_name", it.name!!)
-//            edit.putString("user_photoUrl", it.photoUrl!!)
-//            edit.putString("user_userName", it.userName!!)
-//            edit.apply()
-//            Log.e("user_ıd", shared.getInt("user_ıd", 0).toString())
-//        }
-        // userModel = SignInViewModel.userModelCompanion.value
+        shared = requireContext().getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
 
 
         viewModelObservable()
         try {
-            postViewModel.getPosts(1)
+            postViewModel.getPosts(shared.getInt("user_Id",0))
 
         } catch (e: Exception) {
             Log.e("MainScreenFragment", e.toString())
@@ -99,7 +95,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
             )
             adapter = tweetAdapter
         }
-
+        //tweetSignalR()
 
     }
 
@@ -114,6 +110,29 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
             // "rt" -> viewModel.rtTweet(tweetDocId, currentlyCRFNumber)
 
         }
+    }
+
+    private fun followedControl(id: Int, imageUrl: String) {
+        val haveId=followList?.find { it==id }
+
+
+
+            Log.e("TAG", "haveId$haveId" )
+
+
+    }
+
+    private fun tweetSignalR() {
+        val hubConnection =
+            HubConnectionBuilder.create("http://192.168.3.136:9009/newTweetHub").build()
+        if (hubConnection.connectionState == HubConnectionState.DISCONNECTED) {
+            hubConnection.start()
+        }
+        hubConnection.on("newTweet", { id, imageUrl ->
+            followedControl(id, imageUrl)
+        }, Int::class.java, String::class.java)
+
+ Log.e("Hub", hubConnection.connectionState.toString())
     }
 
 }

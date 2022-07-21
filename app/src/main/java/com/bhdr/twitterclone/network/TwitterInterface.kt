@@ -11,8 +11,6 @@ import retrofit2.http.*
 import java.util.*
 
 interface TwitterInterface {
-
-
     @POST("postSignUp")
     suspend fun createUser(
         @Query("user_name") userName: String,
@@ -63,4 +61,7 @@ interface TwitterInterface {
         @Query("content") content: String,
         @Query("image_url") image_url: String
     ): Response<Boolean>
+
+    @GET("getLoginUserNameAndPassword")
+    suspend fun  getLoginUserNameAndPassword(@Query("userName") userName: String,@Query("password") password: String): Response<Boolean>
 }

@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 class SignInViewModel : ViewModel() {
     private var loginrepo = LoginRepository()
     val userModel: LiveData<Users> = loginrepo.userModel
+    val loginAuto: LiveData<Boolean> =loginrepo.loginAuto
 
     companion object {
         lateinit var userModelCompanion : LiveData<Users>
@@ -24,7 +25,10 @@ class SignInViewModel : ViewModel() {
         viewModelScope.launch {
             loginrepo.signIn(userName)
         }
-
-
+    }
+    fun getLoginUserNameAndPassword(userName: String,password: String) {
+        viewModelScope.launch {
+            loginrepo.getLoginUserNameAndPassword(userName,password)
+        }
     }
 }

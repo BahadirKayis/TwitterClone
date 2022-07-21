@@ -10,6 +10,6 @@
 
     <color name="menu_tint">#03A9F4</color>
     <color name="menu_textColor">#03A9F4</color>
-
+     <color name="mainBlue">#1D9BF0</color>
 
 </resources>

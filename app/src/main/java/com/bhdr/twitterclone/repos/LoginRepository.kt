@@ -34,6 +34,8 @@ class LoginRepository {
 
     val userChangePassword = MutableLiveData<Boolean>()
 
+    val loginAuto = MutableLiveData<Boolean>()
+
     suspend fun userForgetId(userName: String) {
         userStatus.value = LogInUpStatus.LOADING
 
@@ -168,6 +170,13 @@ class LoginRepository {
 
     }
 
+suspend fun getLoginUserNameAndPassword(userName:String, password:String){
+    val response= CallApi.retrofitServiceLogInUp.getLoginUserNameAndPassword(userName,password)
+    Log.e("TAG", "$userName,$password ", )
+    if(response.isSuccessful){
+        loginAuto.value = response.body()
+    }
 
+}
 }
 

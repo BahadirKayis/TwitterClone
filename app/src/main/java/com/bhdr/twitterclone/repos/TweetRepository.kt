@@ -80,6 +80,7 @@ class TweetRepository {
                         mainStatus.value = MainStatus.ERROR
                         tweetAdded.value = false
                     }
+                    Log.e("photo",addTweetResult.errorBody().toString())
                 }
 
             }
@@ -93,7 +94,9 @@ class TweetRepository {
             } else if (!addTweetResult.isSuccessful) {
                 mainStatus.value = MainStatus.ERROR
                 tweetAdded.value = false
+                Log.e("TAG",addTweetResult.toString())
             }
+
         }
         }
         catch (e: Exception) {
