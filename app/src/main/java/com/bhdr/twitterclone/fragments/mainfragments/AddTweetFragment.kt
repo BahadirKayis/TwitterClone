@@ -23,6 +23,7 @@ import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentAddTweetBinding
 import com.bhdr.twitterclone.helperclasses.gone
 import com.bhdr.twitterclone.helperclasses.snackBar
+import com.bhdr.twitterclone.helperclasses.userId
 import com.bhdr.twitterclone.helperclasses.visible
 import com.bhdr.twitterclone.repos.TweetRepository
 import com.bhdr.twitterclone.viewmodels.mainviewmodel.TweetViewModel
@@ -72,11 +73,11 @@ class AddTweetFragment : Fragment(R.layout.fragment_add_tweet) {
         if (tweetText.isNotEmpty()) {
             if (tweetImage != null) {
 
-                tweetViewModel.addTweet(shared?.getInt("user_Id",0)!!, tweetText, tweetImageName, tweetImage!!)
+                tweetViewModel.addTweet(requireContext().userId(), tweetText, tweetImageName, tweetImage!!)
                 //    Navigation.findNavController(requireView()).navigate(R.id.action_addTweetFragment_to_homeFragment)
 
             } else {
-                tweetViewModel.addTweet(shared?.getInt("user_Id",0)!!, tweetText, "null", null)
+                tweetViewModel.addTweet(requireContext().userId(), tweetText, "null", null)
                 //  Navigation.findNavController(requireView()).navigate(R.id.action_addTweetFragment_to_homeFragment)
             }
         } else {

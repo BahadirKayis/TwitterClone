@@ -58,6 +58,18 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
+    <com.example.myloadingbutton.MyLoadingButton
+        android:id="@+id/my_loading_button"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="70dp"
+        app:mlb_label="Yeni tweetler var"
+        android:layout_gravity="center_horizontal"
+        app:mlb_backgroundColor="@color/mainBlue"
+        app:mlb_animationDuration="300"
+        app:mlb_setDoneIcon="@drawable/ic_progress_done"
+        app:mlb_labelSize="5sp"
+        />
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

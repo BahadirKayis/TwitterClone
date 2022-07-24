@@ -12,15 +12,6 @@ class SignInViewModel : ViewModel() {
     val userModel: LiveData<Users> = loginrepo.userModel
     val loginAuto: LiveData<Boolean> =loginrepo.loginAuto
 
-    companion object {
-        lateinit var userModelCompanion : LiveData<Users>
-    }
-
-    init {
-        userModelCompanion = loginrepo.userModel
-    }
-
-
     fun getUserSigIn(userName: String) {
         viewModelScope.launch {
             loginrepo.signIn(userName)

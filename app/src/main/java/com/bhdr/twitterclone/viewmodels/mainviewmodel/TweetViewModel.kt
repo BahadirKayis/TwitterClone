@@ -1,5 +1,6 @@
 package com.bhdr.twitterclone.viewmodels.mainviewmodel
 
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -14,6 +15,7 @@ class TweetViewModel : ViewModel() {
     val sharedFlowPost: LiveData<List<Posts>> = mainrepo.sharedFlowPost
     val mainStatus: LiveData<TweetRepository.MainStatus> = mainrepo.mainStatus
     val tweetAdded:LiveData<Boolean> =mainrepo.tweetAdded
+    val followedUserIdList: LiveData<List<Int>> =mainrepo.followedUserIdList
 
     val liked: LiveData<Int> = mainrepo.liked
     fun getPosts(id: Int) {
@@ -23,9 +25,9 @@ class TweetViewModel : ViewModel() {
 
     }
 
-    fun postLiked(id: Int, count: Int) {
+    fun postLiked(id: Int, count: Int,context: Context){
         viewModelScope.launch {
-            mainrepo.postLiked(id, count)
+            mainrepo.postLiked(id, count,context)
 
         }
     }
@@ -36,6 +38,10 @@ class TweetViewModel : ViewModel() {
         }
 
     }
-
+fun getFollowedUserIdList(id: Int){
+    viewModelScope.launch {
+        mainrepo.getFollowedUserIdList(id)
+    }
+}
 
 }

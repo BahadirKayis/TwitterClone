@@ -174,7 +174,9 @@ suspend fun getLoginUserNameAndPassword(userName:String, password:String){
     val response= CallApi.retrofitServiceLogInUp.getLoginUserNameAndPassword(userName,password)
     Log.e("TAG", "$userName,$password ", )
     if(response.isSuccessful){
-        loginAuto.value = response.body()
+     //  delay(3000)
+      //  Log.e("TAGOBSER", response.body().toString())
+      loginAuto.value = response.body()
     }
 
 }

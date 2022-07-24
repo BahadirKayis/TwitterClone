@@ -67,14 +67,14 @@ class SearchRepository {
                 followedUser.value = false
 
             }
-            Log.e("TAG", response.errorBody().toString())
-            Log.e("TAG", response.toString())
-            Log.e("TAG", response.code().toString())
-            Log.e("TAG", response.headers().toString())
+            Log.e("TAG1", response.errorBody().toString())
+            Log.e("TAG2", response.toString())
+            Log.e("TAG3", response.code().toString())
+            Log.e("TAG4", response.headers().toString())
         } catch (e: Exception) {
             searchStatus.value = MainStatus.ERROR
             followedUser.value = false
-            Log.e("TAG", e.toString())
+            Log.e("TAG5", e.toString())
         }
     }
 }

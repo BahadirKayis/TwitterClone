@@ -1,8 +1,10 @@
 package com.bhdr.twitterclone.repos
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.bhdr.twitterclone.helperclasses.userId
 import com.bhdr.twitterclone.models.Posts
 import com.bhdr.twitterclone.network.CallApi
 import com.google.firebase.ktx.Firebase
@@ -23,6 +25,8 @@ class TweetRepository {
     val liked = MutableLiveData<Int>()
 
     val tweetAdded = MutableLiveData<Boolean>()
+
+    val followedUserIdList= MutableLiveData<List<Int>>()
 
 
     suspend fun getPosts(id: Int) {
@@ -47,11 +51,11 @@ class TweetRepository {
 
     }
 
-    suspend fun postLiked(id: Int, count: Int) {
+    suspend fun postLiked(id: Int, count: Int,context: Context) {
         val request = CallApi.retrofitServiceMain.postLiked(id, count)
         if (request.isSuccessful) {
             liked.value = request.body()!!
-            getPosts(1)
+            getPosts(context.userId())
         } else {
 
         }
@@ -96,7 +100,9 @@ class TweetRepository {
                 tweetAdded.value = false
                 Log.e("TAG",addTweetResult.toString())
             }
-
+            Log.e("TAG",addTweetResult.toString())
+            Log.e("TAG",addTweetResult.message().toString())
+            Log.e("TAG",addTweetResult.headers().toString())
         }
         }
         catch (e: Exception) {
@@ -105,6 +111,14 @@ class TweetRepository {
             Log.e("TAG", e.toString() )
         }
 
+    }
+
+    suspend fun getFollowedUserIdList(userId:Int){
+        val response=CallApi.retrofitServiceMain.getFollowedUserIdList(userId)
+
+        if (response.isSuccessful){
+            followedUserIdList.value=response.body()
+        }
     }
 }
 

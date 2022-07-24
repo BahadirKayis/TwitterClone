@@ -49,7 +49,6 @@ class SignInSecondPageFragment : Fragment(R.layout.fragment_sig_in_second_page) 
         edit.putString("user_userName" , userModel?.userName!!)
         edit.putString("user_userPassword" , userModel?.userPassword!!)
         edit.apply()
-        Log.e("TAG", shared.getString("user_name","").toString() )
     }
 
     private fun nextButton() {

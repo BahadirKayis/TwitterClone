@@ -12,13 +12,12 @@ import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.adapters.TagsAdapter
 import com.bhdr.twitterclone.adapters.WhoToFollowAdapter
 import com.bhdr.twitterclone.databinding.FragmentSearchBinding
-import com.bhdr.twitterclone.helperclasses.gone
+import com.bhdr.twitterclone.helperclasses.*
 
-import com.bhdr.twitterclone.helperclasses.snackBar
-import com.bhdr.twitterclone.helperclasses.visible
 import com.bhdr.twitterclone.models.Users
 import com.bhdr.twitterclone.repos.SearchRepository
 import com.bhdr.twitterclone.viewmodels.mainviewmodel.SearchViewModel
+import com.squareup.picasso.Picasso
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import kotlinx.coroutines.isActive
 
@@ -32,7 +31,7 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeViewModel()
-        searchModel.getSearchFollowUser(1)
+        searchModel.getSearchFollowUser(requireContext().userId())
 
         binding.agendasRecyclerView.apply {
             layoutManager =
@@ -47,6 +46,8 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
             Navigation.findNavController(requireView())
                 .navigate(R.id.action_searchFragment_to_addTweetFragment)
         }
+        Picasso.get().load(requireContext().userPhotoUrl()).into(binding.profilePicture)
+
     }
 
     private fun observeViewModel() {
@@ -59,7 +60,7 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
             }
         }
         searchModel.tags.observe(viewLifecycleOwner) {
-            Log.e("TAG", it.toString())
+
             binding.topContentContentText.text = "Hello"
             binding.topContentSubjectText.text =  it[0]
 
@@ -85,7 +86,7 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
 
             if (!searchModel.followedUser.hasObservers()) {
                 searchModel.followedUser.observe(viewLifecycleOwner) {
-                    Log.e("TAG", it.toString())
+
                     when (it) {
                         true -> {
                             dataFollow.removeAt(index)
@@ -103,6 +104,6 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
     }
 
     override fun followButtonsListener(followId: Int) {
-        searchModel.getSearchFollowUser(1, followId)
+        searchModel.getSearchFollowUser(requireContext().userId(), followId)
     }
 }

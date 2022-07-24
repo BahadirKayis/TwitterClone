@@ -45,7 +45,7 @@ class SignInForgetPasswordFragment : Fragment(R.layout.fragment_sig_in_forget_pa
 
     private fun getUserIdObservable() {
         forgetViewModel.userId.observe(viewLifecycleOwner) {
-            Log.e("UserId", it.toString())
+
             when (it!!) {
                 0 -> snackBar(requireView(), "Girilen Bilgiye Ait Hesap Bulunamadı", 1500)
                 else -> {
@@ -57,7 +57,7 @@ class SignInForgetPasswordFragment : Fragment(R.layout.fragment_sig_in_forget_pa
                         )
                        binding.lottiAnim.gone()
                     } catch (e: Exception) {
-                        Log.e("ErrorGetUserIdObserve", e.toString())
+                        Log.e("SignInForgetPasswordCatchGetUserIdObserve", e.toString())
                     }
                 }
 

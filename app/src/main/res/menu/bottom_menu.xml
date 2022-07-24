@@ -15,8 +15,8 @@
         android:icon="@drawable/notifications"
         android:title="Notifications" />
 
-    <item
-        android:id="@+id/directMessageFragment"
-        android:icon="@drawable/dm"
-        android:title="Direct Messages" />
+<!--    <item-->
+<!--        android:id="@+id/directMessageFragment"-->
+<!--        android:icon="@drawable/dm"-->
+<!--        android:title="Direct Messages" />-->
 </menu>

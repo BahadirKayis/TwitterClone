@@ -40,23 +40,6 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
     override fun onBindViewHolder(holder: TweetViewHolder, position: Int) {
         val posts = getItem(position)
 
-
-//        if (posts.user == null) {//Değişmeden önce boş geliyordu artık gelmiyor
-//            posts.user = Users(
-//                null,
-//                null,
-//                null,
-//                1,
-//                null,
-//                "bhdr",
-//                null,
-//                "https://firebasestorage.googleapis.com/v0/b/twitterclone-f37d0.appspot.com/o/profilpictures%2Fe7f21d65-5e0e-4054-a754-14ba1bbf88cc.jpg?alt=media&token=7da17ba6-c227-4546-8819-c7b3a4b0208e",
-//                null,
-//                "testname",
-//                null
-//            )
-//            Log.e("TAG", "nulla girdi")
-//        }
         val userModel = posts.user
         holder.binding.favButton.setOnLikeListener(object : OnLikeListener {
             override fun liked(likeButton: LikeButton?) {
@@ -81,7 +64,7 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
 
             holder.userModel(userModel!!)
         } catch (e: Exception) {
-            Log.e("holder", e.toString())
+            Log.e("TweetAdapterHolderCatch", e.toString())
         }
     }
 
@@ -105,18 +88,13 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
                         val len1 = source.split(" ")
                         val getTagIndex = source.indexOf("#")
                         var lastIndex = 0
-
                         len1.forEach {
                             if (it.contains("#")) {
 
                                 lastIndex = it.length
-
                             }
 
-
                         }
-                        Log.e("TAG", len1.count().toString())
-
                         spannable.setSpan(
                             ForegroundColorSpan(Color.parseColor("#03A9F4")),
                             getTagIndex,
@@ -145,7 +123,7 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
                 binding.nameText.text = model.name
                 binding.usernameText.text = "@" + model.userName
             } catch (e: Exception) {
-                Log.e("userModel", e.toString())
+                Log.e("TweetAdapterUserModelCatch", e.toString())
             }
 
         }

@@ -6,28 +6,28 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-  <androidx.fragment.app.FragmentContainerView
-      android:id="@+id/fragmentContainerView"
-      android:name="androidx.navigation.fragment.NavHostFragment"
-      android:layout_width="match_parent"
-      android:layout_height="0dp"
-      app:defaultNavHost="true"
-app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
-      app:navGraph="@navigation/login_nav"/>
-<!--  app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"-->
-<!--  <com.google.android.material.bottomnavigation.BottomNavigationView-->
-<!--      android:id="@+id/bottomNavigationView"-->
-<!--      android:layout_width="match_parent"-->
-<!--      android:layout_height="wrap_content"-->
-<!--      app:itemIconTint="@color/menu_tint"-->
-<!--      app:itemTextColor="@color/menu_textColor"-->
-<!--      app:labelVisibilityMode="unlabeled"-->
-<!--      app:layout_constraintBottom_toBottomOf="parent"-->
-<!--      app:layout_constraintEnd_toEndOf="parent"-->
-<!--      app:layout_constraintStart_toStartOf="parent"-->
-<!--      app:menu="@menu/bottom_menu" />-->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerView"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navGraph="@navigation/login_nav" />
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:itemIconTint="#03A9F4"
+        android:visibility="gone"
+        app:itemTextColor="#03A9F4"
+        app:labelVisibilityMode="unlabeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_menu" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
