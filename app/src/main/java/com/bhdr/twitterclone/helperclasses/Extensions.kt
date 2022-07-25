@@ -11,16 +11,19 @@ import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import com.bhdr.twitterclone.R
 import com.google.android.material.snackbar.Snackbar
+
 lateinit var shared: SharedPreferences
 
-fun Context.userId():Int{
-      shared =getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
+fun Context.userId(): Int {
+   shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
    return shared.getInt("user_Id", 0)
 }
-fun Context.userPhotoUrl(): String{
-   shared =getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
-   return shared.getString("user_photoUrl","").toString()
+
+fun Context.userPhotoUrl(): String {
+   shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
+   return shared.getString("user_photoUrl", "").toString()
 }
+
 fun View.gone() {
    visibility = View.GONE
 }

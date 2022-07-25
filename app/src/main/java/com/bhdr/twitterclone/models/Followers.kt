@@ -18,7 +18,7 @@ data class Followers(
     @Json(name = "id")
     val id: Int?,
     @Json(name = "user")
-    val user: String?,
+    val user: List<Users?>?,
     @Json(name = "userId")
     val userId: Int?
 ):Parcelable

@@ -66,7 +66,7 @@ interface TwitterInterface {
    suspend fun getSearchNotFollow(@Query("id") userId: Int): Response<List<Users>>
 
    @GET("tweets")
-   suspend fun getPosts(@Query("user_id") userId: Int): Response<List<Posts>>
+   suspend fun getTweets(@Query("user_id") userId: Int): Response<List<Posts>>
 
    @POST("tweetLiked")
    suspend fun postLiked(@Query("Id") tweetId: Int, @Query("count") count: Int): Response<Int>

@@ -1,6 +1,6 @@
-
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -20,7 +20,6 @@
             android:theme="?attr/actionBarTheme"
             app:buttonGravity="center_vertical"
             app:layout_scrollFlags="scroll|enterAlways">
-
 
 
             <ImageView
@@ -58,18 +57,75 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.example.myloadingbutton.MyLoadingButton
-        android:id="@+id/my_loading_button"
-        android:layout_width="150dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="70dp"
-        app:mlb_label="Yeni tweetler var"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/relativ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        app:mlb_backgroundColor="@color/mainBlue"
-        app:mlb_animationDuration="300"
-        app:mlb_setDoneIcon="@drawable/ic_progress_done"
-        app:mlb_labelSize="5sp"
-        />
+        android:layout_marginTop="70dp"
+        android:background="@android:color/transparent"
+        android:translationZ="50dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/userPhoto1"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="12dp"
+            android:src="@drawable/gecepazari"
+            android:translationZ="5dp"
+android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/userPhoto2"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="10dp"
+            android:elevation="12dp"
+            android:visibility="gone"
+            android:src="@drawable/gecepazari"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/userPhoto1"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/userPhoto3"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:visibility="gone"
+            android:layout_marginStart="10dp"
+            android:elevation="12dp"
+            android:src="@drawable/gecepazari"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/userPhoto2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/seeNewTweet"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+android:visibility="gone"
+            android:background="@drawable/tweetledi_button"
+            android:gravity="end|center"
+            android:paddingEnd="15dp"
+            android:text="Tweetledi"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="RtlSymmetry" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -110,23 +166,24 @@
             android:backgroundTint="#03A9F4"
             android:clickable="true"
             android:contentDescription="Add Tweet"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_baseline_add_24" />
+
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottiAnim"
             android:layout_width="250dp"
             android:layout_height="250dp"
-            app:lottie_autoPlay="true"
-            android:visibility="gone"
-            app:lottie_loop="true"
             android:backgroundTint="@color/white"
-            app:lottie_rawRes="@raw/twitter_loading"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/twitter_loading" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

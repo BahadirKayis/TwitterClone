@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:itemIconTint="#03A9F4"
-        android:visibility="gone"
+
         app:itemTextColor="#03A9F4"
         app:labelVisibilityMode="unlabeled"
         app:layout_constraintBottom_toBottomOf="parent"

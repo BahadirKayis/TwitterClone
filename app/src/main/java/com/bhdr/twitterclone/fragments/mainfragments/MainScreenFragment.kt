@@ -1,54 +1,57 @@
 package com.bhdr.twitterclone.fragments.mainfragments
 
 
-import android.content.Context
-import android.content.SharedPreferences
+import android.icu.number.NumberFormatter.with
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.LiveDataScope
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.adapters.TweetsAdapter
 import com.bhdr.twitterclone.databinding.FragmentMainScreenBinding
-
-
 import com.bhdr.twitterclone.helperclasses.gone
 import com.bhdr.twitterclone.helperclasses.userId
 import com.bhdr.twitterclone.helperclasses.userPhotoUrl
-
 import com.bhdr.twitterclone.helperclasses.visible
 import com.bhdr.twitterclone.repos.TweetRepository
 import com.bhdr.twitterclone.viewmodels.mainviewmodel.TweetViewModel
 import com.microsoft.signalr.HubConnectionBuilder
 import com.microsoft.signalr.HubConnectionState
 import com.squareup.picasso.Picasso
-
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
+
 
 class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
    TweetsAdapter.ClickedTweetListener {
    private val binding by viewBinding(FragmentMainScreenBinding::bind)
    private val viewModel by lazy { TweetViewModel() }
-   private var followedUserIdList: List<Int>? = null
+
    private val tweetAdapter by lazy { TweetsAdapter(this) }
+
 
    var userId: Int? = null
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
       super.onViewCreated(view, savedInstanceState)
 
-      userId =requireContext().userId()
+      userId = requireContext().userId()
       viewModel.getPosts(userId!!)
       viewModel.getFollowedUserIdList(userId!!)
-
+      viewModel.startSignalR()
       binding.addTweetFAB.setOnClickListener {
          Navigation.findNavController(requireView())
             .navigate(R.id.action_mainScreenFragment_to_addTweetFragment)
       }
+
       viewModelObservable()
-      tweetSignalR()
-Picasso.get().load(requireContext().userPhotoUrl()).into(binding.profilePicture)
+
+      Picasso.get().load(requireContext().userPhotoUrl()).into(binding.profilePicture)
    }
 
    private fun viewModelObservable() {
@@ -79,9 +82,28 @@ Picasso.get().load(requireContext().userPhotoUrl()).into(binding.profilePicture)
          adapter = tweetAdapter
       }
 
-      viewModel.followedUserIdList.observe(viewLifecycleOwner) {
-         Log.e("FollowedId", it.toString())
-         followedUserIdList = it
+      viewModel.listNewTweetImageUrl.observe(viewLifecycleOwner) {
+         try {
+            if (it.size == 2) {
+               val url: String = it.values.toTypedArray()[0]
+               Log.e("try", url)
+               Picasso.get().load(url).into(binding.userPhoto1)
+               Picasso.get().load(it.values.toTypedArray()[1]).into(binding.userPhoto2)
+               binding.seeNewTweet.visible()
+               binding.userPhoto1.visible()
+               binding.userPhoto2.visible()
+            } else if (it.size >= 3) {
+               Picasso.get().load(it.values.toTypedArray()[2]).into(binding.userPhoto3)
+               binding.userPhoto3.visible()
+            }
+
+         } catch (e: Exception) {
+            Log.e("Exception", e.toString())
+            e.printStackTrace()
+
+         }
+
+
       }
    }
 
@@ -91,34 +113,15 @@ Picasso.get().load(requireContext().userPhotoUrl()).into(binding.profilePicture)
       currentlyCRFNumber: Int
    ) {
       when (commentrtfav) {
-         "fav" -> viewModel.postLiked(tweetId, currentlyCRFNumber,requireContext())
+         "fav" -> viewModel.postLiked(tweetId, currentlyCRFNumber, requireContext())
          // "comment" -> viewModel.commentTweet(tweetDocId, currentlyCRFNumber)
          // "rt" -> viewModel.rtTweet(tweetDocId, currentlyCRFNumber)
 
       }
    }
 
-   private fun followedControl(id: Int, imageUrl: String) {
-      val haveId = followedUserIdList?.find { it == id }
-      haveId?.let {
-
-      }
-   }
-
-   private fun tweetSignalR() {
-      val hubConnection =
-         HubConnectionBuilder.create("http://192.168.3.136:9009/newTweetHub").build()
-
-      if (hubConnection.connectionState == HubConnectionState.DISCONNECTED) {
-         hubConnection.start()
-
-
-      }
-      hubConnection.on("newTweet", { id, imageUrl ->
-         followedControl(id.toInt(), imageUrl)
-      }, String::class.java, String::class.java)
-
-
-   }
-
 }
+
+
+
+
