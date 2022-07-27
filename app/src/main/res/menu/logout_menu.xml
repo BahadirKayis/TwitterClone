@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    tools:showIn="navigation_view">
+
+<item android:title="">
+    <menu>
+
+    </menu>
+</item>
+        <item
+
+            android:icon="@drawable/ic_baseline_person_24"
+            android:title="Profil" />
+    <item android:id="@+id/logInFragment" android:title="Çıkış"
+        android:icon="@drawable/ic_logout_svgrepo_com"/>
+    <item android:title="">
+        <menu>
+            <item
+
+                android:title="Ayarlar ve gizlilik" />
+            <item
+
+                android:title="Yardım Merkezi" />
+        </menu>
+    </item>
+</menu>

@@ -19,21 +19,24 @@ class SignInFragment : Fragment(R.layout.fragment_sig_in) {
         super.onViewCreated(view, savedInstanceState)
 
         getUserModelObservable()
-        binding.nextButton.setOnClickListener {
-            if (binding.emailphonenicknameEditText.text.isNotEmpty()) {
-                sigInModelView.getUserSigIn(binding.emailphonenicknameEditText.text.toString())
+        binding.apply {
+           nextButton.setOnClickListener {
+                if (emailphonenicknameEditText.text.isNotEmpty()) {
+                    sigInModelView.getUserSigIn(emailphonenicknameEditText.text.toString())
 
-            } else {
+                } else {
 
-                snackBar(requireView(),"Kullanıcı Adı Giriniz",1500)
+                    snackBar(requireView(),"Kullanıcı Adı Giriniz",1500)
+                }
+            }
+            cancel.setOnClickListener {
+                findNavController().popBackStack()
+            }
+          forgetPasswordText.setOnClickListener {
+                findNavController().navigate(R.id.action_sigInFragment_to_sigInForgetPasswordFragment2)
             }
         }
-        binding.cancel.setOnClickListener {
-            findNavController().popBackStack()
-        }
-        binding.forgetPasswordText.setOnClickListener {
-            findNavController().navigate(R.id.action_sigInFragment_to_sigInForgetPasswordFragment2)
-        }
+
     }
 
     private fun getUserModelObservable() {

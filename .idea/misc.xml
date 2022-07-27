@@ -65,9 +65,13 @@
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/fragment_splash.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/fragment_tweet_bottom_dialog.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/loading_screen.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/menu_nav_header.xml" value="0.21614583333333334" />
+        <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/nav_menu_layout.xml" value="0.3776041666666667" />
+        <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/top_menu_user_info.xml" value="0.33" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/tweet_card.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/who_to_follow_card.xml" value="0.358695652173913" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/menu/bottom_menu.xml" value="0.37864583333333335" />
+        <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/menu/logout_menu.xml" value="0.75" />
       </map>
     </option>
   </component>

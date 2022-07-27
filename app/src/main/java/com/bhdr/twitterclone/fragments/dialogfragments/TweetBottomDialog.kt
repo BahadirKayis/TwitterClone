@@ -53,13 +53,16 @@ class TweetBottomDialog : BottomSheetDialogFragment() {
                 return spannable
             }
         }
-        binding.blocktext.setSpannableFactory(spannableFactory)
-        binding.followtext.setSpannableFactory(spannableFactory)
-        binding.mutetext.setSpannableFactory(spannableFactory)
+        binding.apply {
+      blocktext.setSpannableFactory(spannableFactory)
+            followtext.setSpannableFactory(spannableFactory)
+            mutetext.setSpannableFactory(spannableFactory)
 
-        binding.blocktext.setText("$name adlı kişiyi engelle", TextView.BufferType.SPANNABLE)
-        binding.followtext.setText("$name adlı kişiyi takip et", TextView.BufferType.SPANNABLE)
-        binding.mutetext.setText("$name adlı kişiyi sustur", TextView.BufferType.SPANNABLE)
+          blocktext.setText("$name adlı kişiyi engelle", TextView.BufferType.SPANNABLE)
+            followtext.setText("$name adlı kişiyi takip et", TextView.BufferType.SPANNABLE)
+        mutetext.setText("$name adlı kişiyi sustur", TextView.BufferType.SPANNABLE)
+        }
+
 
     }
 

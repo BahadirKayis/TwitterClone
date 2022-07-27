@@ -32,34 +32,39 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
         super.onViewCreated(view, savedInstanceState)
         observeViewModel()
         searchModel.getSearchFollowUser(requireContext().userId())
+binding.apply {
 
-        binding.agendasRecyclerView.apply {
+
+      agendasRecyclerView.apply {
             layoutManager =
                 LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
             hasFixedSize()
         }
-        binding.whoToFollowRecyclerView.apply {
+        whoToFollowRecyclerView.apply {
             layoutManager =
                 LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
         }
-        binding.addTweetFAB.setOnClickListener {
+    addTweetFAB.setOnClickListener {
             Navigation.findNavController(requireView())
                 .navigate(R.id.action_searchFragment_to_addTweetFragment)
         }
-        Picasso.get().load(requireContext().userPhotoUrl()).into(binding.profilePicture)
+    profilePicture.picasso(requireContext().userPhotoUrl())
 
+}
     }
 
     private fun observeViewModel() {
+        searchModel.apply {
 
-        searchModel.status.observe(viewLifecycleOwner) {
+
+        status.observe(viewLifecycleOwner) {
             when (it!!) {
                 SearchRepository.MainStatus.LOADING -> binding.lottiAnim.visible()
                 SearchRepository.MainStatus.ERROR -> binding.lottiAnim.gone()
                 SearchRepository.MainStatus.DONE -> binding.lottiAnim.gone()
             }
         }
-        searchModel.tags.observe(viewLifecycleOwner) {
+        tags.observe(viewLifecycleOwner) {
 
             binding.topContentContentText.text = "Hello"
             binding.topContentSubjectText.text =  it[0]
@@ -69,7 +74,7 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
             binding.agendasRecyclerView.adapter = tags
         }
 
-        searchModel.followUser.observe(viewLifecycleOwner) {
+        followUser.observe(viewLifecycleOwner) {
             binding.whoToFollowRecyclerView.apply {
                 dataFollow = it as MutableList<Users>
                 myAdapter = WhoToFollowAdapter(
@@ -78,6 +83,7 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
                 ) { index -> deleteItem(index) }
                 adapter = myAdapter
             }
+        }
         }
     }
 

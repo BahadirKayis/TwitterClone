@@ -19,63 +19,66 @@ import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 
 
 class SignInForgetPasswordFragment : Fragment(R.layout.fragment_sig_in_forget_password) {
-    private val binding by viewBinding(FragmentSigInForgetPasswordBinding::bind)
-    private val forgetViewModel by lazy { ForgetPasswordViewModel() }
+   private val binding by viewBinding(FragmentSigInForgetPasswordBinding::bind)
+   private val forgetViewModel by lazy { ForgetPasswordViewModel() }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        getUserIdObservable()
-        binding.searchButton.setOnClickListener {
+   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+      super.onViewCreated(view, savedInstanceState)
+      getUserIdObservable()
+      binding.searchButton.setOnClickListener {
 
-            if (binding.emailphonenicknameEditText.text.isNotEmpty()) {
+         if (binding.emailphonenicknameEditText.text.isNotEmpty()) {
 
-                forgetViewModel.userForgetId(binding.emailphonenicknameEditText.text.toString())
+            forgetViewModel.userForgetId(binding.emailphonenicknameEditText.text.toString())
 
-            } else {
-                snackBar(requireView(), "Kullanıcı Bilgisini  Giriniz", 1000)
-            }
+         } else {
+            snackBar(requireView(), "Kullanıcı Bilgisini  Giriniz", 1000)
+         }
 
-        }
-        binding.cancel.setOnClickListener {
-            findNavController().popBackStack()
-        }
+      }
+      binding.cancel.setOnClickListener {
+         findNavController().popBackStack()
+      }
 
 
-    }
+   }
 
-    private fun getUserIdObservable() {
-        forgetViewModel.userId.observe(viewLifecycleOwner) {
+   private fun getUserIdObservable() {
+      forgetViewModel.apply {
+         userId.observe(viewLifecycleOwner) {
 
             when (it!!) {
-                0 -> snackBar(requireView(), "Girilen Bilgiye Ait Hesap Bulunamadı", 1500)
-                else -> {
-                    try {
-                        findNavController().navigate(
-                            SignInForgetPasswordFragmentDirections.actionSigInForgetPasswordFragmentToSignInForgetPasswordSecondFragment(
-                                it
-                            )
+               0 -> snackBar(requireView(), "Girilen Bilgiye Ait Hesap Bulunamadı", 1500)
+               else -> {
+                  try {
+                     findNavController().navigate(
+                        SignInForgetPasswordFragmentDirections.actionSigInForgetPasswordFragmentToSignInForgetPasswordSecondFragment(
+                           it
                         )
-                       binding.lottiAnim.gone()
-                    } catch (e: Exception) {
-                        Log.e("SignInForgetPasswordCatchGetUserIdObserve", e.toString())
-                    }
-                }
+                     )
+                     binding.lottiAnim.gone()
+                  } catch (e: Exception) {
+                     Log.e("SignInForgetPasswordCatchGetUserIdObserve", e.toString())
+                  }
+               }
 
             }
-        }
-        forgetViewModel.executeStatus.observe(viewLifecycleOwner) {
+         }
+         executeStatus.observe(viewLifecycleOwner) {
             when (it!!) {
-                LOADING -> binding.lottiAnim.visible()
-                ERROR -> {
-                    binding.lottiAnim.gone();Snackbar.make(
-                        requireView(),
-                        "Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz",
-                        1500
-                    ).show()
-                }
-                DONE ->  binding.lottiAnim.gone()
+               LOADING -> binding.lottiAnim.visible()
+               ERROR -> {
+                  binding.lottiAnim.gone();Snackbar.make(
+                     requireView(),
+                     "Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz",
+                     1500
+                  ).show()
+               }
+               DONE -> binding.lottiAnim.gone()
             }
-        }
+         }
 
-    }
+      }
+
+   }
 }

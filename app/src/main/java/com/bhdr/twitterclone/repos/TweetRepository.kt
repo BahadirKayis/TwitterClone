@@ -3,17 +3,14 @@ package com.bhdr.twitterclone.repos
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.bhdr.twitterclone.helperclasses.userId
-import com.bhdr.twitterclone.helperclasses.visible
 import com.bhdr.twitterclone.models.Posts
 import com.bhdr.twitterclone.network.CallApi
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.microsoft.signalr.HubConnectionBuilder
 import com.microsoft.signalr.HubConnectionState
-import com.squareup.picasso.Picasso
 import kotlinx.coroutines.*
 
 
@@ -25,19 +22,12 @@ class TweetRepository {
    val mainStatus = MutableLiveData<MainStatus>()
 
 
-   val sharedFlowPost = MutableLiveData<List<Posts>>()
+   val tweets = MutableLiveData<List<Posts>>()
 
 
    val liked = MutableLiveData<Int>()
 
    val tweetAdded = MutableLiveData<Boolean>()
-
-//    private val _followedUserIdList= MutableLiveData<List<Int>>()
-//    val followedUserIdList: LiveData<List<Int>>
-//            get() = _followedUserIdList
-
-
-
 
    private var followedUserIdList: List<Int>? = null
 
@@ -47,7 +37,7 @@ class TweetRepository {
          val request = CallApi.retrofitServiceMain.getTweets(id)
          if (request.isSuccessful) {
             mainStatus.value = MainStatus.DONE
-            sharedFlowPost.value = request.body()!!
+            tweets.value = request.body()!!
             Log.e("TAG", request.body().toString())
          } else if (!request.isSuccessful) {
             mainStatus.value = MainStatus.ERROR

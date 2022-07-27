@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bhdr.twitterclone.databinding.TweetCardBinding
 import com.bhdr.twitterclone.databinding.WhoToFollowCardBinding
+import com.bhdr.twitterclone.helperclasses.picasso
 import com.bhdr.twitterclone.models.Posts
 import com.bhdr.twitterclone.models.Users
 
@@ -24,14 +25,17 @@ class WhoToFollowAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user = listData[position]
-        Picasso.get().load(user.photoUrl).into(holder.binding.profilePicture)
-        holder.binding.nameText.text = user.name
-        holder.binding.followButton.setOnClickListener {
-            onClickDelete(position)
-            clickedUserFollow.followButtonsListener(user.id!!)
+        holder.binding.apply {
+            profilePicture.picasso(user.photoUrl.toString())
+            nameText.text = user.name
+                followButton.setOnClickListener {
+                    onClickDelete(position)
+                    clickedUserFollow.followButtonsListener(user.id!!)
 
+                }
+            idText.text = "@" + user.userName
         }
-        holder.binding.idText.text = "@" + user.userName
+
 
     }
 

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/circleImageView"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+       android:layout_marginStart="10dp"
+        android:src="@drawable/bbl_turko"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/userNameSurname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Bahadir Kayis"
+        android:layout_marginStart="2dp"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/circleImageView"
+        />
+    <TextView
+        android:id="@+id/userName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/userNameSurname"
+        android:layout_marginStart="2dp"
+        android:text="bahadirkayiss"
+        android:textSize="15sp"
+        android:textColor="@android:color/darker_gray"
+        />
+    <TextView
+        android:id="@+id/userFollowed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/userName"
+        android:layout_marginTop="5dp"
+        android:text="19"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/userFollowed2"
+        app:layout_constraintStart_toEndOf="@id/userFollowed"
+        app:layout_constraintTop_toTopOf="@id/userFollowed"
+        app:layout_constraintBottom_toBottomOf="@id/userFollowed"
+        android:layout_width="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="Takip edilen"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/userFollow"
+        android:layout_width="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/userFollowed2"
+        app:layout_constraintTop_toTopOf="@id/userFollowed"
+        app:layout_constraintBottom_toBottomOf="@id/userFollowed"
+        android:layout_marginStart="10dp"
+        android:text="0"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/userFollow"
+        app:layout_constraintTop_toTopOf="@id/userFollow"
+        app:layout_constraintBottom_toBottomOf="@id/userFollow"
+        android:layout_marginStart="5dp"
+        android:text="Takipçi"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>
