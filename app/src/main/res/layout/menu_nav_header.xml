@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="20dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -10,7 +11,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
        android:layout_marginStart="10dp"
-        android:src="@drawable/bbl_turko"
+        tools:src="@drawable/bbl_turko"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -19,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="Bahadir Kayis"
+        tools:text="Bahadir Kayis"
         android:layout_marginStart="2dp"
         android:textColor="@color/black"
         android:textSize="18sp"
@@ -34,7 +35,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/userNameSurname"
         android:layout_marginStart="2dp"
-        android:text="bahadirkayiss"
+        tools:text="bahadirkayiss"
         android:textSize="15sp"
         android:textColor="@android:color/darker_gray"
         />
@@ -43,7 +44,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/userName"
         android:layout_marginTop="5dp"
-        android:text="19"
+        tools:text="19"
         android:textColor="@color/black"
         android:textStyle="bold"
         android:layout_width="wrap_content"
@@ -64,7 +65,7 @@
         app:layout_constraintTop_toTopOf="@id/userFollowed"
         app:layout_constraintBottom_toBottomOf="@id/userFollowed"
         android:layout_marginStart="10dp"
-        android:text="0"
+        tools:text="0"
         android:textColor="@color/black"
         android:textStyle="bold"
         android:layout_height="wrap_content"/>

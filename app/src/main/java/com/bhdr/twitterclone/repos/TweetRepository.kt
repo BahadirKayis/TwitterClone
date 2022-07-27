@@ -54,7 +54,7 @@ class TweetRepository {
    }
 
    suspend fun postLiked(id: Int, count: Int, context: Context) {
-      val request = CallApi.retrofitServiceMain.postLiked(id, count)
+      val request = CallApi.retrofitServiceMain.postLiked(context.userId(), id, count)
       if (request.isSuccessful) {
          liked.value = request.body()!!
          getPosts(context.userId())
@@ -125,35 +125,40 @@ class TweetRepository {
 
 
    fun tweetSignalR() {
-      val hubConnection =
-         HubConnectionBuilder.create("http://192.168.3.136:9009/newTweetHub").build()
+      try {
 
-      if (hubConnection.connectionState == HubConnectionState.DISCONNECTED) {
-         hubConnection.start()
 
-      }
-      hubConnection.on("newTweet", { id, imageUrl ->
-         Log.e("id", id.toString())
-         Log.e("imageUrl", imageUrl.toString())
+         val hubConnection =
+            HubConnectionBuilder.create("http://192.168.3.136:9009/newTweetHub").build()
+
+         if (hubConnection.connectionState == HubConnectionState.DISCONNECTED) {
+            hubConnection.start()
+
+         }
+         hubConnection.on("newTweet", { id, imageUrl ->
+            Log.e("id", id.toString())
+            Log.e("imageUrl", imageUrl.toString())
 
             followedControl(id.toInt(), imageUrl)
 
-
-      }, String::class.java, String::class.java)
+         }, String::class.java, String::class.java)
+      } catch (e: Exception) {
+         Log.e("tweetSignalRException", e.toString())
+      }
    }
 
    private var listUserIdImageUrl = HashMap<Int, String>()
    var mutableListUserIdImageUrl = MutableLiveData<HashMap<Int, String>>()
-   private  fun followedControl(id: Int, imageUrl: String) {
+   private fun followedControl(id: Int, imageUrl: String) {
 
       val haveId = followedUserIdList?.find { it == id }
       haveId.let {
          try {
             listUserIdImageUrl.put(id, imageUrl)
-         //  CoroutineScope(Dispatchers.IO).launch {
-               mutableListUserIdImageUrl.postValue(listUserIdImageUrl)
+            //  CoroutineScope(Dispatchers.IO).launch {
+            mutableListUserIdImageUrl.postValue(listUserIdImageUrl)
 
-          // }
+            // }
 
          } catch (e: Exception) {
             Log.e("listUserIdImageUrlEx", e.toString())

@@ -41,6 +41,8 @@
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/cancel.xml" value="0.2285" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/comment.xml" value="0.2985" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.3425" />
+        <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/ic_baseline_star_border_24.xml" value="0.223" />
+        <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/ic_twitter_social_icons___rounded_square___blue.xml" value="0.223" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/ic_twitter_social_icons___square___blue.xml" value="0.1495" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/left_arrow.xml" value="0.3425" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/notifications.xml" value="0.3425" />
@@ -72,6 +74,8 @@
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/who_to_follow_card.xml" value="0.358695652173913" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/menu/bottom_menu.xml" value="0.37864583333333335" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/menu/logout_menu.xml" value="0.75" />
+        <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.223" />
+        <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.223" />
       </map>
     </option>
   </component>

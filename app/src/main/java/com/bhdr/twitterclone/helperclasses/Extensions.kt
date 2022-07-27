@@ -49,6 +49,3 @@ fun ImageView.picasso(url: String) {
    Picasso.get().load(url).into(this)
 }
 
-fun CircleImageView.picassoCircle(url: String) {
-   Picasso.get().load(url).into(this)
-}

@@ -1,56 +1,41 @@
 package com.bhdr.twitterclone
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Layout
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
-
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentContainer
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupWithNavController
-import co.zsmb.materialdrawerkt.builders.drawer
-import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
 import com.bhdr.twitterclone.databinding.ActivityMainBinding
-import com.bhdr.twitterclone.databinding.ActivityMainBinding.inflate
-import com.bhdr.twitterclone.databinding.AgendaCardBinding.inflate
-import com.bhdr.twitterclone.databinding.FragmentLogInBinding
-import com.bhdr.twitterclone.databinding.MenuNavHeaderBinding
-import com.bhdr.twitterclone.helperclasses.gone
-import com.bhdr.twitterclone.helperclasses.sharedPref
-import com.bhdr.twitterclone.helperclasses.userPhotoUrl
-import com.bhdr.twitterclone.helperclasses.visible
+import com.bhdr.twitterclone.fragments.mainfragments.MainScreenFragment
+import com.bhdr.twitterclone.helperclasses.*
+import com.bhdr.twitterclone.viewmodels.mainviewmodel.MainViewModel
 import com.canerture.e_commerce_app.common.delegate.viewBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.mikepenz.materialdrawer.AccountHeader
-import com.mikepenz.materialdrawer.Drawer
-import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlin.properties.Delegates
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace {
    private val binding by viewBinding(ActivityMainBinding::inflate)
 
    private lateinit var navController: NavController
    lateinit var toggle: ActionBarDrawerToggle
-
-
+   private val viewModel by lazy { MainViewModel() }
+   var itemsLayout: View? = null
+   private val mDrawerToggle: ActionBarDrawerToggle? = null
    override fun onCreate(savedInstanceState: Bundle?) {
       super.onCreate(savedInstanceState)
       setContentView(binding.root)
 
-      navMenu()
       val navHostFragment =
          supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
       navController = navHostFragment.navController
@@ -65,14 +50,16 @@ class MainActivity : AppCompatActivity() {
                binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             }
             else -> {
-               navMenu()
-               binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN)
 
+               userRequest()
+               binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED)
                binding.bottomNav.visible()
             }
          }
       }
 
+
+      itemsLayout = binding.navMenu.inflateHeaderView(R.layout.menu_nav_header)
       toggle = ActionBarDrawerToggle(this, binding.drawerLayout, R.string.open, R.string.close)
       binding.drawerLayout.addDrawerListener(toggle)
       toggle.syncState()
@@ -80,30 +67,57 @@ class MainActivity : AppCompatActivity() {
       binding.navMenu.setNavigationItemSelectedListener {
          when (it.itemId) {
             R.id.logInFragment -> {
-               Log.e("TAG", "onCreate: ");logOut()
+               snackBar(
+                  binding.drawerLayout,
+                  "Çıkış Yapılıyor",
+                  1000
+               )
+               binding.drawerLayout.close()
+               logOut()
+               this.lifecycleScope.launch {
+                  delay(1100)
+                  navHostFragment.navController.navigate(
+                     R.id.logInFragment
+                  )
+               }
+
             }
          }
          true
       }
+      observable()
    }
 
    private fun logOut() {
       this.sharedPref().edit().clear().commit()
-      //  binding.fragmentContainerView.id=R.navigation.login_nav
-
    }
 
-   private fun navMenu() {
-      try {
+   private fun userRequest() {
+      viewModel.followCount(this.userId())
+      viewModel.followedCount(this.userId())
+   }
 
-         val itemsLayout: View = binding.navMenu.inflateHeaderView(R.layout.menu_nav_header)
-         Picasso.get().load(this.userPhotoUrl())
-            .into(itemsLayout.findViewById<CircleImageView>(R.id.circleImageView))
-         val item: TextView = itemsLayout.findViewById(R.id.userFollow)
-         item.text = "44"
-      } catch (e: Exception) {
-         Log.e("MainEx", e.toString())
+   private fun observable() {
+
+      viewModel.apply {
+         followCount.observe(this@MainActivity, Observer {
+            itemsLayout!!.findViewById<TextView>(R.id.userFollow).text = it.toString()
+
+            itemsLayout!!.findViewById<TextView>(R.id.userNameSurname).text =
+               this@MainActivity.sharedPref().getString("user_name", "").toString()
+
+            itemsLayout!!.findViewById<TextView>(R.id.userName).text = "@" +
+                    this@MainActivity.sharedPref().getString("user_userName", "").toString()
+
+            itemsLayout!!.findViewById<CircleImageView>(R.id.circleImageView)
+               .picasso(this@MainActivity.userPhotoUrl())
+         })
+         followedCount.observe(this@MainActivity, Observer {
+            itemsLayout!!.findViewById<TextView>(R.id.userFollowed).text = it.toString()
+         })
       }
+
+
    }
 
    override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -112,4 +126,14 @@ class MainActivity : AppCompatActivity() {
       }
       return super.onOptionsItemSelected(item)
    }
+
+   override fun openDrawerClick() {
+      Log.e("TAG", "openDrawer: ")
+      //  binding.drawerLayout.openDrawer(R.id.drawerLayout)
+      // toggle.onDrawerClosed(binding.drawerLayout)
+    binding.drawerLayout.openDrawer(GravityCompat.START)
+
+   }
+
+
 }

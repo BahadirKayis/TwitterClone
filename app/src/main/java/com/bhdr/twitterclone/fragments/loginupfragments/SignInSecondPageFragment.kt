@@ -33,7 +33,6 @@ class SignInSecondPageFragment : Fragment(R.layout.fragment_sig_in_second_page) 
 
       binding.apply {
 
-
          cancel.setOnClickListener {
             findNavController().popBackStack()
 

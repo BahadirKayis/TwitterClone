@@ -1,20 +1,26 @@
 package com.bhdr.twitterclone.fragments.mainfragments
 
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bhdr.twitterclone.MainActivity
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.adapters.TweetsAdapter
 import com.bhdr.twitterclone.databinding.FragmentMainScreenBinding
 import com.bhdr.twitterclone.helperclasses.*
 import com.bhdr.twitterclone.repos.TweetRepository
+import com.bhdr.twitterclone.viewmodels.mainviewmodel.MainViewModel
 import com.bhdr.twitterclone.viewmodels.mainviewmodel.TweetViewModel
 import com.squareup.picasso.Picasso
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
@@ -24,8 +30,18 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
 
    private val tweetAdapter by lazy { TweetsAdapter(this) }
 
+   var  userProfileClickListener : MainScreenInterFace? = null
 
    var userId: Int? = null
+   override fun onAttach(context: Context) {
+      super.onAttach(context)
+
+      if (context is MainScreenInterFace) {
+         userProfileClickListener =  context as MainScreenInterFace
+      } else {
+         throw RuntimeException(context!!.toString() )
+      }
+   }
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
       super.onViewCreated(view, savedInstanceState)
 
@@ -45,7 +61,9 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
       viewModelObservable()
       binding.profilePicture.picasso(requireContext().userPhotoUrl())
 
+      //(activity as MainActivity).openDrawer()
    }
+
 
    private fun viewModelObservable() {
       viewModel.apply {
@@ -55,7 +73,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
 
                TweetRepository.MainStatus.ERROR -> binding.lottiAnim.gone()
                TweetRepository.MainStatus.DONE -> {
-                  binding.lottiAnim.gone();startSignalR()
+                  binding.lottiAnim.gone();lifecycleScope.launch { delay(2000);startSignalR()}
                }
             }
          }
@@ -102,8 +120,11 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
          adapter = tweetAdapter
       }
 
-
+binding.profilePicture.setOnClickListener{
+   userProfileClickListener?.openDrawerClick()
+}
    }
+
 
    override fun crfButtonsListener(
       commentrtfav: String,
@@ -118,8 +139,11 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
       }
    }
 
+interface MainScreenInterFace{
+   fun openDrawerClick()
 }
 
+}
 
 
 
