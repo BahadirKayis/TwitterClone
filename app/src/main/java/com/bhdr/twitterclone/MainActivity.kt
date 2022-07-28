@@ -1,5 +1,6 @@
 package com.bhdr.twitterclone
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -19,22 +20,28 @@ import com.bhdr.twitterclone.fragments.mainfragments.MainScreenFragment
 import com.bhdr.twitterclone.helperclasses.*
 import com.bhdr.twitterclone.viewmodels.mainviewmodel.MainViewModel
 import com.canerture.e_commerce_app.common.delegate.viewBinding
+import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace {
+class MainActivity : AppCompatActivity(),MainScreenFragment.MainScreenInterFace {
    private val binding by viewBinding(ActivityMainBinding::inflate)
 
    private lateinit var navController: NavController
    lateinit var toggle: ActionBarDrawerToggle
    private val viewModel by lazy { MainViewModel() }
    var itemsLayout: View? = null
-   private val mDrawerToggle: ActionBarDrawerToggle? = null
+   //private val mDrawerToggle: ActionBarDrawerToggle? = null
+var notificationCount: Int = 0
+
    override fun onCreate(savedInstanceState: Bundle?) {
+
       super.onCreate(savedInstanceState)
+
       setContentView(binding.root)
+
 
       val navHostFragment =
          supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
@@ -74,6 +81,7 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
                )
                binding.drawerLayout.close()
                logOut()
+
                this.lifecycleScope.launch {
                   delay(1100)
                   navHostFragment.navController.navigate(
@@ -95,10 +103,19 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
    private fun userRequest() {
       viewModel.followCount(this.userId())
       viewModel.followedCount(this.userId())
+      viewModel.getFollowedUserIdList(this.userId())
+      shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
+
+   //   if (shared.getBoolean("startSignalR", false)) {
+     //    this.saveSharedItem("startSignalR", true)
+         viewModel.startSignalR(this@MainActivity)
+
+     // }
+
+
    }
 
    private fun observable() {
-
       viewModel.apply {
          followCount.observe(this@MainActivity, Observer {
             itemsLayout!!.findViewById<TextView>(R.id.userFollow).text = it.toString()
@@ -115,8 +132,19 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
          followedCount.observe(this@MainActivity, Observer {
             itemsLayout!!.findViewById<TextView>(R.id.userFollowed).text = it.toString()
          })
-      }
 
+         mutableNotFollowTweetOrLike.observe(this@MainActivity) {
+            try {
+
+               notificationCount++
+               Log.e("Exception", notificationCount.toString())
+            } catch (e: Exception) {
+               Log.e("Exception", e.toString())
+               e.printStackTrace()
+
+            }
+         }
+      }
 
    }
 
@@ -131,8 +159,16 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
       Log.e("TAG", "openDrawer: ")
       //  binding.drawerLayout.openDrawer(R.id.drawerLayout)
       // toggle.onDrawerClosed(binding.drawerLayout)
-    binding.drawerLayout.openDrawer(GravityCompat.START)
+      binding.drawerLayout.openDrawer(GravityCompat.START)
 
+   }
+
+
+
+
+   override fun onDestroy() {
+      super.onDestroy()
+      this.saveSharedItem("startSignalR", false)
    }
 
 

@@ -27,21 +27,22 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
    TweetsAdapter.ClickedTweetListener {
    private val binding by viewBinding(FragmentMainScreenBinding::bind)
    private val viewModel by lazy { TweetViewModel() }
-
+   private val viewModelMain by lazy { MainViewModel() }
    private val tweetAdapter by lazy { TweetsAdapter(this) }
 
-   var  userProfileClickListener : MainScreenInterFace? = null
+ var userProfileClickListener: MainScreenInterFace? = null
 
    var userId: Int? = null
    override fun onAttach(context: Context) {
       super.onAttach(context)
 
       if (context is MainScreenInterFace) {
-         userProfileClickListener =  context as MainScreenInterFace
+         userProfileClickListener = context as MainScreenInterFace
       } else {
-         throw RuntimeException(context!!.toString() )
+         throw RuntimeException(context.toString())
       }
    }
+
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
       super.onViewCreated(view, savedInstanceState)
 
@@ -49,7 +50,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
 
       viewModel.getPosts(userId!!)
 
-      viewModel.getFollowedUserIdList(userId!!)
+
 
 
 
@@ -61,7 +62,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
       viewModelObservable()
       binding.profilePicture.picasso(requireContext().userPhotoUrl())
 
-      //(activity as MainActivity).openDrawer()
+
    }
 
 
@@ -73,7 +74,10 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
 
                TweetRepository.MainStatus.ERROR -> binding.lottiAnim.gone()
                TweetRepository.MainStatus.DONE -> {
-                  binding.lottiAnim.gone();lifecycleScope.launch { delay(2000);startSignalR()}
+                  binding.lottiAnim.gone();lifecycleScope.launch {
+                     delay(2000)
+                     //    startSignalR(requireContext())
+                  }
                }
             }
          }
@@ -82,30 +86,25 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
             tweetAdapter.submitList(it)
          }
 
-         listNewTweetImageUrl.observe(viewLifecycleOwner) {
-            try {
-               if (it.size == 2) {
-                  val url: String = it.values.toTypedArray()[0]
-                  Log.e("try", url)
-                  Picasso.get().load(url).into(binding.userPhoto1)
-                  Picasso.get().load(it.values.toTypedArray()[1]).into(binding.userPhoto2)
-                  binding.seeNewTweet.visible()
-                  binding.userPhoto1.visible()
-                  binding.userPhoto2.visible()
-               } else if (it.size >= 3) {
-                  Picasso.get().load(it.values.toTypedArray()[2]).into(binding.userPhoto3)
-                  binding.userPhoto3.visible()
-               }
 
-            } catch (e: Exception) {
-               Log.e("Exception", e.toString())
-               e.printStackTrace()
-
-            }
-         }
       }
 
-
+      viewModelMain.apply {
+         mutableNotFollowTweetOrLike.value.apply {
+//            if (it.size == 1) {
+//               val url: String = it.values.toTypedArray()[0]
+//               Log.e("try", url)
+//               Picasso.get().load(url).into(binding.userPhoto1)
+//               Picasso.get().load(it.values.toTypedArray()[1]).into(binding.userPhoto2)
+//               binding.seeNewTweet.visible()
+//               binding.userPhoto1.visible()
+//               binding.userPhoto2.visible()
+//            } else if (it.size >= 3) {
+//               Picasso.get().load(it.values.toTypedArray()[2]).into(binding.userPhoto3)
+//               binding.userPhoto3.visible()
+//            }
+         }
+      }
 
       viewModel.liked.observe(viewLifecycleOwner) {
 
@@ -120,11 +119,11 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
          adapter = tweetAdapter
       }
 
-binding.profilePicture.setOnClickListener{
-   userProfileClickListener?.openDrawerClick()
-}
+      binding.profilePicture.setOnClickListener {
+           userProfileClickListener?.openDrawerClick()
+         //   TODO invoke class yapılacak iki sayfa arasında iki interface olmadığı için
+      }
    }
-
 
    override fun crfButtonsListener(
       commentrtfav: String,
@@ -139,9 +138,11 @@ binding.profilePicture.setOnClickListener{
       }
    }
 
-interface MainScreenInterFace{
-   fun openDrawerClick()
-}
+
+
+   interface MainScreenInterFace {
+      fun openDrawerClick()
+   }
 
 }
 

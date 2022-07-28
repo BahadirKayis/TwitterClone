@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.bhdr.twitterclone.helperclasses.userId
 import com.bhdr.twitterclone.models.Posts
+import com.bhdr.twitterclone.models.SignalRModel
 import com.bhdr.twitterclone.network.CallApi
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -29,7 +30,7 @@ class TweetRepository {
 
    val tweetAdded = MutableLiveData<Boolean>()
 
-   private var followedUserIdList: List<Int>? = null
+
 
    suspend fun getPosts(id: Int) {
       try {
@@ -115,57 +116,6 @@ class TweetRepository {
 
    }
 
-   suspend fun getFollowedUserIdList(userId: Int) {
-      val response = CallApi.retrofitServiceMain.getFollowedUserIdList(userId)
-      if (response.isSuccessful) {
-         followedUserIdList = response.body()
-      }
-      Log.e("response", response.body().toString())
-   }
 
-
-   fun tweetSignalR() {
-      try {
-
-
-         val hubConnection =
-            HubConnectionBuilder.create("http://192.168.3.136:9009/newTweetHub").build()
-
-         if (hubConnection.connectionState == HubConnectionState.DISCONNECTED) {
-            hubConnection.start()
-
-         }
-         hubConnection.on("newTweet", { id, imageUrl ->
-            Log.e("id", id.toString())
-            Log.e("imageUrl", imageUrl.toString())
-
-            followedControl(id.toInt(), imageUrl)
-
-         }, String::class.java, String::class.java)
-      } catch (e: Exception) {
-         Log.e("tweetSignalRException", e.toString())
-      }
-   }
-
-   private var listUserIdImageUrl = HashMap<Int, String>()
-   var mutableListUserIdImageUrl = MutableLiveData<HashMap<Int, String>>()
-   private fun followedControl(id: Int, imageUrl: String) {
-
-      val haveId = followedUserIdList?.find { it == id }
-      haveId.let {
-         try {
-            listUserIdImageUrl.put(id, imageUrl)
-            //  CoroutineScope(Dispatchers.IO).launch {
-            mutableListUserIdImageUrl.postValue(listUserIdImageUrl)
-
-            // }
-
-         } catch (e: Exception) {
-            Log.e("listUserIdImageUrlEx", e.toString())
-         }
-
-
-      }
-   }
 }
 

@@ -23,9 +23,14 @@ fun Context.userId(): Int {
    return shared.getInt("user_Id", 0)
 }
 
+
 fun Context.userPhotoUrl(): String {
    shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
    return shared.getString("user_photoUrl", "").toString()
+}
+fun Context.saveSharedItem(key:String,status:Boolean){
+   shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
+   shared.edit().putBoolean(key,status).apply()
 }
 
 fun Context.sharedPref(): SharedPreferences {
