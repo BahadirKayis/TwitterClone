@@ -1,14 +1,12 @@
 package com.bhdr.twitterclone.network
 
 import com.bhdr.twitterclone.models.Posts
-import com.bhdr.twitterclone.models.Tags
 import com.bhdr.twitterclone.models.UsernameAndEmailControl
 import com.bhdr.twitterclone.models.Users
-
-import retrofit2.Call
 import retrofit2.Response
-import retrofit2.http.*
-import java.util.*
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface TwitterInterface {
 
@@ -69,16 +67,21 @@ interface TwitterInterface {
    suspend fun getTweets(@Query("user_id") userId: Int): Response<List<Posts>>
 
    @POST("tweetLiked")
-   suspend fun postLiked(@Query("likeUserId")likeUserId:Int, @Query("Id") tweetId: Int, @Query("count") count: Int): Response<Int>
+   suspend fun postLiked(
+      @Query("likeUserId") likeUserId: Int,
+      @Query("Id") tweetId: Int,
+      @Query("count") count: Int
+   ): Response<Int>
 
    @GET("tags")
    suspend fun getPopularTags(): Response<List<String>>
 
    @GET("followCount")
-   suspend fun getFollowCount(@Query("user_id") UserId:Int): Response<Int>
+   suspend fun getFollowCount(@Query("user_id") UserId: Int): Response<Int>
 
    @GET("followedCount")
-   suspend fun getFollowedCount(@Query("user_id")UserId:Int): Response<Int>
+   suspend fun getFollowedCount(@Query("user_id") UserId: Int): Response<Int>
 
-
+   @GET("TweetNew")
+   suspend fun getTweetNew(@Query("postId") tweetId: Int): Response<Posts>
 }

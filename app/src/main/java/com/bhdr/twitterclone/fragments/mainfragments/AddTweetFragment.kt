@@ -25,7 +25,6 @@ import com.bhdr.twitterclone.helperclasses.*
 import com.bhdr.twitterclone.repos.TweetRepository
 import com.bhdr.twitterclone.viewmodels.mainviewmodel.TweetViewModel
 import com.google.android.material.snackbar.Snackbar
-import com.squareup.picasso.Picasso
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import java.io.IOException
 import java.util.*
@@ -49,9 +48,9 @@ class AddTweetFragment : Fragment(R.layout.fragment_add_tweet) {
       binding.apply {
          profilePicture.picasso(requireContext().userPhotoUrl())
 
-      addImage.setOnClickListener { selectImage() }
-        cancel.setOnClickListener { cancel() }
-      addTweetButton.setOnClickListener { addTweet(tweetEditText.text.toString()) }
+         addImage.setOnClickListener { selectImage() }
+         cancel.setOnClickListener { cancel() }
+         addTweetButton.setOnClickListener { addTweet(tweetEditText.text.toString()) }
       }
       registerLauncher()
       tweetViewModelObservable()

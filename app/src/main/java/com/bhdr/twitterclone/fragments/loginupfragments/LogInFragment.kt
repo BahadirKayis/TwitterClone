@@ -1,12 +1,13 @@
 package com.bhdr.twitterclone.fragments.loginupfragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentLogInBinding
 import com.bhdr.twitterclone.viewmodels.loginupviewmodel.SignInViewModel
+import com.muratozturk.click_shrink_effect.applyClickShrink
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 
 
@@ -27,6 +28,7 @@ class LogInFragment : Fragment(R.layout.fragment_log_in) {
             false -> null
          }
       }
+      binding.signUpButton.applyClickShrink()
       binding.signUpButton.setOnClickListener {
          findNavController().navigate(R.id.action_logInFragment_to_signUpFragment)
       }

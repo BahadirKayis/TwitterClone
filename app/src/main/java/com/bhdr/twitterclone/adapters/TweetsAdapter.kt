@@ -2,7 +2,6 @@ package com.bhdr.twitterclone.adapters
 
 import android.content.Context
 import android.graphics.Color
-import android.net.Uri
 import android.text.Spannable
 import android.text.style.ForegroundColorSpan
 import android.util.Log
@@ -16,16 +15,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bhdr.twitterclone.databinding.TweetCardBinding
 import com.bhdr.twitterclone.diffcallback.TweetsCallBack
 import com.bhdr.twitterclone.fragments.mainfragments.MainScreenFragmentDirections
-import com.bhdr.twitterclone.helperclasses.gone
 import com.bhdr.twitterclone.helperclasses.picasso
-import com.bhdr.twitterclone.helperclasses.visible
 import com.bhdr.twitterclone.models.Posts
 import com.bhdr.twitterclone.models.Users
 import com.like.LikeButton
 import com.like.OnLikeListener
 import com.squareup.picasso.Picasso
-import retrofit2.Converter
-import java.util.*
 
 
 class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :

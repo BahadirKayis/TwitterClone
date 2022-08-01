@@ -9,6 +9,10 @@ import com.bhdr.twitterclone.models.SignalRModel
 import com.bhdr.twitterclone.network.CallApi
 import com.microsoft.signalr.HubConnectionBuilder
 import com.microsoft.signalr.HubConnectionState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class MainRepository {
    val followCount: MutableLiveData<Int> = MutableLiveData()
@@ -19,6 +23,9 @@ class MainRepository {
    private var followedUserIdList: List<Int>? = null
    private var mutableNotFollowTweetOrLikeList: MutableList<SignalRModel>? = null
 
+   private val job = Job()
+   private val coroutineContext = Dispatchers.IO + job
+   private val caScope = CoroutineScope(coroutineContext)
    suspend fun followCount(userId: Int) {
       try {
          val response = CallApi.retrofitServiceMain.getFollowCount(userId)
@@ -26,7 +33,7 @@ class MainRepository {
          if (response.isSuccessful) {
             followCount.postValue(response.body())
          }
-         Log.e("TAG", response.errorBody().toString())
+
       } catch (e: Exception) {
          Log.e("Ex", e.toString())
 
@@ -39,7 +46,7 @@ class MainRepository {
       if (response.isSuccessful) {
          followedCount.postValue(response.body())
       }
-      Log.e("TAG", response.errorBody().toString())
+
    }
 
 
@@ -53,6 +60,7 @@ class MainRepository {
 
 
    fun tweetSignalR(context: Context) {
+
       try {
          val hubConnection =
             HubConnectionBuilder.create("http://192.168.3.136:9009/newTweetHub").build()
@@ -61,28 +69,52 @@ class MainRepository {
             hubConnection.start()
 
          }
-         //NewTweet follow & not follow
-         hubConnection.on(
-            "newTweet",
-            { id, imageUrl, userName, name, post ->
-               Log.e("id", id.toString())
-               Log.e("imageUrl", imageUrl.toString())
 
-               signalRControl(id.toInt(), imageUrl, userName, name, post)
-            },
-            String::class.java,
-            String::class.java,
-            String::class.java,
-            String::class.java,
-            Posts::class.java
-         )
+         //NewTweet follow & not follow
+         try {
+
+
+            hubConnection.on(
+               "newTweets",
+               { id, imageUrl, userName, name, post ->
+                  Log.e("id", id.toString())
+                  Log.e("imageUrl", imageUrl.toString())
+                  Log.e("imageUrl", name.toString())
+                  try {
+                     caScope.launch {
+                        signalRControl(
+                           id.toInt(),
+                           imageUrl,
+                           userName,
+                           name,
+                           post.toInt(),
+                           null
+                        )
+                     }
+
+                  } catch (e: Throwable) {
+
+                     Log.e("imageUrl", e.toString())
+                  }
+               },
+               String::class.java,
+               String::class.java,
+               String::class.java,
+               String::class.java,
+               String::class.java
+            )
+
+         } catch (e: Throwable) {
+
+            Log.e("newTweets", e.toString())
+         }
 
 //Like imagUrl.PhotoUrl,imagUrl.UserName,imagUrl.Name,post
          hubConnection.on(
             context.userId().toString(), { imageUrl, userName, name, post ->
-
-               signalRControl(0, imageUrl, userName, name, post)
-
+               caScope.launch {
+                  signalRControl(0, imageUrl, userName, name, 0, post)
+               }
             }, String::class.java,
             String::class.java,
             String::class.java,
@@ -94,53 +126,65 @@ class MainRepository {
       }
    }
 
+   private suspend fun tweetNew(tweetId: Int): Posts {
+      val response = CallApi.retrofitServiceMain.getTweetNew(tweetId)
+      return response.body() as Posts
+   }
 
-   private fun signalRControl(
+   suspend fun signalRControl(
       id: Int,
       imageUrl: String,
       userName: String,
       name: String,
-      post: Posts
+      postId: Int,
+      post: Posts?
    ) {
-
       try {
+
          if (id == 0) {
             //TODO SignalrModel id'si 0 ise tweeti beğenilmiş demek farklı
             //Like tweeti beğinilmiş modele atılacak
+
             mutableNotFollowTweetOrLikeList?.add(
                SignalRModel(
                   id,
                   imageUrl,
                   userName,
                   name,
-                  post
+                  post!!
                )
             )
-
-
             mutableNotFollowTweetOrLike.postValue(mutableNotFollowTweetOrLikeList)
          } else {
+            Log.e("TAG", "haveID")
             //NewTweet follow & not follow
             val haveId = followedUserIdList?.find { it == id }
             if (haveId != null) {
-               //boş değilse bunu takip ediyor mainscreende üstte resmi açılacak
 
-               listUserIdImageUrl.put(id, imageUrl)
+               caScope.launch {
 
-               mutableFollowNewTweet.postValue(listUserIdImageUrl)
+                  CoroutineScope(Dispatchers.Main).launch {
+                     listUserIdImageUrl[id] = imageUrl
+                     Log.e("list", listUserIdImageUrl.values.toTypedArray()[0])
+
+                     mutableFollowNewTweet.value = listUserIdImageUrl
+
+                     Log.e("mutable", mutableFollowNewTweet.value.toString())
+                  }
+               }
             } else {
                //Takipe etmiyor bildirim ekranında gösterilecek modelde olacak
+               val getPost: Posts = tweetNew(postId)
                mutableNotFollowTweetOrLikeList?.add(
                   SignalRModel(
                      id,
                      imageUrl,
                      userName,
                      name,
-                     post
+                     getPost
                   )
                )
                mutableNotFollowTweetOrLike.postValue(mutableNotFollowTweetOrLikeList)
-
             }
          }
       } catch (e: Exception) {

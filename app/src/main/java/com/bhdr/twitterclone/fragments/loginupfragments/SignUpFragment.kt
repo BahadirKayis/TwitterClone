@@ -10,17 +10,16 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Patterns
-import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentSignUpBinding
 import com.bhdr.twitterclone.helperclasses.gone
-
 import com.bhdr.twitterclone.helperclasses.snackBar
 import com.bhdr.twitterclone.helperclasses.visible
 import com.bhdr.twitterclone.repos.LoginRepository
@@ -215,38 +214,38 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
       viewModelSignUp.apply {
 
 
-   userSavedStatus.observe(viewLifecycleOwner) {
-         when (it!!) {
-            LoginRepository.LogInUpStatus.LOADING -> binding.lottiAnim.visible()
-            LoginRepository.LogInUpStatus.ERROR -> {
-               binding.lottiAnim.gone()
-               snackBar(requireView(), "Hata oluştu lütfen daha sonra tekrar deneyiniz", 2000)
+         userSavedStatus.observe(viewLifecycleOwner) {
+            when (it!!) {
+               LoginRepository.LogInUpStatus.LOADING -> binding.lottiAnim.visible()
+               LoginRepository.LogInUpStatus.ERROR -> {
+                  binding.lottiAnim.gone()
+                  snackBar(requireView(), "Hata oluştu lütfen daha sonra tekrar deneyiniz", 2000)
+               }
+               LoginRepository.LogInUpStatus.DONE -> {
+                  binding.lottiAnim.gone()
+               }
             }
-            LoginRepository.LogInUpStatus.DONE -> {
-               binding.lottiAnim.gone()
+
+         }
+         userSaved.observe(viewLifecycleOwner) {
+            when (it) {
+
+               true -> {
+                  snackBar(requireView(), "Hesap Oluşturuldu", 2000)
+                  binding.lottiAnim.gone()
+               }
+
+
+               false -> {
+                  binding.lottiAnim.gone()
+                  snackBar(
+                     requireView(),
+                     "Girilen bilgiler mevcut",
+                     2000
+                  )
+               }
             }
          }
-
-      }
-      userSaved.observe(viewLifecycleOwner) {
-         when (it) {
-
-            true -> {
-               snackBar(requireView(), "Hesap Oluşturuldu", 2000)
-               binding.lottiAnim.gone()
-            }
-
-
-            false -> {
-               binding.lottiAnim.gone()
-               snackBar(
-                  requireView(),
-                  "Girilen bilgiler mevcut",
-                  2000
-               )
-            }
-         }
-      }
       }
    }
 }

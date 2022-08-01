@@ -1,15 +1,14 @@
 package com.bhdr.twitterclone.fragments.loginupfragments
 
+
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentSigInForgetPasswordBinding
 import com.bhdr.twitterclone.helperclasses.gone
-
-
 import com.bhdr.twitterclone.helperclasses.snackBar
 import com.bhdr.twitterclone.helperclasses.visible
 import com.bhdr.twitterclone.repos.LoginRepository.LogInUpStatus.*

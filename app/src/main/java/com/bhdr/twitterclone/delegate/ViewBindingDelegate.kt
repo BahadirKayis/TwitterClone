@@ -14,31 +14,31 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 inline fun <T : ViewBinding> AppCompatActivity.viewBinding(crossinline factory: (LayoutInflater) -> T) =
-    lazy(LazyThreadSafetyMode.NONE) {
-        factory(layoutInflater)
-    }
+   lazy(LazyThreadSafetyMode.NONE) {
+      factory(layoutInflater)
+   }
 
 fun <T : ViewBinding> Fragment.viewBinding(factory: (View) -> T): ReadOnlyProperty<Fragment, T> =
-    object : ReadOnlyProperty<Fragment, T>, DefaultLifecycleObserver {
-        private var binding: T? = null
+   object : ReadOnlyProperty<Fragment, T>, DefaultLifecycleObserver {
+      private var binding: T? = null
 
-        override fun getValue(thisRef: Fragment, property: KProperty<*>): T =
-            binding ?: factory(requireView()).also {
-                if (viewLifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.INITIALIZED)) {
-                    viewLifecycleOwner.lifecycle.addObserver(this)
-                    binding = it
-                }
+      override fun getValue(thisRef: Fragment, property: KProperty<*>): T =
+         binding ?: factory(requireView()).also {
+            if (viewLifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.INITIALIZED)) {
+               viewLifecycleOwner.lifecycle.addObserver(this)
+               binding = it
             }
+         }
 
-        override fun onDestroy(owner: LifecycleOwner) {
-            binding = null
-        }
-    }
+      override fun onDestroy(owner: LifecycleOwner) {
+         binding = null
+      }
+   }
 
 inline fun <T : ViewBinding> DialogFragment.viewBinding(crossinline factory: (LayoutInflater) -> T) =
-    lazy(LazyThreadSafetyMode.NONE) {
-        factory(layoutInflater)
-    }
+   lazy(LazyThreadSafetyMode.NONE) {
+      factory(layoutInflater)
+   }
 
 inline fun <T : ViewBinding> ViewGroup.viewBinding(factory: (LayoutInflater, ViewGroup, Boolean) -> T) =
-    factory(LayoutInflater.from(context), this, false)
+   factory(LayoutInflater.from(context), this, false)

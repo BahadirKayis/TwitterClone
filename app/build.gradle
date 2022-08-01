@@ -115,4 +115,10 @@ dependencies {
     implementation 'co.zsmb:materialdrawer-kt:3.0.0'
     implementation 'com.google.android.material:material:1.6.1'
 
+    //Room
+    implementation("androidx.room:room-runtime:2.4.3")
+    kapt("androidx.room:room-compiler:2.4.3")
+
+    implementation 'com.github.muratozturk5:ClickShrinkEffectLibrary:1.0.0'
+
 }

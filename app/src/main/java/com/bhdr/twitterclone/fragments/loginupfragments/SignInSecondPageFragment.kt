@@ -4,19 +4,14 @@ package com.bhdr.twitterclone.fragments.loginupfragments
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentSigInSecondPageBinding
 import com.bhdr.twitterclone.models.Users
-import com.bhdr.twitterclone.viewmodels.loginupviewmodel.SignUpViewModel
-
 import com.google.android.material.snackbar.Snackbar
-import com.google.gson.Gson
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 
 

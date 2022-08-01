@@ -1,16 +1,14 @@
 package com.bhdr.twitterclone.repos
 
-import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.bhdr.twitterclone.models.UsernameAndEmailControl
 import com.bhdr.twitterclone.models.Users
 import com.bhdr.twitterclone.network.CallApi
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
 
 
 class LoginRepository() {
@@ -159,8 +157,7 @@ class LoginRepository() {
       val response = CallApi.retrofitServiceLogInUp.getLoginUserNameAndPassword(userName, password)
       Log.e("TAG", "$userName,$password ")
       if (response.isSuccessful) {
-         //  delay(3000)
-         //  Log.e("TAGOBSER", response.body().toString())
+
          loginAuto.value = response.body()
       }
    }

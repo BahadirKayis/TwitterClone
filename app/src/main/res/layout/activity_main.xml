@@ -6,9 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".MainActivity"
-
-    >
+    tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -29,18 +27,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:itemIconTint="#03A9F4"
-
             app:itemTextColor="#03A9F4"
             app:labelVisibilityMode="unlabeled"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/bottom_menu"
-
-            />
+            app:menu="@menu/bottom_menu" />
 
         <TextView
-            android:id="@+id/chat_badge"
+            android:id="@+id/notificationCount"
             android:layout_width="17dp"
             android:layout_height="17dp"
             android:layout_marginTop="8dp"
@@ -48,14 +43,12 @@
             android:background="@drawable/rounded_corner"
             android:gravity="center"
             android:text="0"
-
             android:textColor="@android:color/white"
             android:textSize="10sp"
-            android:translationZ="9dp"
-
+            android:translationZ="8dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragmentContainerView" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -67,9 +60,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/logout_menu">
-
-    </com.google.android.material.navigation.NavigationView>
+        app:menu="@menu/logout_menu"/>
 
 
 </androidx.drawerlayout.widget.DrawerLayout>

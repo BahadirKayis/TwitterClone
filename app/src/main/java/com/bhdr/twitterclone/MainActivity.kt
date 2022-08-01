@@ -5,12 +5,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -18,30 +16,27 @@ import androidx.navigation.ui.NavigationUI
 import com.bhdr.twitterclone.databinding.ActivityMainBinding
 import com.bhdr.twitterclone.fragments.mainfragments.MainScreenFragment
 import com.bhdr.twitterclone.helperclasses.*
-import com.bhdr.twitterclone.viewmodels.mainviewmodel.MainViewModel
 import com.canerture.e_commerce_app.common.delegate.viewBinding
-import com.squareup.picasso.Picasso
-import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-class MainActivity : AppCompatActivity(),MainScreenFragment.MainScreenInterFace {
+class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace {
    private val binding by viewBinding(ActivityMainBinding::inflate)
 
    private lateinit var navController: NavController
    lateinit var toggle: ActionBarDrawerToggle
-   private val viewModel by lazy { MainViewModel() }
+
+   //   private val viewModel by lazy { MainViewModel() }
    var itemsLayout: View? = null
-   //private val mDrawerToggle: ActionBarDrawerToggle? = null
-var notificationCount: Int = 0
+
+   var notificationCount: Int = 0
 
    override fun onCreate(savedInstanceState: Bundle?) {
 
       super.onCreate(savedInstanceState)
 
       setContentView(binding.root)
-
 
       val navHostFragment =
          supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
@@ -93,7 +88,7 @@ var notificationCount: Int = 0
          }
          true
       }
-      observable()
+//      observable()
    }
 
    private fun logOut() {
@@ -101,53 +96,47 @@ var notificationCount: Int = 0
    }
 
    private fun userRequest() {
-      viewModel.followCount(this.userId())
-      viewModel.followedCount(this.userId())
-      viewModel.getFollowedUserIdList(this.userId())
+//      viewModel.followCount(this.userId())
+//      viewModel.followedCount(this.userId())
+//      viewModel.getFollowedUserIdList(this.userId())
       shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
 
-   //   if (shared.getBoolean("startSignalR", false)) {
-     //    this.saveSharedItem("startSignalR", true)
-         viewModel.startSignalR(this@MainActivity)
-
-     // }
-
 
    }
 
-   private fun observable() {
-      viewModel.apply {
-         followCount.observe(this@MainActivity, Observer {
-            itemsLayout!!.findViewById<TextView>(R.id.userFollow).text = it.toString()
-
-            itemsLayout!!.findViewById<TextView>(R.id.userNameSurname).text =
-               this@MainActivity.sharedPref().getString("user_name", "").toString()
-
-            itemsLayout!!.findViewById<TextView>(R.id.userName).text = "@" +
-                    this@MainActivity.sharedPref().getString("user_userName", "").toString()
-
-            itemsLayout!!.findViewById<CircleImageView>(R.id.circleImageView)
-               .picasso(this@MainActivity.userPhotoUrl())
-         })
-         followedCount.observe(this@MainActivity, Observer {
-            itemsLayout!!.findViewById<TextView>(R.id.userFollowed).text = it.toString()
-         })
-
-         mutableNotFollowTweetOrLike.observe(this@MainActivity) {
-            try {
-
-               notificationCount++
-               Log.e("Exception", notificationCount.toString())
-            } catch (e: Exception) {
-               Log.e("Exception", e.toString())
-               e.printStackTrace()
-
-            }
-         }
-      }
-
-   }
-
+   //   private fun observable() {
+//      viewModel.apply {
+//         followCount.observe(this@MainActivity, Observer {
+//            itemsLayout!!.findViewById<TextView>(R.id.userFollow).text = it.toString()
+//
+//            itemsLayout!!.findViewById<TextView>(R.id.userNameSurname).text =
+//               this@MainActivity.sharedPref().getString("user_name", "").toString()
+//
+//            itemsLayout!!.findViewById<TextView>(R.id.userName).text = "@" +
+//                    this@MainActivity.sharedPref().getString("user_userName", "").toString()
+//
+//            itemsLayout!!.findViewById<CircleImageView>(R.id.circleImageView)
+//               .picasso(this@MainActivity.userPhotoUrl())
+//         })
+//         followedCount.observe(this@MainActivity, Observer {
+//            itemsLayout!!.findViewById<TextView>(R.id.userFollowed).text = it.toString()
+//         })
+//
+//         mutableNotFollowTweetOrLike.observe(this@MainActivity) {
+//            try {
+//
+//               notificationCount++
+//               binding.notificationCount.text = notificationCount.toString()
+//               binding.notificationCount.visible()
+//
+//            } catch (e: Exception) {
+//               Log.e("Exception", e.toString())
+//               e.printStackTrace()
+//
+//            }
+//         }
+//      }
+//   }
    override fun onOptionsItemSelected(item: MenuItem): Boolean {
       if (toggle.onOptionsItemSelected(item)) {
          return true
@@ -160,16 +149,15 @@ var notificationCount: Int = 0
       //  binding.drawerLayout.openDrawer(R.id.drawerLayout)
       // toggle.onDrawerClosed(binding.drawerLayout)
       binding.drawerLayout.openDrawer(GravityCompat.START)
-
    }
-
-
-
 
    override fun onDestroy() {
       super.onDestroy()
-      this.saveSharedItem("startSignalR", false)
+
    }
 
+   override fun onStart() {
+      super.onStart()
 
+   }
 }

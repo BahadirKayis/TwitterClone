@@ -6,9 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bhdr.twitterclone.models.Posts
-import com.bhdr.twitterclone.models.SignalRModel
 import com.bhdr.twitterclone.repos.TweetRepository
-
 import kotlinx.coroutines.launch
 
 class TweetViewModel : ViewModel() {
@@ -38,7 +36,6 @@ class TweetViewModel : ViewModel() {
       }
 
    }
-
 
 
 }

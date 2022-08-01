@@ -6,13 +6,10 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.bhdr.twitterclone.helperclasses.userId
 import com.bhdr.twitterclone.models.Posts
-import com.bhdr.twitterclone.models.SignalRModel
 import com.bhdr.twitterclone.network.CallApi
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.microsoft.signalr.HubConnectionBuilder
-import com.microsoft.signalr.HubConnectionState
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
 
 
 class TweetRepository {
@@ -29,7 +26,6 @@ class TweetRepository {
    val liked = MutableLiveData<Int>()
 
    val tweetAdded = MutableLiveData<Boolean>()
-
 
 
    suspend fun getPosts(id: Int) {

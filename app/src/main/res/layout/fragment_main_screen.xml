@@ -45,15 +45,12 @@
                 android:layout_gravity="start"
                 app:cardCornerRadius="250dp"
                 app:cardElevation="0dp">
-
                 <ImageView
                     android:id="@+id/profilePicture"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop" />
             </androidx.cardview.widget.CardView>
-
-
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -166,7 +163,7 @@
             android:backgroundTint="#03A9F4"
             android:clickable="true"
             android:contentDescription="Add Tweet"
-
+            app:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_baseline_add_24" />

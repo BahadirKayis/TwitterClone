@@ -1,25 +1,17 @@
 package com.bhdr.twitterclone.helperclasses
 
-import android.app.Activity
-import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
-import android.widget.ProgressBar
-import androidx.fragment.app.Fragment
-import com.bhdr.twitterclone.R
-import com.bhdr.twitterclone.models.Users
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
-import de.hdodenhof.circleimageview.CircleImageView
 
 lateinit var shared: SharedPreferences
 
 fun Context.userId(): Int {
-   shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
+   shared = getSharedPreferences("com.bhdr.twitterclone", MODE_PRIVATE)
    return shared.getInt("user_Id", 0)
 }
 
@@ -28,9 +20,10 @@ fun Context.userPhotoUrl(): String {
    shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
    return shared.getString("user_photoUrl", "").toString()
 }
-fun Context.saveSharedItem(key:String,status:Boolean){
+
+fun Context.saveSharedItem(key: String, status: Boolean) {
    shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
-   shared.edit().putBoolean(key,status).apply()
+   shared.edit().putBoolean(key, status).apply()
 }
 
 fun Context.sharedPref(): SharedPreferences {

@@ -1,8 +1,8 @@
 package com.bhdr.twitterclone.fragments.loginupfragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentSignInForgetPasswordSecondBinding
@@ -15,51 +15,51 @@ import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 
 
 class SignInForgetPasswordSecondFragment :
-    Fragment(R.layout.fragment_sign_in_forget_password_second) {
-    private val binding by viewBinding(FragmentSignInForgetPasswordSecondBinding::bind)
-    private val args: SignInForgetPasswordSecondFragmentArgs by navArgs()
-    private val forgetViewModel by lazy { ForgetPasswordViewModel() }
+   Fragment(R.layout.fragment_sign_in_forget_password_second) {
+   private val binding by viewBinding(FragmentSignInForgetPasswordSecondBinding::bind)
+   private val args: SignInForgetPasswordSecondFragmentArgs by navArgs()
+   private val forgetViewModel by lazy { ForgetPasswordViewModel() }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+      super.onViewCreated(view, savedInstanceState)
 
-        binding.passwordUpdateButton.setOnClickListener {
-            passwordUpdate()
-        }
+      binding.passwordUpdateButton.setOnClickListener {
+         passwordUpdate()
+      }
 
-    }
+   }
 
-    private fun passwordUpdate() {
-        if (binding.passwordInput.text.toString() == binding.passwordInput2.text.toString()) {
-            passwordObservable()
-            forgetViewModel.userChangePassword(args.userId, binding.passwordInput.text.toString())
+   private fun passwordUpdate() {
+      if (binding.passwordInput.text.toString() == binding.passwordInput2.text.toString()) {
+         passwordObservable()
+         forgetViewModel.userChangePassword(args.userId, binding.passwordInput.text.toString())
 
-        } else {
-            snackBar(requireView(), "Şifreler uyuşmuyor", 1000)
-        }
-    }
+      } else {
+         snackBar(requireView(), "Şifreler uyuşmuyor", 1000)
+      }
+   }
 
-    private fun passwordObservable() {
-        forgetViewModel.userChangePassword.observe(viewLifecycleOwner) {
-            when (it) {
-                true -> snackBar(requireView(), "Şifre Değiştirildi", 1500)
-                false -> snackBar(
-                    requireView(),
-                    "Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz",
-                    1500
-                )
+   private fun passwordObservable() {
+      forgetViewModel.userChangePassword.observe(viewLifecycleOwner) {
+         when (it) {
+            true -> snackBar(requireView(), "Şifre Değiştirildi", 1500)
+            false -> snackBar(
+               requireView(),
+               "Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz",
+               1500
+            )
+         }
+      }
+      forgetViewModel.executeStatus.observe(viewLifecycleOwner) {
+         when (it!!) {
+            LoginRepository.LogInUpStatus.LOADING -> binding.lottiAnim.visible()
+
+            LoginRepository.LogInUpStatus.ERROR -> {
+               binding.lottiAnim.gone()
+               snackBar(requireView(), "Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz", 1500)
             }
-        }
-        forgetViewModel.executeStatus.observe(viewLifecycleOwner) {
-            when (it!!) {
-                LoginRepository.LogInUpStatus.LOADING -> binding.lottiAnim.visible()
-
-                LoginRepository.LogInUpStatus.ERROR -> {
-                    binding.lottiAnim.gone()
-                    snackBar(requireView(), "Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz", 1500)
-                }
-                LoginRepository.LogInUpStatus.DONE -> binding.lottiAnim.gone()
-            }
-        }
-    }
+            LoginRepository.LogInUpStatus.DONE -> binding.lottiAnim.gone()
+         }
+      }
+   }
 }
