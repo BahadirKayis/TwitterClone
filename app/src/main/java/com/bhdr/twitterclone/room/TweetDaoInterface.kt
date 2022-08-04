@@ -6,7 +6,7 @@ import androidx.room.*
 @Dao
 interface TweetDaoInterface {
    @Insert(onConflict = OnConflictStrategy.REPLACE)
-   suspend fun addTweet(tweet: TweetsRoomModel)
+   suspend fun addTweet(tweet: List<TweetsRoomModel>)
 
    @Update
    suspend  fun updateTweet(tweet: TweetsRoomModel)

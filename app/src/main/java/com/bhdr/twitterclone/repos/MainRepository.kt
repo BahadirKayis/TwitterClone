@@ -1,9 +1,7 @@
 package com.bhdr.twitterclone.repos
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.bhdr.twitterclone.helperclasses.userId
 import com.bhdr.twitterclone.models.Posts
 import com.bhdr.twitterclone.models.SignalRModel
 import com.bhdr.twitterclone.network.CallApi
@@ -59,7 +57,7 @@ class MainRepository {
    }
 
 
-   fun tweetSignalR(context: Context) {
+   fun tweetSignalR(userId: Int) {
 
       try {
          val hubConnection =
@@ -111,7 +109,7 @@ class MainRepository {
 
 //Like imagUrl.PhotoUrl,imagUrl.UserName,imagUrl.Name,post
          hubConnection.on(
-            context.userId().toString(), { imageUrl, userName, name, post ->
+            userId.toString(), { imageUrl, userName, name, post ->
                caScope.launch {
                   signalRControl(0, imageUrl, userName, name, 0, post)
                }
@@ -131,7 +129,7 @@ class MainRepository {
       return response.body() as Posts
    }
 
-   suspend fun signalRControl(
+   private suspend fun signalRControl(
       id: Int,
       imageUrl: String,
       userName: String,
@@ -154,7 +152,11 @@ class MainRepository {
                   post!!
                )
             )
-            mutableNotFollowTweetOrLike.postValue(mutableNotFollowTweetOrLikeList)
+            caScope.launch {
+               CoroutineScope(Dispatchers.Main).launch {
+                  mutableNotFollowTweetOrLike.value = mutableNotFollowTweetOrLikeList!!
+               }
+            }
          } else {
             Log.e("TAG", "haveID")
             //NewTweet follow & not follow
@@ -162,8 +164,8 @@ class MainRepository {
             if (haveId != null) {
 
                caScope.launch {
-
                   CoroutineScope(Dispatchers.Main).launch {
+
                      listUserIdImageUrl[id] = imageUrl
                      Log.e("list", listUserIdImageUrl.values.toTypedArray()[0])
 
@@ -184,7 +186,13 @@ class MainRepository {
                      getPost
                   )
                )
-               mutableNotFollowTweetOrLike.postValue(mutableNotFollowTweetOrLikeList)
+               caScope.launch {
+                  CoroutineScope(Dispatchers.Main).launch {
+                     mutableNotFollowTweetOrLike.value = mutableNotFollowTweetOrLikeList!!
+                  }
+               }
+
+
             }
          }
       } catch (e: Exception) {
@@ -192,4 +200,5 @@ class MainRepository {
       }
 
    }
+
 }

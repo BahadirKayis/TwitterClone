@@ -34,8 +34,8 @@ class MainViewModel : ViewModel() {
       }
    }
 
-   fun startSignalR(context: Context) {
-      mainRepository.tweetSignalR(context)
+   fun startSignalR(userId: Int) {
+      mainRepository.tweetSignalR(userId)
    }
 
    fun getFollowedUserIdList(id: Int) {

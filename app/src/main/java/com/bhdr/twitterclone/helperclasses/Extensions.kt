@@ -3,8 +3,12 @@ package com.bhdr.twitterclone.helperclasses
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.view.View
 import android.widget.ImageView
+import androidx.annotation.RequiresApi
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 
@@ -45,5 +49,13 @@ fun snackBar(view: View, text: String, duration: Int) {
 
 fun ImageView.picasso(url: String) {
    Picasso.get().load(url).into(this)
+}
+
+@RequiresApi(Build.VERSION_CODES.M)
+fun Context.checkNetworkConnection(): Boolean {
+   val cm = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+   val capabilities = cm.getNetworkCapabilities(cm.activeNetwork)
+   return (capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
+
 }
 

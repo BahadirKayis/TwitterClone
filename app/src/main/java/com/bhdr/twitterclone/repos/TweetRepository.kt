@@ -3,15 +3,14 @@ package com.bhdr.twitterclone.repos
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.bhdr.twitterclone.helperclasses.userId
 import com.bhdr.twitterclone.models.Posts
 import com.bhdr.twitterclone.network.CallApi
-import com.bhdr.twitterclone.room.TweetDaoInterface
 import com.bhdr.twitterclone.room.TweetsRoomModel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import io.ktor.util.reflect.*
 import kotlinx.coroutines.runBlocking
 
 
@@ -29,8 +28,7 @@ class TweetRepository {
    val liked = MutableLiveData<Int>()
 
    val tweetAdded = MutableLiveData<Boolean>()
-
-
+   private var listUserIdImageUrl = HashMap<Int, String>()
 
 //val allTweet=MutableLiveData<List<Posts>>()
 
@@ -41,13 +39,13 @@ class TweetRepository {
          if (request.isSuccessful) {
             mainStatus.value = MainStatus.DONE
             tweets.value = request.body()!!
-            Log.e("TAG", request.body().toString())
+            Log.e("TweetRepoGetPosts", request.body().toString())
          } else if (!request.isSuccessful) {
             mainStatus.value = MainStatus.ERROR
          }
       } catch (e: Exception) {
          mainStatus.value = MainStatus.ERROR
-         Log.e("ex", e.toString())
+         Log.e("TweetRepoGetPostsEX", e.toString())
          if (e.message == "timeout") {
             getPosts(id)
          }
@@ -90,7 +88,7 @@ class TweetRepository {
                         mainStatus.value = MainStatus.ERROR
                         tweetAdded.value = false
                      }
-                     Log.e("photo", addTweetResult.errorBody().toString())
+                     Log.e("TweetRepositoryAddTweet", addTweetResult.errorBody().toString())
                   }
 
                }
@@ -104,22 +102,42 @@ class TweetRepository {
             } else if (!addTweetResult.isSuccessful) {
                mainStatus.value = MainStatus.ERROR
                tweetAdded.value = false
-               Log.e("TAG", addTweetResult.toString())
+
             }
-            Log.e("TAG", addTweetResult.toString())
-            Log.e("TAG", addTweetResult.message().toString())
-            Log.e("TAG", addTweetResult.headers().toString())
+
          }
       } catch (e: Exception) {
          mainStatus.value = MainStatus.ERROR
          tweetAdded.value = false
-         Log.e("TAG", e.toString())
+         Log.e("TweetRepositoryAdTwEx", e.toString())
       }
 
    }
 
    //suspend fun tweetsInsert(tweets:List<TweetsRoomModel>)=localTweets.addTweet( tweets)
+   suspend fun isNewTweet(roomTweet: List<TweetsRoomModel>, cloudTweet: List<Posts>) {
+      if (roomTweet.isNotEmpty() && cloudTweet.isNotEmpty()) {
+         if (roomTweet.size != cloudTweet.size) {
+            val Notnus=cloudTweet.intersect(roomTweet.toSet())
+            val common = findCommon(roomTweet, cloudTweet)
+            Log.e("Notnus", Notnus.toString() )
+            Log.e("common", Notnus.toString() )
+//            cloudTweet.forEach { itCloud ->
+//               roomTweet.find { itRoom ->
+//                  itCloud.id==itRoom.id -> RoomModel
+//
+//
+//               }
+//            }
+         }
+      }
+   }
 
+ private  fun <T> findCommon(first: List<T>, second: List<T>): Set<T> {
+      val common = first.toMutableSet();
+      common.retainAll(second.toSet())
+      return common
+   }
 
 }
 

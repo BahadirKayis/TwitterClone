@@ -23,7 +23,7 @@ import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentAddTweetBinding
 import com.bhdr.twitterclone.helperclasses.*
 import com.bhdr.twitterclone.repos.TweetRepository
-import com.bhdr.twitterclone.viewmodels.mainviewmodel.TweetViewModel
+import com.bhdr.twitterclone.viewmodels.mainviewmodel.AddTweetViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import java.io.IOException
@@ -32,7 +32,7 @@ import java.util.*
 
 class AddTweetFragment : Fragment(R.layout.fragment_add_tweet) {
    private val binding by viewBinding(FragmentAddTweetBinding::bind)
-   private val tweetViewModel by lazy { TweetViewModel() }
+   private val tweetViewModel by lazy { AddTweetViewModel() }
 
    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
    private lateinit var permissionLauncher: ActivityResultLauncher<String>
