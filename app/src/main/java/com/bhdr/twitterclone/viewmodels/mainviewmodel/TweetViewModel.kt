@@ -21,15 +21,12 @@ class TweetViewModel : ViewModel() {
       }
 
    }
-
-
    fun postLiked(id: Int, count: Int, context: Context) {
       viewModelScope.launch {
          mainrepo.postLiked(id, count, context)
 
       }
    }
-
    fun addTweet(id: Int, tweetText: String, tweetImageName: String, tweetImage: Uri?) {
       viewModelScope.launch {
          mainrepo.addTweet(id, tweetText, tweetImageName, tweetImage)

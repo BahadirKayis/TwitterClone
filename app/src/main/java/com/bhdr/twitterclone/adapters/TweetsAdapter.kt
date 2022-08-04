@@ -96,7 +96,6 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
       fun userModel(model: Users) {
          binding.apply {
 
-
             try {
                profilePicture.picasso(model.photoUrl.toString())
 

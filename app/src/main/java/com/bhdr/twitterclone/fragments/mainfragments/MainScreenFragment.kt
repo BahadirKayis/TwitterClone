@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,8 +14,12 @@ import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.adapters.TweetsAdapter
 import com.bhdr.twitterclone.databinding.FragmentMainScreenBinding
 import com.bhdr.twitterclone.helperclasses.*
+import com.bhdr.twitterclone.models.Posts
 import com.bhdr.twitterclone.models.SignalRModel
+import com.bhdr.twitterclone.models.Users
 import com.bhdr.twitterclone.repos.TweetRepository
+import com.bhdr.twitterclone.room.RoomViewModel
+import com.bhdr.twitterclone.room.TweetsRoomModel
 import com.bhdr.twitterclone.viewmodels.mainviewmodel.MainViewModel
 import com.bhdr.twitterclone.viewmodels.mainviewmodel.TweetViewModel
 import com.squareup.picasso.Picasso
@@ -33,16 +38,70 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
    var userProfileClickListener: MainScreenInterFace? = null
    private var mutableFollowNewTweetHashMap: HashMap<Int, String>? = null
 
-   //observe çalışmaya başladı ama sayfa değişince içi boş geliyor ona bakılcak
+   var tweetsRoom: MutableList<Posts>? = null
+
+   //Room Repoya taşınacak
+   private lateinit var allRoomTweets: List<TweetsRoomModel>
+   lateinit var viewModelRoom: RoomViewModel
+
    var userId: Int? = null
    override fun onAttach(context: Context) {
       super.onAttach(context)
 
       if (context is MainScreenInterFace) {
-         userProfileClickListener = context as MainScreenInterFace
+         userProfileClickListener = context
       } else {
          throw RuntimeException(context.toString())
       }
+   }
+
+
+   private fun room() {
+
+      viewModelRoom = ViewModelProvider(requireParentFragment())[RoomViewModel::class.java]
+
+      viewModelRoom.allRoomTweets.observe(viewLifecycleOwner) {
+
+         Log.e("Room", it.toString())
+         it.forEach { itFor ->
+            var post: Posts? = null
+            var users: Users? = null
+            itFor?.user.apply {
+               users = Users(
+                  id = id,
+                  photoUrl = this!!.photoUrl,
+                  userName = userName,
+                  name = name,
+                  date = null,
+                  email = null,
+                  followers = null,
+                  messages = null,
+                  phone = null,
+                  userPassword = null,
+                  posts = null
+               )
+            }
+            itFor?.apply {
+               post = Posts(
+                  date = date,
+                  id = id,
+                  postContent = postContent,
+                  postImageUrl = postImageUrl,
+                  postLike = postLike,
+                  user = users,
+                  userId = userId,
+                  followers = null,
+                  tags = null
+               )
+            }
+            tweetsRoom?.toMutableList()?.add(post!!)
+            tweetAdapter.submitList(tweetsRoom)
+            Log.e("Room", tweetsRoom.toString())
+         }
+
+
+      }
+
    }
 
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -57,6 +116,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
             .navigate(R.id.action_mainScreenFragment_to_addTweetFragment)
       }
       viewModel.getPosts(userId!!)
+      room()
       viewModelObservable()
       binding.profilePicture.picasso(requireContext().userPhotoUrl())
 
@@ -81,7 +141,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
       }
 
       mutableFollowNewTweetHashMap = viewModelMain.mutableFollowNewTweet.value
-      Log.e("mutableFollowNewTweetHashMap", viewModelMain.mutableFollowNewTweet.value.toString())
+
 
       mutableFollowNewTweetHashMap?.apply {
          if (this.size == 1) {
@@ -100,6 +160,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
    }
 
    private fun viewModelObservable() {
+
       viewModel.apply {
          mainStatus.observe(viewLifecycleOwner) {
             when (it!!) {
@@ -114,9 +175,37 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
                }
             }
          }
-
+//Bazı değerler olmadığı için  Tweet as TweetsRoomModel diyemiyordum ClassCastException hatası veriyordu
+         //Retrofit için kullandığım modeli kullansam çok fazla tablo ve gereksiz değer çekmem gerekiyordu bende böyle bir çözüm buldum
          tweets.observe(viewLifecycleOwner) {
-            tweetAdapter.submitList(it)
+            //  tweetAdapter.submitList(it)
+//            try {
+//               it.forEach { it ->
+//                  var userRoomModel: UsersRoomModel? = null
+//                  it.user?.apply {
+//                     userRoomModel = UsersRoomModel(id, photoUrl, userName, name)
+//                  }
+//                  it.apply {
+//                     viewModelRoom.tweetInsert(
+//                        TweetsRoomModel(
+//                           date,
+//                           id,
+//                           postContent,
+//                           postImageUrl,
+//                           postLike,
+//                           userRoomModel,
+//                           userId
+//                        )
+//                     )
+//                  }
+//
+//               }
+//
+//            } catch (e: Exception) {
+//
+//               Log.e("ex", e.toString())
+//            }
+
          }
 
 

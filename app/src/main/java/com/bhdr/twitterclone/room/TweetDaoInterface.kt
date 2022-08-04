@@ -1,17 +1,20 @@
 package com.bhdr.twitterclone.room
 
-//@Dao
-//interface TweetDaoInterface {
-//   @Insert
-//   fun addTweet(tweet: TweetsRoomModel)
-//
-//   @Update
-//   fun updateTweet(tweet: TweetsRoomModel)
-//
-//   @Delete
-//   fun deleteTweet(tweet: TweetsRoomModel)
-//
-//   @Query("SELECT * FROM tweets")
-//   fun allTweet(): List<TweetsRoomModel?>
-//
-//}
+import androidx.lifecycle.LiveData
+import androidx.room.*
+
+@Dao
+interface TweetDaoInterface {
+   @Insert(onConflict = OnConflictStrategy.REPLACE)
+   suspend fun addTweet(tweet: TweetsRoomModel)
+
+   @Update
+   suspend  fun updateTweet(tweet: TweetsRoomModel)
+
+   @Query("DELETE FROM tweets")
+   suspend fun deleteTweet()
+
+   @Query("SELECT * FROM tweets")
+   fun allTweet(): LiveData<List<TweetsRoomModel?>>
+
+}

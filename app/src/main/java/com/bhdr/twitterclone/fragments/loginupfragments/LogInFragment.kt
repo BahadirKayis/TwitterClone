@@ -7,7 +7,7 @@ import androidx.navigation.fragment.findNavController
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentLogInBinding
 import com.bhdr.twitterclone.viewmodels.loginupviewmodel.SignInViewModel
-import com.muratozturk.click_shrink_effect.applyClickShrink
+
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 
 
@@ -25,10 +25,11 @@ class LogInFragment : Fragment(R.layout.fragment_log_in) {
 
          when (it) {
             true -> findNavController().navigate(R.id.action_logInFragment_to_main_nav)
-            false -> null
+
+            else -> {}
          }
       }
-      binding.signUpButton.applyClickShrink()
+
       binding.signUpButton.setOnClickListener {
          findNavController().navigate(R.id.action_logInFragment_to_signUpFragment)
       }

@@ -56,8 +56,8 @@ dependencies {
     implementation 'com.github.Zhuinden:fragmentviewbindingdelegate-kt:1.0.0'
 
     //Navigate
-    implementation "androidx.navigation:navigation-fragment-ktx:2.5.0"
-    implementation "androidx.navigation:navigation-ui-ktx:2.5.0"
+    implementation "androidx.navigation:navigation-fragment-ktx:2.5.1"
+    implementation "androidx.navigation:navigation-ui-ktx:2.5.1"
 //LikeButton
     implementation 'com.github.jd-alexander:LikeButton:0.2.3'
     //Retrofit
@@ -70,11 +70,11 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
     //ViewModel
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0'
-    implementation 'androidx.activity:activity-ktx:1.5.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+    implementation 'androidx.activity:activity-ktx:1.5.1'
     // implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
     //LiveData
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.0"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
 
     // Moshi
     implementation 'com.squareup.moshi:moshi-kotlin:1.9.3'
@@ -116,9 +116,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.6.1'
 
     //Room
-    implementation("androidx.room:room-runtime:2.4.3")
-    kapt("androidx.room:room-compiler:2.4.3")
-
-    implementation 'com.github.muratozturk5:ClickShrinkEffectLibrary:1.0.0'
-
+    implementation "androidx.room:room-runtime:2.4.3"
+    kapt "androidx.room:room-compiler:2.4.3"
+    // Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:2.4.3"
 }

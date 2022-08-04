@@ -1,24 +1,19 @@
 package com.bhdr.twitterclone.room
 
-//@Entity(tableName = "users")
-//data class UsersRoomModel(
-//   @ColumnInfo(name = "date")
-//   val date: String?,
-//   @ColumnInfo(name = "email")
-//   val email: String?,
-//   @ColumnInfo(name = "id")
-//   @PrimaryKey(autoGenerate = false)
-//   var id: Int?,
-//   @ColumnInfo(name = "name")
-//   var name: String?,
-//   @ColumnInfo(name = "phone")
-//   val phone: String?,
-//   @ColumnInfo(name = "photoUrl")
-//   var photoUrl: String?,
-//   @ColumnInfo(name = "posts")
-//   val posts: List<Posts>?,
-//   @ColumnInfo(name = "userName")
-//   var userName: String?,
-//   @ColumnInfo(name = "userPassword")
-//   val userPassword: String?
-//)
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.squareup.moshi.Json
+
+@Entity(tableName = "users")
+data class UsersRoomModel(
+   @ColumnInfo(name = "id")
+   @PrimaryKey(autoGenerate = false)
+   var id: Any?,
+   @ColumnInfo(name = "photoUrl")
+   var photoUrl: String?,
+   @ColumnInfo(name = "userName")
+   var userName: String?,
+   @ColumnInfo(name = "name")
+   var name: String?,
+)

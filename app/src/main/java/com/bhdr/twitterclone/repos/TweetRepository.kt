@@ -3,10 +3,13 @@ package com.bhdr.twitterclone.repos
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.bhdr.twitterclone.helperclasses.userId
 import com.bhdr.twitterclone.models.Posts
 import com.bhdr.twitterclone.network.CallApi
+import com.bhdr.twitterclone.room.TweetDaoInterface
+import com.bhdr.twitterclone.room.TweetsRoomModel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.runBlocking
@@ -27,6 +30,9 @@ class TweetRepository {
 
    val tweetAdded = MutableLiveData<Boolean>()
 
+
+
+//val allTweet=MutableLiveData<List<Posts>>()
 
    suspend fun getPosts(id: Int) {
       try {
@@ -111,6 +117,8 @@ class TweetRepository {
       }
 
    }
+
+   //suspend fun tweetsInsert(tweets:List<TweetsRoomModel>)=localTweets.addTweet( tweets)
 
 
 }
