@@ -11,7 +11,7 @@ import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.runBlocking
 
 
-class LoginRepository() {
+class LoginUpRepository() {
 
    enum class LogInUpStatus { LOADING, ERROR, DONE }
 
@@ -75,7 +75,7 @@ class LoginRepository() {
          userModel.value = signIn.body()
          userStatus.value = LogInUpStatus.DONE
       } else if (!signIn.isSuccessful) {
-         userModel.value = null
+
          userStatus.value = LogInUpStatus.ERROR
 
       }

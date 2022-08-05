@@ -9,7 +9,7 @@ import com.bhdr.twitterclone.databinding.FragmentSignInForgetPasswordSecondBindi
 import com.bhdr.twitterclone.helperclasses.gone
 import com.bhdr.twitterclone.helperclasses.snackBar
 import com.bhdr.twitterclone.helperclasses.visible
-import com.bhdr.twitterclone.repos.LoginRepository
+import com.bhdr.twitterclone.repos.LoginUpRepository
 import com.bhdr.twitterclone.viewmodels.loginupviewmodel.ForgetPasswordViewModel
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 
@@ -52,13 +52,13 @@ class SignInForgetPasswordSecondFragment :
       }
       forgetViewModel.executeStatus.observe(viewLifecycleOwner) {
          when (it!!) {
-            LoginRepository.LogInUpStatus.LOADING -> binding.lottiAnim.visible()
+            LoginUpRepository.LogInUpStatus.LOADING -> binding.lottiAnim.visible()
 
-            LoginRepository.LogInUpStatus.ERROR -> {
+            LoginUpRepository.LogInUpStatus.ERROR -> {
                binding.lottiAnim.gone()
                snackBar(requireView(), "Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz", 1500)
             }
-            LoginRepository.LogInUpStatus.DONE -> binding.lottiAnim.gone()
+            LoginUpRepository.LogInUpStatus.DONE -> binding.lottiAnim.gone()
          }
       }
    }

@@ -24,6 +24,7 @@ class MainRepository {
    private val job = Job()
    private val coroutineContext = Dispatchers.IO + job
    private val caScope = CoroutineScope(coroutineContext)
+
    suspend fun followCount(userId: Int) {
       try {
          val response = CallApi.retrofitServiceMain.getFollowCount(userId)

@@ -9,12 +9,12 @@ interface TweetDaoInterface {
    suspend fun addTweet(tweet: List<TweetsRoomModel>)
 
    @Update
-   suspend  fun updateTweet(tweet: TweetsRoomModel)
+   suspend fun updateTweet(tweet: TweetsRoomModel)
 
    @Query("DELETE FROM tweets")
    suspend fun deleteTweet()
 
    @Query("SELECT * FROM tweets")
-   fun allTweet(): LiveData<List<TweetsRoomModel?>>
+    suspend fun allTweet(): List<TweetsRoomModel?>
 
 }

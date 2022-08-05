@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
             }
             else -> {
 
-               userRequest()
+             //  userRequest()
                binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED)
                binding.bottomNav.visible()
             }

@@ -15,16 +15,14 @@ import com.bhdr.twitterclone.adapters.TweetsAdapter
 import com.bhdr.twitterclone.databinding.FragmentMainScreenBinding
 import com.bhdr.twitterclone.helperclasses.*
 import com.bhdr.twitterclone.models.Posts
-import com.bhdr.twitterclone.models.SignalRModel
-import com.bhdr.twitterclone.models.Users
 import com.bhdr.twitterclone.repos.TweetRepository
-import com.bhdr.twitterclone.room.RoomViewModel
-import com.bhdr.twitterclone.room.TweetsRoomModel
-import com.bhdr.twitterclone.room.UsersRoomModel
-import com.bhdr.twitterclone.viewmodels.mainviewmodel.MainViewModel
 import com.bhdr.twitterclone.viewmodels.mainviewmodel.TweetViewModel
 import com.squareup.picasso.Picasso
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 // TODO:ilk defa giriş yaptım : Room boş room boş ise apiye istek atıp tweetleri alıyorum tweetleri
 //  adaptere gönderiyorum aynı zamanda tweetRoomAdd() fun gönderip rooma kaydediyorum
@@ -35,18 +33,15 @@ import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 @Suppress("DEPRECATION")
 class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
    TweetsAdapter.ClickedTweetListener {
+
    private val binding by viewBinding(FragmentMainScreenBinding::bind)
-   private val viewModel by lazy { TweetViewModel() }
-   private val viewModelMain by lazy { MainViewModel() }
+   private lateinit var viewModel: TweetViewModel
    private val tweetAdapter by lazy { TweetsAdapter(this) }
-   private var mutableNotFollowTweetOrLikeList: List<SignalRModel>? = null
-   var userProfileClickListener: MainScreenInterFace? = null
+   private var userProfileClickListener: MainScreenInterFace? = null
    private var mutableFollowNewTweetHashMap: HashMap<Int, String> = HashMap()
    var userId: Int? = null
+   private var tweetsRoom: List<Posts?> = mutableListOf()
 
-   //Room Repoya taşınacak
-   private lateinit var viewModelRoom: RoomViewModel
-   private val tweetsRoom: MutableList<Posts> = mutableListOf()
    override fun onAttach(context: Context) {
       super.onAttach(context)
 
@@ -57,75 +52,32 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
       }
    }
 
-
-   private fun room() {
-
-      viewModelRoom = ViewModelProvider(requireParentFragment())[RoomViewModel::class.java]
-
-      viewModelRoom.allRoomTweets.observe(viewLifecycleOwner) {
-         tweetsRoomModelConvertPostModel(it)
-      }
-
-   }
+   // viewModel = ViewModelProvider(requireParentFragment())[TweetViewModel::class.java]
 
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
       super.onViewCreated(view, savedInstanceState)
-      room()
+      viewModel = ViewModelProvider(requireParentFragment())[TweetViewModel::class.java]
       userId = requireContext().userId()
-      //viewModelMain.getFollowedUserIdList(userId!!)
-
-
-      binding.addTweetFAB.setOnClickListener {
-         Navigation.findNavController(requireView())
-            .navigate(R.id.action_mainScreenFragment_to_addTweetFragment)
-      }
-
 
       viewModelObservable()
-      binding.profilePicture.picasso(requireContext().userPhotoUrl())
-
-
-
-      viewModelMain.mutableFollowNewTweet.observe(viewLifecycleOwner) {
-         Log.e("try", it.size.toString())
-         if (it!!.size == 1) {
-            val url: String = it.values.toTypedArray()[0]
-            Log.e("try", url)
-            Picasso.get().load(url).into(binding.userPhoto1)
-            Picasso.get().load(it.values.toTypedArray()[0]).into(binding.userPhoto2)
-            binding.seeNewTweet.visible()
-            binding.userPhoto1.visible()
-            binding.userPhoto2.visible()
-         } else if (it.size >= 3) {
-            Picasso.get().load(it.values.toTypedArray()[2]).into(binding.userPhoto3)
-            binding.userPhoto3.visible()
-         }
+      binding()
+      CoroutineScope(Dispatchers.IO).launch {
+         delay(3000)
+         netWorkControlAndCloudRequestTweets()
       }
-
-//      mutableFollowNewTweetHashMap = viewModelMain.mutableFollowNewTweet.value!!
-
-
-//      mutableFollowNewTweetHashMap?.apply {
-//         if (this.size == 1) {
-//            val url: String = this.values.toTypedArray()[0]
-//            Log.e("try", url)
-//            Picasso.get().load(url).into(binding.userPhoto1)
-//            Picasso.get().load(this.values.toTypedArray()[1]).into(binding.userPhoto2)
-//            binding.seeNewTweet.visible()
-//            binding.userPhoto1.visible()
-//            binding.userPhoto2.visible()
-//         } else if (this.size >= 3) {
-//            Picasso.get().load(this.values.toTypedArray()[2]).into(binding.userPhoto3)
-//            binding.userPhoto3.visible()
-//         }
-//      }
-      // netWorkControlAndCloudRequestTweets()
-
    }
 
    private fun viewModelObservable() {
+      with(viewModel) {
+         allRoomTweets.observe(viewLifecycleOwner) {
+            if (it != null) {
+               tweetAdapter.submitList(it)
+               tweetsRoom = it
+            } else {
+               netWorkControlAndCloudRequestTweets()
+            }
 
-      viewModel.apply {
+         }
          mainStatus.observe(viewLifecycleOwner) {
             when (it!!) {
                TweetRepository.MainStatus.LOADING -> binding.lottiAnim.visible()
@@ -136,170 +88,110 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
                }
             }
          }
-//         tweets.observe(viewLifecycleOwner) {
-//            tweetRoomAdd(it)
-//            tweetAdapter.submitList(it)
-//
-//         }
-      }
-      viewModelMain.apply {
-         mutableNotFollowTweetOrLikeList = mutableNotFollowTweetOrLike.value
-         mutableNotFollowTweetOrLikeList.apply {
-            //SearchaDAPTER
-         }
-         mutableNotFollowTweetOrLike.value?.apply {
 
-
+         tweets.observe(viewLifecycleOwner) {
+            isNewTweet(tweetsRoom, it)
          }
 
-
-      }
-      binding.tweetsRecyclerView.apply {
-         layoutManager = LinearLayoutManager(
-            binding.tweetsRecyclerView.context,
-            LinearLayoutManager.VERTICAL,
-            false
-         )
-         adapter = tweetAdapter
-      }
-
-      binding.profilePicture.setOnClickListener {
-         userProfileClickListener?.openDrawerClick()
-
-      }
-
-      viewModel.tweets.observe(viewLifecycleOwner) {
-         isNewTweet(tweetsRoom, it)
-      }
-   }
-
-   private fun tweetRoomAdd(it: List<Posts>) {
-      val tweetsAddRoom: MutableList<TweetsRoomModel> = mutableListOf()
-      try {
-         it.forEach {
-            var userRoomModel: UsersRoomModel? = null
-            it.user?.apply {
-               userRoomModel = UsersRoomModel(id, photoUrl, userName, name)
-            }
-            it.apply {
-               tweetsAddRoom.add(
-                  TweetsRoomModel(
-                     date,
-                     id,
-                     postContent,
-                     postImageUrl,
-                     postLike,
-                     userRoomModel,
-                     userId
-                  )
-               )
+         mutableFollowNewTweet.observe(viewLifecycleOwner) {
+            //SignalR dinliyor ve 2'den fazla tweet atılırsa clouddan tweetleri çekip tweetObserveden devam ediyor
+            Log.e("try", it.size.toString())
+            if (it!!.size >= 2) {
+               viewModel.getTweets(userId!!)
+               viewModel.mutableFollowNewTweet.value!!.clear()
             }
          }
-         viewModelRoom.tweetInsert(tweetsAddRoom)
-      } catch (e: Exception) {
-
-         Log.e("ex", e.toString())
       }
+
    }
 
-   private fun tweetsRoomModelConvertPostModel(it: List<TweetsRoomModel?>) {
-
-      it.forEach { itFor ->
-         var users: Users
-         itFor?.user.apply {
-            users = Users(
-               id = id,
-               photoUrl = this!!.photoUrl,
-               userName = userName,
-               name = name,
-               date = null,
-               email = null,
-               followers = null,
-               messages = null,
-               phone = null,
-               userPassword = null,
-               posts = null
+   private fun binding() {
+      with(binding) {
+         tweetsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(
+               tweetsRecyclerView.context,
+               LinearLayoutManager.VERTICAL,
+               false
             )
-         }
-         itFor?.apply {
-            tweetsRoom.add(
-               Posts(
-                  date = date,
-                  id = id,
-                  postContent = postContent,
-                  postImageUrl = postImageUrl,
-                  postLike = postLike,
-                  user = users,
-                  userId = userId,
-                  followers = null,
-                  tags = null
-               )
-            )
+            adapter = tweetAdapter
          }
 
+         profilePicture.setOnClickListener {
+            userProfileClickListener?.openDrawerClick()
+
+         }
+         profilePicture.picasso(requireContext().userPhotoUrl())
+
+         addTweetFAB.setOnClickListener {
+            Navigation.findNavController(requireView())
+               .navigate(R.id.action_mainScreenFragment_to_addTweetFragment)
+         }
       }
-      tweetAdapter.submitList(tweetsRoom)
-      netWorkControlAndCloudRequestTweets()
+
    }
 
 
    private fun netWorkControlAndCloudRequestTweets() {
 
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
          if (requireContext().checkNetworkConnection()) {
-            viewModel.getPosts(userId!!)
-
+            viewModel.getTweets(userId!!)
          }
       } else {
-         viewModel.getPosts(userId!!)
+         viewModel.getTweets(userId!!)
       }
-
-
    }
 
-   private fun isNewTweet(roomTweet: List<Posts>, cloudTweet: List<Posts>) {
+   private fun isNewTweet(roomTweet: List<Posts?>, cloudTweet: List<Posts>) {
       try {
-         if (roomTweet.isNotEmpty() && cloudTweet.isNotEmpty()) {
-            if (roomTweet.size != cloudTweet.size) {
-
-               roomTweet.forEach { itCloud ->
-                  var tweet: Posts? = null
-                  tweet = cloudTweet.find { itRoom ->
-                     itCloud.id != itRoom.id
+         if (roomTweet.isEmpty()) {
+            newTweetButton(cloudTweet)
+         } else {
+            if (roomTweet.isNotEmpty() && cloudTweet.isNotEmpty()) {
+               if (roomTweet.size != cloudTweet.size) {
+                  roomTweet.forEach { itCloud ->
+                     val tweet: Posts? = cloudTweet.find { itRoom ->
+                        itCloud!!.id != itRoom.id
+                     }
+                     if (tweet != null) {
+                        mutableFollowNewTweetHashMap[id] = tweet.user?.photoUrl.toString()
+                     }
                   }
-                  if (tweet != null) {
-                     mutableFollowNewTweetHashMap[tweet.id!!] = tweet.user?.photoUrl.toString()
-
+                  if (mutableFollowNewTweetHashMap.isNotEmpty()) {
+                     newTweetButton(cloudTweet)
                   }
-               }
-               if (mutableFollowNewTweetHashMap.isNotEmpty()) {
-                  newTweetButton(cloudTweet)
                }
             }
          }
+
       } catch (e: Exception) {
          Log.e("isNewTweet", e.toString())
       }
    }
 
-   private fun newTweetButton(cloudTweet:List<Posts>) {
-      mutableFollowNewTweetHashMap.apply {
-         if (this!!.size == 1) {
-            val url: String = this.values.toTypedArray()[0]
-            Log.e("try", url)
-            Picasso.get().load(url).into(binding.userPhoto1)
-            Picasso.get().load(this.values.toTypedArray()[0]).into(binding.userPhoto2)
-            binding.seeNewTweet.visible()
-            binding.userPhoto1.visible()
-            binding.userPhoto2.visible()
-         } else if (this.size >= 3) {
-            Picasso.get().load(this.values.toTypedArray()[2]).into(binding.userPhoto3)
-            binding.userPhoto3.visible()
+   private fun newTweetButton(cloudTweet: List<Posts>) {
+      with(binding) {
+         mutableFollowNewTweetHashMap.apply {
+            if (this.size == 1) {
+               Picasso.get().load(this.values.toTypedArray()[0]).into(userPhoto1)
+               seeNewTweet.visible()
+               userPhoto1.visible()
+            } else if (this.size == 2) {
+               Picasso.get().load(this.values.toTypedArray()[1]).into(userPhoto2)
+               userPhoto2.visible()
+            } else if (this.size >= 3) {
+               Picasso.get().load(this.values.toTypedArray()[2]).into(userPhoto3)
+               userPhoto3.visible()
+            }
          }
-      }
-      binding.seeNewTweet.setOnClickListener {
-         tweetAdapter.submitList(cloudTweet)
+         seeNewTweet.setOnClickListener {
+            tweetAdapter.submitList(cloudTweet)
+            seeNewTweet.gone()
+            userPhoto1.gone()
+            userPhoto2.gone()
+            userPhoto3.gone()
+            viewModel.tweetsRoomConvertAndAdd(cloudTweet)
+         }
       }
    }
 

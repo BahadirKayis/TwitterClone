@@ -10,8 +10,8 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
    private var mainRepository = MainRepository()
-   val mutableFollowNewTweet: LiveData<HashMap<Int, String>>
-      get() = mainRepository.mutableFollowNewTweet
+
+
    val mutableNotFollowTweetOrLike: LiveData<List<SignalRModel>> =
       mainRepository.mutableNotFollowTweetOrLike
 

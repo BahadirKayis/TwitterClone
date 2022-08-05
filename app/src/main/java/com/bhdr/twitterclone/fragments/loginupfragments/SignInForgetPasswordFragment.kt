@@ -11,7 +11,7 @@ import com.bhdr.twitterclone.databinding.FragmentSigInForgetPasswordBinding
 import com.bhdr.twitterclone.helperclasses.gone
 import com.bhdr.twitterclone.helperclasses.snackBar
 import com.bhdr.twitterclone.helperclasses.visible
-import com.bhdr.twitterclone.repos.LoginRepository.LogInUpStatus.*
+import com.bhdr.twitterclone.repos.LoginUpRepository.LogInUpStatus.*
 import com.bhdr.twitterclone.viewmodels.loginupviewmodel.ForgetPasswordViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding

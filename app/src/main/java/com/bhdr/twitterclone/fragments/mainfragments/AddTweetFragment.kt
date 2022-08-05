@@ -18,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentAddTweetBinding
@@ -32,8 +33,7 @@ import java.util.*
 
 class AddTweetFragment : Fragment(R.layout.fragment_add_tweet) {
    private val binding by viewBinding(FragmentAddTweetBinding::bind)
-   private val tweetViewModel by lazy { AddTweetViewModel() }
-
+   private val viewModel: AddTweetViewModel by viewModels()
    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
    private lateinit var permissionLauncher: ActivityResultLauncher<String>
    var selectedBitmap: Bitmap? = null
@@ -47,7 +47,6 @@ class AddTweetFragment : Fragment(R.layout.fragment_add_tweet) {
 
       binding.apply {
          profilePicture.picasso(requireContext().userPhotoUrl())
-
          addImage.setOnClickListener { selectImage() }
          cancel.setOnClickListener { cancel() }
          addTweetButton.setOnClickListener { addTweet(tweetEditText.text.toString()) }
@@ -63,7 +62,7 @@ class AddTweetFragment : Fragment(R.layout.fragment_add_tweet) {
       if (tweetText.isNotEmpty()) {
          if (tweetImage != null) {
 
-            tweetViewModel.addTweet(
+            viewModel.addTweet(
                requireContext().userId(),
                tweetText,
                tweetImageName,
@@ -72,7 +71,7 @@ class AddTweetFragment : Fragment(R.layout.fragment_add_tweet) {
             //    Navigation.findNavController(requireView()).navigate(R.id.action_addTweetFragment_to_homeFragment)
 
          } else {
-            tweetViewModel.addTweet(requireContext().userId(), tweetText, "null", null)
+            viewModel.addTweet(requireContext().userId(), tweetText, "null", null)
             //  Navigation.findNavController(requireView()).navigate(R.id.action_addTweetFragment_to_homeFragment)
          }
       } else {
@@ -155,7 +154,7 @@ class AddTweetFragment : Fragment(R.layout.fragment_add_tweet) {
    }
 
    private fun tweetViewModelObservable() {
-      tweetViewModel.mainStatus.observe(viewLifecycleOwner) {
+      viewModel.mainStatus.observe(viewLifecycleOwner) {
          when (it!!) {
             TweetRepository.MainStatus.LOADING -> binding.lottiAnim.visible()
             TweetRepository.MainStatus.DONE -> binding.lottiAnim.gone()
@@ -163,7 +162,7 @@ class AddTweetFragment : Fragment(R.layout.fragment_add_tweet) {
          }
 
       }
-      tweetViewModel.tweetAdded.observe(viewLifecycleOwner) {
+      viewModel.tweetAdded.observe(viewLifecycleOwner) {
          when (it) {
             true -> Navigation.findNavController(requireView())
                .navigate(R.id.action_addTweetFragment_to_mainScreenFragment)

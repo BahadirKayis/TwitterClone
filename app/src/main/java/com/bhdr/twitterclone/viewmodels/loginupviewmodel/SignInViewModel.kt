@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bhdr.twitterclone.models.Users
-import com.bhdr.twitterclone.repos.LoginRepository
+import com.bhdr.twitterclone.repos.LoginUpRepository
 import kotlinx.coroutines.launch
 
 class SignInViewModel : ViewModel() {
-   private var loginrepo = LoginRepository()
+   private var loginrepo = LoginUpRepository()
    val userModel: LiveData<Users> = loginrepo.userModel
    val loginAuto: LiveData<Boolean> = loginrepo.loginAuto
 

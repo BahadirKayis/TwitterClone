@@ -4,14 +4,14 @@ import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bhdr.twitterclone.repos.LoginRepository
+import com.bhdr.twitterclone.repos.LoginUpRepository
 import kotlinx.coroutines.launch
 
 
 class SignUpViewModel : ViewModel() {
-   private var loginrepo = LoginRepository()
+   private var loginrepo = LoginUpRepository()
    val userSaved: LiveData<Boolean> = loginrepo.userSaved
-   val userSavedStatus: LiveData<LoginRepository.LogInUpStatus> = loginrepo.userStatus
+   val userSavedStatus: LiveData<LoginUpRepository.LogInUpStatus> = loginrepo.userStatus
 
    fun createUser(
       userName: String,

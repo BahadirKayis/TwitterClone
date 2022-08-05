@@ -22,7 +22,7 @@ import com.bhdr.twitterclone.databinding.FragmentSignUpBinding
 import com.bhdr.twitterclone.helperclasses.gone
 import com.bhdr.twitterclone.helperclasses.snackBar
 import com.bhdr.twitterclone.helperclasses.visible
-import com.bhdr.twitterclone.repos.LoginRepository
+import com.bhdr.twitterclone.repos.LoginUpRepository
 import com.bhdr.twitterclone.viewmodels.loginupviewmodel.SignUpViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
@@ -216,12 +216,12 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
          userSavedStatus.observe(viewLifecycleOwner) {
             when (it!!) {
-               LoginRepository.LogInUpStatus.LOADING -> binding.lottiAnim.visible()
-               LoginRepository.LogInUpStatus.ERROR -> {
+               LoginUpRepository.LogInUpStatus.LOADING -> binding.lottiAnim.visible()
+               LoginUpRepository.LogInUpStatus.ERROR -> {
                   binding.lottiAnim.gone()
                   snackBar(requireView(), "Hata oluştu lütfen daha sonra tekrar deneyiniz", 2000)
                }
-               LoginRepository.LogInUpStatus.DONE -> {
+               LoginUpRepository.LogInUpStatus.DONE -> {
                   binding.lottiAnim.gone()
                }
             }
