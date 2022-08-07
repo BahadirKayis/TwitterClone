@@ -1,11 +1,5 @@
 package com.bhdr.twitterclone.room
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-
 //class RoomRepository(private val tweetDao: TweetDaoInterface) {
 //   val tweetsRoom: LiveData<List<TweetsRoomModel?>> = tweetDao.allTweet()
 //

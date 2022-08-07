@@ -1,14 +1,14 @@
 package com.bhdr.twitterclone.diffcallback
 
 import androidx.recyclerview.widget.DiffUtil
-import com.bhdr.twitterclone.models.Posts
+import com.bhdr.twitterclone.room.TweetsRoomModel
 
-class TweetsCallBack : DiffUtil.ItemCallback<Posts>() {
-   override fun areItemsTheSame(oldItem: Posts, newItem: Posts): Boolean {
+class TweetsCallBack : DiffUtil.ItemCallback<TweetsRoomModel>() {
+   override fun areItemsTheSame(oldItem: TweetsRoomModel, newItem: TweetsRoomModel): Boolean {
       return oldItem.id == newItem.id
    }
 
-   override fun areContentsTheSame(oldItem: Posts, newItem: Posts): Boolean {
+   override fun areContentsTheSame(oldItem: TweetsRoomModel, newItem: TweetsRoomModel): Boolean {
       return oldItem == newItem
    }
 

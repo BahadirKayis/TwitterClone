@@ -51,6 +51,11 @@ fun ImageView.picasso(url: String) {
    Picasso.get().load(url).into(this)
 }
 
+fun Any?.toInt(): Int {
+   val d = 5.25
+   return d.toInt()
+}
+
 @RequiresApi(Build.VERSION_CODES.M)
 fun Context.checkNetworkConnection(): Boolean {
    val cm = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -58,4 +63,5 @@ fun Context.checkNetworkConnection(): Boolean {
    return (capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
 
 }
+
 

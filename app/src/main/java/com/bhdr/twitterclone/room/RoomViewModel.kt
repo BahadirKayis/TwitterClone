@@ -1,14 +1,5 @@
 package com.bhdr.twitterclone.room
 
-import android.app.Application
-import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
-import com.bhdr.twitterclone.models.Posts
-import com.bhdr.twitterclone.repos.TweetRepository
-import kotlinx.coroutines.launch
-
 //class RoomViewModel(application: Application) : AndroidViewModel(application) {
 //   val allRoomTweets: LiveData<List<TweetsRoomModel?>>
 //   private  val repository: RoomRepository

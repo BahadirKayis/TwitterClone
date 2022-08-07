@@ -1,18 +1,17 @@
 package com.bhdr.twitterclone.repos
 
-import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.bhdr.twitterclone.helperclasses.userId
 import com.bhdr.twitterclone.models.Posts
-import com.bhdr.twitterclone.models.Users
 import com.bhdr.twitterclone.network.CallApi
 import com.bhdr.twitterclone.room.TweetDaoInterface
 import com.bhdr.twitterclone.room.TweetsRoomModel
 import com.bhdr.twitterclone.room.UsersRoomModel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import io.ktor.http.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
 
@@ -23,18 +22,28 @@ class TweetRepository(private val tweetDao: TweetDaoInterface) {
 
    val mainStatus = MutableLiveData<MainStatus>()
 
-
+   val app = ContentType.Application
    val tweets = MutableLiveData<List<Posts>>()
-   val tweetsRoomList = MutableLiveData<List<Posts?>?>()
-   private val tweetsRoomPost: MutableList<Posts> = mutableListOf()
+   val tweetsRoomList = MutableLiveData<List<TweetsRoomModel?>?>()
+   val tweetsRoomListLikeToInsert = MutableLiveData<List<TweetsRoomModel?>?>()
+   private var tweetsRoomPost: List<TweetsRoomModel?> = listOf()
 
-   val liked = MutableLiveData<Int>()
 
    val tweetAdded = MutableLiveData<Boolean>()
+   private var isObserve: Boolean = true
 
+   //   private suspend fun getBitmap(): Bitmap {
+//      val loading = ImageLoader(Context)
+//      val request = ImageRequest.Builder(this)
+//         .data("https://avatars3.githubusercontent.com/u/14994036?s=400&u=2832879700f03d4b37ae1c09645352a352b9d2d0&v=4")
+//         .build()
+//
+//      val result = (loading.execute(request) as SuccessResult).drawable
+//      return (result as BitmapDrawable).bitmap
+//   }
    suspend fun getTweets(id: Int) {
       try {
-         mainStatus.value = MainStatus.LOADING
+
          val request = CallApi.retrofitServiceMain.getTweets(id)
          if (request.isSuccessful) {
             mainStatus.value = MainStatus.DONE
@@ -54,11 +63,28 @@ class TweetRepository(private val tweetDao: TweetDaoInterface) {
 
    }
 
-   suspend fun postLiked(id: Int, count: Int, context: Context) {
-      val request = CallApi.retrofitServiceMain.postLiked(context.userId(), id, count)
-      if (request.isSuccessful) {
-         liked.value = request.body()!!
-         getTweets(context.userId())
+   suspend fun postLiked(id: Int, count: Int, userId: Int) {
+      try {
+
+
+         val response = CallApi.retrofitServiceMain.postLiked(userId, id, count)
+         if (response.isSuccessful) {
+            isObserve = false
+            Log.e("TAG", tweetsRoomPost.toString())
+            tweetsRoomPost.find { it!!.id == id }?.apply {
+               postLike = response.body()
+               isLiked = true
+
+            }
+
+            tweetsInsert(tweetsRoomPost)
+            Log.e("TAG", tweetsRoomPost.toString())
+
+            Log.e("TAG", response.body().toString())
+
+         }
+      } catch (e: Exception) {
+         Log.e("postLiked", e.toString())
       }
    }
 
@@ -112,14 +138,22 @@ class TweetRepository(private val tweetDao: TweetDaoInterface) {
 
    }
 
-
    //room
-
-   suspend fun tweetsInsert(tweets: List<TweetsRoomModel>) {
+   private suspend fun tweetsInsert(tweets: List<TweetsRoomModel?>) {
       try {
+
          tweetDao.addTweet(tweets)
+         delay(500)
+
+         if (isObserve) {
+            Log.e("class", "true")
+            tweetsRoomModelConvertPostModel()
+         } else {
+            isObserve = true
+            Log.e("class", "false")
+         }
       } catch (e: ClassCastException) {
-         Log.e("class", e.toString())
+         Log.e("classEx", e.toString())
       }
    }
 
@@ -152,51 +186,50 @@ class TweetRepository(private val tweetDao: TweetDaoInterface) {
    }
 
    suspend fun tweetsRoomModelConvertPostModel() {
+      mainStatus.value = MainStatus.LOADING
       val tweetsRoomModelList = tweetDao.allTweet()
       if (tweetsRoomModelList.isNotEmpty()) {
-         tweetsRoomModelList.forEach {
-            var users: Users
-            it!!.user.apply {
-               users = Users(
-                  id = this!!.id.toInt(),
-                  photoUrl = photoUrl,
-                  userName = userName,
-                  name = name,
-                  date = null,
-                  email = null,
-                  followers = null,
-                  messages = null,
-                  phone = null,
-                  userPassword = null,
-                  posts = null
-               )
-            }
-            it.apply {
-               tweetsRoomPost.add(
-                  Posts(
-                     date = date,
-                     id = id,
-                     postContent = postContent,
-                     postImageUrl = postImageUrl,
-                     postLike = postLike,
-                     user = users,
-                     userId = userId,
-                     followers = null,
-                     tags = null
-                  )
-               )
-            }
-            tweetsRoomList.value = tweetsRoomPost.reversed()
-         }
+//         tweetsRoomModelList.forEach {
+//            var users: Users
+//            it!!.user.apply {
+//               users = Users(
+//                  id = this!!.id.toInt(),
+//                  photoUrl = photoUrl,
+//                  userName = userName,
+//                  name = name,
+//                  date = null,
+//                  email = null,
+//                  followers = null,
+//                  messages = null,
+//                  phone = null,
+//                  userPassword = null,
+//                  posts = null
+//               )
+//            }
+//            it.apply {
+//               tweetsRoomPost.add(
+//                  Posts(
+//                     date = date,
+//                     id = id,
+//                     postContent = postContent,
+//                     postImageUrl = postImageUrl,
+//                     postLike = postLike,
+//                     user = users,
+//                     userId = userId,
+//                     followers = null,
+//                     tags = null
+//                  )
+//               )
+//            }
+         tweetsRoomPost = tweetsRoomModelList
+         tweetsRoomList.value = tweetsRoomModelList.reversed()
+         tweetsRoomListLikeToInsert.value = tweetsRoomModelList.reversed()
+         // }
       } else {
-         tweetsRoomList.value=null
+         tweetsRoomList.value = null
 
       }
    }
-}
 
-private fun Any?.toInt(): Int {
-   val d = 5.25
-   return d.toInt()
 }
 

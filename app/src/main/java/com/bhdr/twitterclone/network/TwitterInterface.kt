@@ -66,6 +66,9 @@ interface TwitterInterface {
    @GET("tweets")
    suspend fun getTweets(@Query("user_id") userId: Int): Response<List<Posts>>
 
+   @GET("tweetOne")
+   suspend fun tweetOne(@Query("id") tweetId: Int): Response<Posts>
+
    @POST("tweetLiked")
    suspend fun postLiked(
       @Query("likeUserId") likeUserId: Int,

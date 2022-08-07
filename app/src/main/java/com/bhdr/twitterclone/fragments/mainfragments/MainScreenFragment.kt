@@ -16,13 +16,10 @@ import com.bhdr.twitterclone.databinding.FragmentMainScreenBinding
 import com.bhdr.twitterclone.helperclasses.*
 import com.bhdr.twitterclone.models.Posts
 import com.bhdr.twitterclone.repos.TweetRepository
+import com.bhdr.twitterclone.room.TweetsRoomModel
 import com.bhdr.twitterclone.viewmodels.mainviewmodel.TweetViewModel
 import com.squareup.picasso.Picasso
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 // TODO:ilk defa giriş yaptım : Room boş room boş ise apiye istek atıp tweetleri alıyorum tweetleri
 //  adaptere gönderiyorum aynı zamanda tweetRoomAdd() fun gönderip rooma kaydediyorum
@@ -40,7 +37,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
    private var userProfileClickListener: MainScreenInterFace? = null
    private var mutableFollowNewTweetHashMap: HashMap<Int, String> = HashMap()
    var userId: Int? = null
-   private var tweetsRoom: List<Posts?> = mutableListOf()
+   private var tweetsRoom: List<TweetsRoomModel?> = mutableListOf()
 
    override fun onAttach(context: Context) {
       super.onAttach(context)
@@ -61,10 +58,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
 
       viewModelObservable()
       binding()
-      CoroutineScope(Dispatchers.IO).launch {
-         delay(3000)
-         netWorkControlAndCloudRequestTweets()
-      }
+      netWorkControlAndCloudRequestTweets()
    }
 
    private fun viewModelObservable() {
@@ -73,10 +67,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
             if (it != null) {
                tweetAdapter.submitList(it)
                tweetsRoom = it
-            } else {
-               netWorkControlAndCloudRequestTweets()
             }
-
          }
          mainStatus.observe(viewLifecycleOwner) {
             when (it!!) {
@@ -101,7 +92,9 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
                viewModel.mutableFollowNewTweet.value!!.clear()
             }
          }
+
       }
+
 
    }
 
@@ -142,10 +135,10 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
       }
    }
 
-   private fun isNewTweet(roomTweet: List<Posts?>, cloudTweet: List<Posts>) {
+   private fun isNewTweet(roomTweet: List<TweetsRoomModel?>, cloudTweet: List<Posts>) {
       try {
          if (roomTweet.isEmpty()) {
-            newTweetButton(cloudTweet)
+            newTweetButton(cloudTweet, true)
          } else {
             if (roomTweet.isNotEmpty() && cloudTweet.isNotEmpty()) {
                if (roomTweet.size != cloudTweet.size) {
@@ -158,7 +151,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
                      }
                   }
                   if (mutableFollowNewTweetHashMap.isNotEmpty()) {
-                     newTweetButton(cloudTweet)
+                     newTweetButton(cloudTweet, false)
                   }
                }
             }
@@ -169,28 +162,40 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
       }
    }
 
-   private fun newTweetButton(cloudTweet: List<Posts>) {
+   private fun newTweetButton(cloudTweet: List<Posts>, isNull: Boolean) {
       with(binding) {
-         mutableFollowNewTweetHashMap.apply {
-            if (this.size == 1) {
-               Picasso.get().load(this.values.toTypedArray()[0]).into(userPhoto1)
-               seeNewTweet.visible()
-               userPhoto1.visible()
-            } else if (this.size == 2) {
-               Picasso.get().load(this.values.toTypedArray()[1]).into(userPhoto2)
-               userPhoto2.visible()
-            } else if (this.size >= 3) {
-               Picasso.get().load(this.values.toTypedArray()[2]).into(userPhoto3)
-               userPhoto3.visible()
-            }
-         }
-         seeNewTweet.setOnClickListener {
-            tweetAdapter.submitList(cloudTweet)
-            seeNewTweet.gone()
-            userPhoto1.gone()
-            userPhoto2.gone()
-            userPhoto3.gone()
+         if (isNull) {
             viewModel.tweetsRoomConvertAndAdd(cloudTweet)
+
+         } else {
+
+
+            mutableFollowNewTweetHashMap.apply {
+               if (this.size == 1) {
+                  Picasso.get().load(this.values.toTypedArray()[0]).into(userPhoto1)
+                  seeNewTweet.visible()
+                  userPhoto1.visible()
+               } else if (this.size == 2) {
+                  Picasso.get().load(this.values.toTypedArray()[1]).into(userPhoto2)
+                  userPhoto2.visible()
+               } else if (this.size >= 3) {
+                  seeNewTweet.visible()
+                  Picasso.get().load(this.values.toTypedArray()[0]).into(userPhoto1)
+                  userPhoto1.visible()
+                  Picasso.get().load(this.values.toTypedArray()[1]).into(userPhoto2)
+                  userPhoto2.visible()
+                  Picasso.get().load(this.values.toTypedArray()[2]).into(userPhoto3)
+                  userPhoto3.visible()
+               }
+            }
+            seeNewTweet.setOnClickListener {
+
+               seeNewTweet.gone()
+               userPhoto1.gone()
+               userPhoto2.gone()
+               userPhoto3.gone()
+               viewModel.tweetsRoomConvertAndAdd(cloudTweet)
+            }
          }
       }
    }
@@ -201,7 +206,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
       currentlyCRFNumber: Int
    ) {
       when (commentrtfav) {
-         "fav" -> viewModel.postLiked(tweetId, currentlyCRFNumber, requireContext())
+         "fav" -> viewModel.postLiked(tweetId, currentlyCRFNumber, requireContext().userId())
          // "comment" -> viewModel.commentTweet(tweetDocId, currentlyCRFNumber)
          // "rt" -> viewModel.rtTweet(tweetDocId, currentlyCRFNumber)
 

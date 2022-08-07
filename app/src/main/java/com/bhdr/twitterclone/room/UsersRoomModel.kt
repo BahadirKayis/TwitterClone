@@ -3,7 +3,6 @@ package com.bhdr.twitterclone.room
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.squareup.moshi.Json
 
 @Entity(tableName = "users")
 data class UsersRoomModel(

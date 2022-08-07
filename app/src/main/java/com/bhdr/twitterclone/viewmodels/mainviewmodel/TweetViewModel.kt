@@ -1,7 +1,6 @@
 package com.bhdr.twitterclone.viewmodels.mainviewmodel
 
 import android.app.Application
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -15,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class TweetViewModel(application: Application) : AndroidViewModel(application) {
    //room
-   val allRoomTweets: LiveData<List<Posts?>?>
+   val allRoomTweets: LiveData<List<TweetsRoomModel?>?>
 
 
    private val tweetRepository: TweetRepository
@@ -27,10 +26,10 @@ class TweetViewModel(application: Application) : AndroidViewModel(application) {
       get() = tweetRepository.mainStatus
 
    init {
-
       val dao = TweetsDatabase.getTweetsDatabase(application)?.tweetDao()
       tweetRepository = TweetRepository(dao!!)
       allRoomTweets = tweetRepository.tweetsRoomList
+      Log.e("TAG", "init viewModle ")
       viewModelScope.launch {
          tweetRepository.tweetsRoomModelConvertPostModel()
       }
@@ -41,7 +40,7 @@ class TweetViewModel(application: Application) : AndroidViewModel(application) {
    val mutableFollowNewTweet: LiveData<HashMap<Int, String>>
       get() = mainRepository.mutableFollowNewTweet
 
-   val liked: LiveData<Int> = tweetRepository.liked
+
    fun getTweets(id: Int) {
       viewModelScope.launch {
          tweetRepository.getTweets(id)
@@ -49,22 +48,10 @@ class TweetViewModel(application: Application) : AndroidViewModel(application) {
 
    }
 
-   fun postLiked(id: Int, count: Int, context: Context) {
+   fun postLiked(id: Int, count: Int, userId: Int) {
       viewModelScope.launch {
-         tweetRepository.postLiked(id, count, context)
+         tweetRepository.postLiked(id, count, userId)
 
-      }
-   }
-
-   fun tweetInsert(tweets: List<TweetsRoomModel>) {
-      try {
-
-         viewModelScope.launch {
-
-            tweetRepository.tweetsInsert(tweets)
-         }
-      } catch (e: ClassCastException) {
-         Log.e("class", e.toString())
       }
    }
 

@@ -43,7 +43,6 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
       setContentView(binding.root)
 
 
-
       val navHostFragment =
          supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
       navController = navHostFragment.navController
@@ -59,7 +58,7 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
             }
             else -> {
 
-             //  userRequest()
+               //  userRequest()
                binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED)
                binding.bottomNav.visible()
             }
@@ -170,4 +169,5 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
       super.onStart()
 
    }
+
 }
