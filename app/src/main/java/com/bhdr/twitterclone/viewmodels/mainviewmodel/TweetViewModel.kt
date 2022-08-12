@@ -1,7 +1,6 @@
 package com.bhdr.twitterclone.viewmodels.mainviewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
@@ -14,31 +13,35 @@ import kotlinx.coroutines.launch
 
 class TweetViewModel(application: Application) : AndroidViewModel(application) {
    //room
-   val allRoomTweets: LiveData<List<TweetsRoomModel?>?>
+   private val dao = TweetsDatabase.getTweetsDatabase(application)?.tweetDao()
+   private val tweetRepository = TweetRepository(dao!!, application)
+
+   val allRoomTweets: LiveData<List<TweetsRoomModel>?>
+      get() = tweetRepository.tweetsRoomList
 
 
-   private val tweetRepository: TweetRepository
-
-   val tweets: LiveData<List<Posts>>
+   val tweets: LiveData<List<Posts>?>//Insert işlemi için
       get() = tweetRepository.tweets
 
    val mainStatus: LiveData<TweetRepository.MainStatus>
       get() = tweetRepository.mainStatus
 
    init {
-      val dao = TweetsDatabase.getTweetsDatabase(application)?.tweetDao()
-      tweetRepository = TweetRepository(dao!!)
-      allRoomTweets = tweetRepository.tweetsRoomList
-      Log.e("TAG", "init viewModle ")
       viewModelScope.launch {
-         tweetRepository.tweetsRoomModelConvertPostModel()
+         tweetRepository.getTweetsRoom()
       }
    }
 
    private var mainRepository = MainRepository()
 
    val mutableFollowNewTweet: LiveData<HashMap<Int, String>>
+      //Genel olarak dinliyor
       get() = mainRepository.mutableFollowNewTweet
+
+   //BU da getTicketsa istek attığında yeni tweet varsa
+   val mutableFollowNewTweetHashMap: LiveData<HashMap<Int, String>>
+   get() = tweetRepository.mutableFollowNewTweetHashMap
+
 
 
    fun getTweets(id: Int) {
@@ -50,16 +53,17 @@ class TweetViewModel(application: Application) : AndroidViewModel(application) {
 
    fun postLiked(id: Int, count: Int, userId: Int) {
       viewModelScope.launch {
-         tweetRepository.postLiked(id, count, userId)
+         tweetRepository.tweetLiked(id, count, userId)
 
       }
    }
-
 
    fun tweetsRoomConvertAndAdd(it: List<Posts>) {
       viewModelScope.launch {
          tweetRepository.tweetsRoomConvertAndAdd(it)
       }
-
    }
+
+
+
 }

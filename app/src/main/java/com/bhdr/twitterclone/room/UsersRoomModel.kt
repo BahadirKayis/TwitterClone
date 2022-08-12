@@ -9,8 +9,8 @@ data class UsersRoomModel(
    @ColumnInfo(name = "id")
    @PrimaryKey(autoGenerate = false)
    var id: Any?,
-   @ColumnInfo(name = "photoUrl")
-   var photoUrl: String?,
+   @ColumnInfo(name = "profileImage")
+   val photo: String,
    @ColumnInfo(name = "userName")
    var userName: String?,
    @ColumnInfo(name = "name")

@@ -1,8 +1,15 @@
 package com.bhdr.twitterclone.repos
 
+import android.app.Application
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.util.Log
+import androidx.core.content.FileProvider
 import androidx.lifecycle.MutableLiveData
+import coil.ImageLoader
+import coil.request.ImageRequest
+import coil.request.SuccessResult
 import com.bhdr.twitterclone.models.Posts
 import com.bhdr.twitterclone.network.CallApi
 import com.bhdr.twitterclone.room.TweetDaoInterface
@@ -10,44 +17,47 @@ import com.bhdr.twitterclone.room.TweetsRoomModel
 import com.bhdr.twitterclone.room.UsersRoomModel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import io.ktor.http.*
+import com.mikepenz.materialdrawer.util.ifNotNull
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import java.io.File
 
 
-class TweetRepository(private val tweetDao: TweetDaoInterface) {
+class TweetRepository(
+   private val tweetDao: TweetDaoInterface,
+   private val application: Application
+) {
+
    enum class MainStatus { LOADING, ERROR, DONE }
 
    private val db = Firebase.storage
 
    val mainStatus = MutableLiveData<MainStatus>()
 
-   val app = ContentType.Application
-   val tweets = MutableLiveData<List<Posts>>()
-   val tweetsRoomList = MutableLiveData<List<TweetsRoomModel?>?>()
-   val tweetsRoomListLikeToInsert = MutableLiveData<List<TweetsRoomModel?>?>()
-   private var tweetsRoomPost: List<TweetsRoomModel?> = listOf()
+
+   val tweets = MutableLiveData<List<Posts>?>()
+   val tweetsRoomList = MutableLiveData<List<TweetsRoomModel>?>()
 
 
    val tweetAdded = MutableLiveData<Boolean>()
-   private var isObserve: Boolean = true
 
-   //   private suspend fun getBitmap(): Bitmap {
-//      val loading = ImageLoader(Context)
-//      val request = ImageRequest.Builder(this)
-//         .data("https://avatars3.githubusercontent.com/u/14994036?s=400&u=2832879700f03d4b37ae1c09645352a352b9d2d0&v=4")
-//         .build()
-//
-//      val result = (loading.execute(request) as SuccessResult).drawable
-//      return (result as BitmapDrawable).bitmap
-//   }
+
+   private lateinit var imageUri: String
+   private var haveImageUri: Boolean = false
+
+   val mutableFollowNewTweetHashMap = MutableLiveData<HashMap<Int, String>>()
+
+   private var hashMapFollowNewTweetHashMap: HashMap<Int, String> = HashMap()
    suspend fun getTweets(id: Int) {
       try {
-
          val request = CallApi.retrofitServiceMain.getTweets(id)
+
          if (request.isSuccessful) {
+
             mainStatus.value = MainStatus.DONE
+
             tweets.value = request.body()!!
+            isNewTweet(request.body()!!, tweetsRoomList.value)
             Log.e("TweetRepoGetPosts", request.body().toString())
          } else if (!request.isSuccessful) {
             mainStatus.value = MainStatus.ERROR
@@ -58,31 +68,18 @@ class TweetRepository(private val tweetDao: TweetDaoInterface) {
          if (e.message == "timeout") {
             getTweets(id)
          }
-
       }
 
    }
 
-   suspend fun postLiked(id: Int, count: Int, userId: Int) {
+   suspend fun tweetLiked(id: Int, count: Int, userId: Int) {
       try {
-
-
          val response = CallApi.retrofitServiceMain.postLiked(userId, id, count)
+
          if (response.isSuccessful) {
-            isObserve = false
-            Log.e("TAG", tweetsRoomPost.toString())
-            tweetsRoomPost.find { it!!.id == id }?.apply {
-               postLike = response.body()
-               isLiked = true
-
-            }
-
-            tweetsInsert(tweetsRoomPost)
-            Log.e("TAG", tweetsRoomPost.toString())
-
-            Log.e("TAG", response.body().toString())
-
+            tweetDao.tweetIsLiked(id, response.body()!!, true)
          }
+
       } catch (e: Exception) {
          Log.e("postLiked", e.toString())
       }
@@ -141,95 +138,168 @@ class TweetRepository(private val tweetDao: TweetDaoInterface) {
    //room
    private suspend fun tweetsInsert(tweets: List<TweetsRoomModel?>) {
       try {
-
          tweetDao.addTweet(tweets)
          delay(500)
-
-         if (isObserve) {
-            Log.e("class", "true")
-            tweetsRoomModelConvertPostModel()
-         } else {
-            isObserve = true
-            Log.e("class", "false")
-         }
+         getTweetsRoom()
       } catch (e: ClassCastException) {
-         Log.e("classEx", e.toString())
+         Log.e("tweetsInsertEx", e.toString())
       }
    }
 
-   suspend fun tweetsRoomConvertAndAdd(it: List<Posts>) {
-      val tweetsAddRoom: MutableList<TweetsRoomModel> = mutableListOf()
-      try {
-         it.forEach {
-            var userRoomModel: UsersRoomModel? = null
-            it.user?.apply {
-               userRoomModel = UsersRoomModel(id, photoUrl, userName, name)
-            }
-            it.apply {
-               tweetsAddRoom.add(
-                  TweetsRoomModel(
-                     date,
-                     id,
-                     postContent,
-                     postImageUrl,
-                     postLike,
-                     userRoomModel,
-                     userId
-                  )
-               )
-            }
-         }
-         tweetsInsert(tweetsAddRoom)
-      } catch (e: Exception) {
-         Log.e("ex", e.toString())
+   private suspend fun tweetsUpdate(tweets: List<Posts>) {
+      tweets.forEach {
+         tweetDao.updateTweet(it.id!!, it.postLike!!)
+
       }
+      getTweetsRoom()
    }
 
-   suspend fun tweetsRoomModelConvertPostModel() {
-      mainStatus.value = MainStatus.LOADING
+   suspend fun getTweetsRoom() {
+
       val tweetsRoomModelList = tweetDao.allTweet()
-      if (tweetsRoomModelList.isNotEmpty()) {
-//         tweetsRoomModelList.forEach {
-//            var users: Users
-//            it!!.user.apply {
-//               users = Users(
-//                  id = this!!.id.toInt(),
-//                  photoUrl = photoUrl,
-//                  userName = userName,
-//                  name = name,
-//                  date = null,
-//                  email = null,
-//                  followers = null,
-//                  messages = null,
-//                  phone = null,
-//                  userPassword = null,
-//                  posts = null
-//               )
-//            }
-//            it.apply {
-//               tweetsRoomPost.add(
-//                  Posts(
-//                     date = date,
-//                     id = id,
-//                     postContent = postContent,
-//                     postImageUrl = postImageUrl,
-//                     postLike = postLike,
-//                     user = users,
-//                     userId = userId,
-//                     followers = null,
-//                     tags = null
-//                  )
-//               )
-//            }
-         tweetsRoomPost = tweetsRoomModelList
-         tweetsRoomList.value = tweetsRoomModelList.reversed()
-         tweetsRoomListLikeToInsert.value = tweetsRoomModelList.reversed()
-         // }
+
+      if (tweetsRoomModelList != null) {
+
+         tweetsRoomList.value = tweetsRoomModelList
+
       } else {
          tweetsRoomList.value = null
 
       }
    }
 
+   suspend fun tweetsRoomConvertAndAdd(lTweet: List<Posts?>) {
+      mainStatus.value = MainStatus.LOADING
+      val tweetsAddRoom: MutableList<TweetsRoomModel> = mutableListOf()
+      try {
+         lTweet.forEach {
+            var userRoomModel: UsersRoomModel? = null
+            imageUri =
+               createImageUri(it!!.user?.id.toString() + "_" + it.user?.userName + "_user_profile.png")
+            if (!haveImageUri) {
+               val bmp = getBitmap(it.user!!.photoUrl!!)//fotoğraf indiriliyor
+               bmp.ifNotNull { storeBitmap(bmp) }//fotoğraf kayıt edilyior
+            }
+            it.user?.apply {
+               userRoomModel =
+                  UsersRoomModel(
+                     id,
+                     imageUri,
+                     userName,
+                     name
+                  )
+            }
+            it.apply {
+               if (it.postImageUrl != "null") {
+                  imageUri =
+                     createImageUri(id.toString() + "_" + userId.toString() + "_tweet_content.png")
+                  if (!haveImageUri) {
+                     val bmp = getBitmap(it.postImageUrl.toString())//fotoğraf indiriliyor
+                     bmp.ifNotNull { storeBitmap(bmp) }//fotoğraf kayıt ediliyor
+                  }
+               } else {
+                  imageUri = "null"
+               }
+               tweetsAddRoom.add(
+                  TweetsRoomModel(
+                     date,
+                     id,
+                     postContent,
+                     imageUri,
+                     postLike,
+                     userRoomModel,
+                     userId
+                  )
+               )
+
+            }
+
+            tweetsInsert(tweetsAddRoom)
+         }
+         mainStatus.value = MainStatus.DONE
+
+      } catch (e: Exception) {
+         Log.e("tweetsRoomConvertAndAdd", e.toString())
+      }
+   }
+
+   private suspend fun getBitmap(url: String): Bitmap {
+      try {
+         val loading = ImageLoader(application)
+         val request = ImageRequest.Builder(application)
+            .data(url)
+            .build()
+         val result = (loading.execute(request) as SuccessResult).drawable
+         return (result as BitmapDrawable).bitmap
+      } catch (e: Exception) {
+         throw  e
+      }
+
+   }
+
+   private fun createImageUri(photoName: String): String {
+      val image = File(application.filesDir, photoName)
+
+      haveImageUri = image.isFile
+
+      return FileProvider.getUriForFile(
+         application,
+         "com.bhdr.twitterclone.fileProvider",
+         image
+      ).toString()
+
+   }
+
+   private fun storeBitmap(bmp: Bitmap) {
+      val outputStream =
+         application.contentResolver.openOutputStream(Uri.parse(imageUri))
+      bmp.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+      outputStream!!.close()
+   }
+
+
+   private suspend fun isNewTweet(cloudTweet: List<Posts>, roomTweet: List<TweetsRoomModel>?) {
+
+      val tweetRoomUpdateList: MutableList<Posts> = mutableListOf()
+      val tweetCloudAddToRoomList: MutableList<Posts> = mutableListOf()
+      try {
+         if (roomTweet == null) {
+            newTweetButton(cloudTweet, tweetRoomUpdateList)
+         } else {
+            if (cloudTweet.isNotEmpty()) {
+               if (roomTweet.size != cloudTweet.size) {
+                  roomTweet.forEach { itCloud ->
+                     val tweet: Posts? = cloudTweet.find { itRoom ->
+                        itCloud.id != itRoom.id
+                     }
+                     if (tweet != null) {
+                        hashMapFollowNewTweetHashMap[tweet.id!!] = tweet.user?.photoUrl.toString()
+                        tweetCloudAddToRoomList.add(tweet)
+
+                     } else {
+                        tweetRoomUpdateList.add(cloudTweet[itCloud.id!!])
+
+                     }
+                  }
+                  newTweetButton(tweetCloudAddToRoomList, tweetRoomUpdateList)
+               } else {
+                  newTweetButton(null, cloudTweet)
+               }
+            }
+         }
+      } catch (e: Exception) {
+         Log.e("isNewTweet", e.toString())
+      }
+   }
+
+   private suspend fun newTweetButton(addTweet: List<Posts>?, updateTweet: List<Posts>?) {
+      if (updateTweet != null) {
+         tweetsUpdate(updateTweet)
+      }
+      if (addTweet != null) {
+         mutableFollowNewTweetHashMap.value = hashMapFollowNewTweetHashMap
+         tweets.value = addTweet
+      }
+   }
 }
 

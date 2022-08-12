@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 
-@Database(entities = [TweetsRoomModel::class], version = 2, exportSchema = false)
+@Database(entities = [TweetsRoomModel::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class TweetsDatabase : RoomDatabase() {
 
@@ -33,6 +33,11 @@ abstract class TweetsDatabase : RoomDatabase() {
             INSTANCE = instance
          }
          return INSTANCE
+
       }
+
+
    }
+
+
 }

@@ -1,11 +1,16 @@
 package com.bhdr.twitterclone.helperclasses
 
+import android.app.DownloadManager
 import android.content.Context
+import android.content.Context.DOWNLOAD_SERVICE
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.Uri
 import android.os.Build
+import android.os.Environment
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
@@ -21,7 +26,7 @@ fun Context.userId(): Int {
 
 
 fun Context.userPhotoUrl(): String {
-   shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
+   shared = getSharedPreferences("com.bhdr.twitterclone", MODE_PRIVATE)
    return shared.getString("user_photoUrl", "").toString()
 }
 
@@ -51,17 +56,12 @@ fun ImageView.picasso(url: String) {
    Picasso.get().load(url).into(this)
 }
 
-fun Any?.toInt(): Int {
-   val d = 5.25
-   return d.toInt()
-}
+
 
 @RequiresApi(Build.VERSION_CODES.M)
 fun Context.checkNetworkConnection(): Boolean {
    val cm = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
    val capabilities = cm.getNetworkCapabilities(cm.activeNetwork)
    return (capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
-
 }
-
 

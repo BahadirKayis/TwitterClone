@@ -187,11 +187,11 @@ class MainRepository {
                      getPost
                   )
                )
-               caScope.launch {
-                  CoroutineScope(Dispatchers.Main).launch {
-                     mutableNotFollowTweetOrLike.value = mutableNotFollowTweetOrLikeList!!
-                  }
-               }
+//               caScope.launch {
+//                  CoroutineScope(Dispatchers.Main).launch {
+//                     mutableNotFollowTweetOrLike.value = mutableNotFollowTweetOrLikeList!!
+//                  }
+//               }
 
 
             }

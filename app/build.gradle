@@ -99,7 +99,8 @@ dependencies {
 //SignalR
     implementation 'com.microsoft.signalr:signalr:1.0.0'
 
-
+    //
+    implementation 'com.github.bumptech.glide:glide:4.13.2'
     //ktor Interceptor
     implementation "io.ktor:ktor-client-core:2.0.3"
     implementation "io.ktor:ktor-client-android:1.6.3"

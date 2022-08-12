@@ -21,7 +21,7 @@ class AddTweetViewModel(application: Application) : AndroidViewModel(application
 
    init {
       val dao = TweetsDatabase.getTweetsDatabase(application)?.tweetDao()
-      tweetRepository = TweetRepository(dao!!)
+      tweetRepository = TweetRepository(dao!!, application)
 
    }
 

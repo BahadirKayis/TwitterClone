@@ -1,5 +1,6 @@
 package com.bhdr.twitterclone.adapters
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.text.Spannable
@@ -12,7 +13,6 @@ import androidx.core.text.toSpannable
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.TweetCardBinding
 import com.bhdr.twitterclone.diffcallback.TweetsCallBack
 import com.bhdr.twitterclone.fragments.mainfragments.MainScreenFragmentDirections
@@ -21,7 +21,6 @@ import com.bhdr.twitterclone.room.TweetsRoomModel
 import com.bhdr.twitterclone.room.UsersRoomModel
 import com.like.LikeButton
 import com.like.OnLikeListener
-import com.squareup.picasso.Picasso
 
 
 class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
@@ -54,7 +53,7 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
 
          override fun unLiked(likeButton: LikeButton?) {
             clickedTweetListener.crfButtonsListener("fav", posts.id!!, -1)
-            val postCont = 1 - posts.postLike!!
+            val postCont = posts.postLike!! - 1
             holder.binding.favText.text = postCont.toString()
             posts.postLike = postCont
             posts.isLiked = false
@@ -79,39 +78,39 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
 
    inner class TweetViewHolder(val binding: TweetCardBinding) :
       RecyclerView.ViewHolder(binding.root) {
+
       fun post(model: TweetsRoomModel) {
-         binding.apply {
+         try {
 
-            tweetText.text = model.postContent.toString()
-            if (model.postImageUrl != null) {
-               if (model.postImageUrl.contains(".jpg") || model.postImageUrl.contains(".png")) {
-                  Picasso.get().load(model.postImageUrl + "qss").error(R.drawable.twitter)
-                     .into(binding.tweetImage)
-               } else {
+            binding.apply {
 
+               tweetText.text = model.postContent.toString()
+               tweetImage.picasso(model.tweetImage.toString())
+               timeText.text = model.date.toString()
+
+               if (model.postContent?.contains("#") == true) {
+
+                  tweetText.setSpannableFactory(spannableFactory())
+
+                  tweetText.setText(
+                     model.postContent.replace("-n", "\n"),
+                     TextView.BufferType.SPANNABLE
+                  )
                }
+
+               favText.text = model.postLike.toString()
             }
-            timeText.text = model.date.toString()
-            if (model.postContent?.contains("#") == true) {
-
-               tweetText.setSpannableFactory(spannableFactory())
-
-               tweetText.setText(
-                  model.postContent.replace("-n", "\n"),
-                  TextView.BufferType.SPANNABLE
-               )
-            }
-
-            favText.text = model.postLike.toString()
+         } catch (e: Exception) {
+            Log.e("TweetViewHolder", "post: $e")
          }
       }
 
+      @SuppressLint("SetTextI18n")
       fun userModel(model: UsersRoomModel) {
          binding.apply {
-
             try {
-               profilePicture.picasso(model.photoUrl.toString())
-
+               //   binding.profilePicture.load(Uri.parse(model.photo))
+               profilePicture.picasso(model.photo.toString())
                nameText.text = model.name
                usernameText.text = "@" + model.userName
             } catch (e: Exception) {

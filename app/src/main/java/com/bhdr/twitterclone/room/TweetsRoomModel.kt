@@ -13,8 +13,8 @@ data class TweetsRoomModel(
    val id: Int?,
    @ColumnInfo(name = "postContent")
    val postContent: String?,
-   @ColumnInfo(name = "postImageUrl")
-   val postImageUrl: String?,
+   @ColumnInfo(name = "tweetImage")
+   var tweetImage: String?,
    @ColumnInfo(name = "postLike")
    var postLike: Int?,
    @ColumnInfo(name = "users")
