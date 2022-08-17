@@ -1,19 +1,20 @@
 package com.bhdr.twitterclone.viewmodels.mainviewmodel
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bhdr.twitterclone.models.SignalRModel
 import com.bhdr.twitterclone.repos.MainRepository
+import com.bhdr.twitterclone.room.TweetsDatabase
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
-   private var mainRepository = MainRepository()
+class MainViewModel(application: Application) : AndroidViewModel(application) {
 
+   private val dao = TweetsDatabase.getTweetsDatabase(application)?.tweetDao()
+   private var mainRepository = MainRepository(dao!!)
 
-   val mutableNotFollowTweetOrLike: LiveData<List<SignalRModel>> =
-      mainRepository.mutableNotFollowTweetOrLike
-
+   val notificationCount: LiveData<Int> =
+      mainRepository.notificationCount
 
    val followCount: LiveData<Int>
       get() = mainRepository.followCount

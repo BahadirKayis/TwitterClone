@@ -35,8 +35,8 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
    private fun sharedRequest() {
       shared =
          requireContext().getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
-      val userName = shared.getString("user_userName", "")
-      val password = shared.getString("user_userPassword", "")
+      val userName = shared.getString("user_userName", null)
+      val password = shared.getString("user_userPassword", null)
       if (userName != null && password != null) {
          viewModel.getLoginUserNameAndPassword(userName, password)
       }

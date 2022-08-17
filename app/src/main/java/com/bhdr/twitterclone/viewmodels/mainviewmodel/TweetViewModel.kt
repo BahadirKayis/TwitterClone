@@ -5,10 +5,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.bhdr.twitterclone.models.Posts
-import com.bhdr.twitterclone.repos.MainRepository
 import com.bhdr.twitterclone.repos.TweetRepository
 import com.bhdr.twitterclone.room.TweetsDatabase
 import com.bhdr.twitterclone.room.TweetsRoomModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class TweetViewModel(application: Application) : AndroidViewModel(application) {
@@ -16,11 +16,13 @@ class TweetViewModel(application: Application) : AndroidViewModel(application) {
    private val dao = TweetsDatabase.getTweetsDatabase(application)?.tweetDao()
    private val tweetRepository = TweetRepository(dao!!, application)
 
+
    val allRoomTweets: LiveData<List<TweetsRoomModel>?>
       get() = tweetRepository.tweetsRoomList
 
 
-   val tweets: LiveData<List<Posts>?>//Insert işlemi için
+   val tweets: LiveData<List<Posts>?>
+      //Insert işlemi için
       get() = tweetRepository.tweets
 
    val mainStatus: LiveData<TweetRepository.MainStatus>
@@ -29,19 +31,19 @@ class TweetViewModel(application: Application) : AndroidViewModel(application) {
    init {
       viewModelScope.launch {
          tweetRepository.getTweetsRoom()
+         delay(10000)
+         tweetRepository.tweetSignalR()
       }
    }
 
-   private var mainRepository = MainRepository()
 
-   val mutableFollowNewTweet: LiveData<HashMap<Int, String>>
-      //Genel olarak dinliyor
-      get() = mainRepository.mutableFollowNewTweet
+   val mutableFollowNewTweet: LiveData<HashMap<Int, String>> = tweetRepository.mutableFollowNewTweet
+   //Genel olarak dinliyor
+
 
    //BU da getTicketsa istek attığında yeni tweet varsa
    val mutableFollowNewTweetHashMap: LiveData<HashMap<Int, String>>
-   get() = tweetRepository.mutableFollowNewTweetHashMap
-
+      get() = tweetRepository.mutableFollowNewTweetHashMap
 
 
    fun getTweets(id: Int) {
@@ -64,6 +66,11 @@ class TweetViewModel(application: Application) : AndroidViewModel(application) {
       }
    }
 
+   fun getFollowedUserIdList(userId: Int) {
+      viewModelScope.launch {
+         tweetRepository.getFollowedUserIdList(userId)
+      }
+   }
 
 
 }

@@ -1,9 +1,17 @@
 package com.bhdr.twitterclone.models
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import java.util.*
+
+@Entity(tableName = "signalRModel")
 data class SignalRModel(
+   @PrimaryKey(autoGenerate = true)
    var id: Int,
    var imageUrl: String,
    var userName: String,
    var name: String,
-   val post: Posts
+   var isLiked: Boolean,
+   var date: Date,
+   val tweet: Posts
 )

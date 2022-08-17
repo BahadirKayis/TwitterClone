@@ -1,5 +1,6 @@
 package com.bhdr.twitterclone
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -21,27 +23,22 @@ import com.bhdr.twitterclone.helperclasses.*
 import com.bhdr.twitterclone.viewmodels.mainviewmodel.MainViewModel
 import com.canerture.e_commerce_app.common.delegate.viewBinding
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace {
    private val binding by viewBinding(ActivityMainBinding::inflate)
-
    private lateinit var navController: NavController
    lateinit var toggle: ActionBarDrawerToggle
-
-   private val viewModel by lazy { MainViewModel() }
+   private lateinit var viewModel: MainViewModel
    var itemsLayout: View? = null
 
-   var notificationCount: Int = 0
-
+   var signalRStart = false
    override fun onCreate(savedInstanceState: Bundle?) {
+      viewModel = ViewModelProvider(this)[MainViewModel::class.java]
       super.onCreate(savedInstanceState)
       setContentView(binding.root)
-
 
       val navHostFragment =
          supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
@@ -56,12 +53,16 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
                binding.bottomNav.gone()
                binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             }
-            else -> {
 
-               //  userRequest()
+            else -> {
+//               when (destination.id) {
+//                  R.id.mainScreenFragment -> userRequest()
+//               }
+               userRequest()
                binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED)
                binding.bottomNav.visible()
             }
+
          }
       }
       itemsLayout = binding.navMenu.inflateHeaderView(R.layout.menu_nav_header)
@@ -91,24 +92,28 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
          }
          true
       }
-      observable()
+
    }
 
    private fun logOut() {
-      this.sharedPref().edit().clear().commit()
+      this.sharedPref().edit().clear().apply()
    }
 
    private fun userRequest() {
+
+      observable()
+      shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
+      signalRStart = true
+      Log.e("TAG", "signalRSTART")
+      viewModel.startSignalR(this@MainActivity.userId())
       viewModel.followCount(this.userId())
       viewModel.followedCount(this.userId())
       viewModel.getFollowedUserIdList(this.userId())
-      shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
-
-
    }
 
+   @SuppressLint("SetTextI18n")
    private fun observable() {
-      viewModel.apply {
+      with(viewModel) {
          followCount.observe(this@MainActivity, Observer {
             itemsLayout!!.findViewById<TextView>(R.id.userFollow).text = it.toString()
 
@@ -124,20 +129,17 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
          followedCount.observe(this@MainActivity, Observer {
             itemsLayout!!.findViewById<TextView>(R.id.userFollowed).text = it.toString()
          })
+         notificationCount.observe(this@MainActivity) {
 
-         mutableNotFollowTweetOrLike.observe(this@MainActivity) {
             try {
-
-               notificationCount++
-               binding.notificationCount.text = notificationCount.toString()
+               binding.notificationCount.text = it.toString()
                binding.notificationCount.visible()
-
             } catch (e: Exception) {
                Log.e("Exception", e.toString())
                e.printStackTrace()
-
             }
          }
+
       }
    }
 
@@ -153,21 +155,6 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
       //  binding.drawerLayout.openDrawer(R.id.drawerLayout)
       // toggle.onDrawerClosed(binding.drawerLayout)
       binding.drawerLayout.openDrawer(GravityCompat.START)
-   }
-
-   override fun onDestroy() {
-      super.onDestroy()
-
-   }
-
-   override fun onStart() {
-      CoroutineScope(Dispatchers.Main).launch {
-         delay(3000)
-         viewModel.startSignalR(this@MainActivity.userId())
-      }
-
-      super.onStart()
-
    }
 
 }

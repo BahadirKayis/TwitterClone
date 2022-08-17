@@ -30,11 +30,10 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
    private val tweetAdapter by lazy { TweetsAdapter(this) }
    private var userProfileClickListener: MainScreenInterFace? = null
 
-   var userId: Int? = null
-   
+   var userId: Int = 0
+
    override fun onAttach(context: Context) {
       super.onAttach(context)
-
       if (context is MainScreenInterFace) {
          userProfileClickListener = context
       } else {
@@ -43,25 +42,28 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
    }
 
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-      super.onViewCreated(view, savedInstanceState)
       viewModel = ViewModelProvider(requireParentFragment())[TweetViewModel::class.java]
+      super.onViewCreated(view, savedInstanceState)
       userId = requireContext().userId()
-
       viewModelObservable()
       binding()
       lifecycleScope.launch {
-         delay(2000)
+         delay(5000)
+         viewModel.getFollowedUserIdList(userId)
          netWorkControlAndCloudRequestTweets()
       }
    }
 
    private fun viewModelObservable() {
+
       with(viewModel) {
          allRoomTweets.observe(viewLifecycleOwner) {
             if (it != null) {
                tweetAdapter.submitList(it)
                //    tweetsRoom = it
             }
+
+
          }
          mainStatus.observe(viewLifecycleOwner) {
             when (it!!) {
@@ -71,17 +73,16 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
             }
          }
 
-
-
          mutableFollowNewTweet.observe(viewLifecycleOwner) {
             //SignalR dinliyor ve 2'den fazla tweet atılırsa clouddan tweetleri çekip tweetObserveden devam ediyor
             Log.e("try", it.size.toString())
-            if (it!!.size >= 2) {
-               viewModel.getTweets(userId!!)
+
+            if (it!!.size >= 1) {
+               viewModel.getTweets(userId)
                viewModel.mutableFollowNewTweet.value!!.clear()
+               snackBar(requireView(), "Yeni Tweet Paylaşıldı", 2000)
             }
          }
-
       }
       newTweetButton()
 
@@ -114,13 +115,12 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
    private fun netWorkControlAndCloudRequestTweets() {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
          if (requireContext().checkNetworkConnection()) {
-            viewModel.getTweets(userId!!)
+            viewModel.getTweets(userId)
          }
       } else {
-         viewModel.getTweets(userId!!)
+         viewModel.getTweets(userId)
       }
    }
-
 
    private fun newTweetButton() {
       with(binding) {
@@ -141,6 +141,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
                   seeNewTweet.visible()
                   userPhoto1.visible()
                } else if (it.size == 2) {
+                  seeNewTweet.visible()
                   Picasso.get().load(it.values.toTypedArray()[1]).into(userPhoto2)
                   userPhoto2.visible()
                } else if (it.size >= 3) {
@@ -166,7 +167,6 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
          "fav" -> viewModel.postLiked(tweetId, currentlyCRFNumber, requireContext().userId())
          // "comment" -> viewModel.commentTweet(tweetDocId, currentlyCRFNumber)
          // "rt" -> viewModel.rtTweet(tweetDocId, currentlyCRFNumber)
-
       }
    }
 

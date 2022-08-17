@@ -1,24 +1,20 @@
 package com.bhdr.twitterclone.helperclasses
 
-import android.app.DownloadManager
 import android.content.Context
-import android.content.Context.DOWNLOAD_SERVICE
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.net.Uri
 import android.os.Build
-import android.os.Environment
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import com.google.android.material.snackbar.Snackbar
+import com.microsoft.signalr.HubConnectionBuilder
 import com.squareup.picasso.Picasso
 
 lateinit var shared: SharedPreferences
-
+val hubConnection = HubConnectionBuilder.create("http://192.168.3.151:9009/newTweetHub").build()!!
 fun Context.userId(): Int {
    shared = getSharedPreferences("com.bhdr.twitterclone", MODE_PRIVATE)
    return shared.getInt("user_Id", 0)
@@ -30,13 +26,13 @@ fun Context.userPhotoUrl(): String {
    return shared.getString("user_photoUrl", "").toString()
 }
 
-fun Context.saveSharedItem(key: String, status: Boolean) {
-   shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
-   shared.edit().putBoolean(key, status).apply()
+fun Context.saveSharedItem(key: String, status: String) {
+   shared = getSharedPreferences("com.bhdr.twitterclone", MODE_PRIVATE)
+   shared.edit().putString(key, status).apply()
 }
 
 fun Context.sharedPref(): SharedPreferences {
-   shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
+   shared = getSharedPreferences("com.bhdr.twitterclone", MODE_PRIVATE)
    return shared
 }
 
@@ -49,14 +45,12 @@ fun View.visible() {
 }
 
 fun snackBar(view: View, text: String, duration: Int) {
-   Snackbar.make(view, text.toString(), duration).show()
+   Snackbar.make(view, text, duration).show()
 }
 
 fun ImageView.picasso(url: String) {
    Picasso.get().load(url).into(this)
 }
-
-
 
 @RequiresApi(Build.VERSION_CODES.M)
 fun Context.checkNetworkConnection(): Boolean {

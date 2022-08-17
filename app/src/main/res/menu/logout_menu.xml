@@ -4,25 +4,28 @@
 
     tools:showIn="navigation_view">
 
-<item android:title="">
-    <menu>
+    <item android:title="">
+        <menu>
 
-    </menu>
-</item>
-        <item
-
-            android:icon="@drawable/ic_baseline_person_24"
-            android:title="Profil" />
-    <item android:id="@+id/logInFragment" android:title="Çıkış"
-        android:icon="@drawable/ic_logout_svgrepo_com"/>
+        </menu>
+    </item>
+    <item
+        android:icon="@drawable/ic_baseline_person_24"
+        android:title="Profil" />
+    <item
+        android:id="@+id/logInFragment"
+        android:icon="@drawable/ic_logout_svgrepo_com"
+        android:title="Çıkış" />
     <item android:title="">
         <menu>
             <item
 
                 android:title="Ayarlar ve gizlilik" />
+
             <item
 
                 android:title="Yardım Merkezi" />
+         
         </menu>
     </item>
 </menu>

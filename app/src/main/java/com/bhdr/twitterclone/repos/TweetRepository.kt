@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
+import com.bhdr.twitterclone.helperclasses.hubConnection
 import com.bhdr.twitterclone.models.Posts
 import com.bhdr.twitterclone.network.CallApi
 import com.bhdr.twitterclone.room.TweetDaoInterface
@@ -17,9 +18,9 @@ import com.bhdr.twitterclone.room.TweetsRoomModel
 import com.bhdr.twitterclone.room.UsersRoomModel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.microsoft.signalr.HubConnectionState
 import com.mikepenz.materialdrawer.util.ifNotNull
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.io.File
 
 
@@ -48,14 +49,24 @@ class TweetRepository(
    val mutableFollowNewTweetHashMap = MutableLiveData<HashMap<Int, String>>()
 
    private var hashMapFollowNewTweetHashMap: HashMap<Int, String> = HashMap()
+
+   //SignalR
+   private val job = Job()
+   private val coroutineContext = Dispatchers.IO + job
+   private val IoScope = CoroutineScope(coroutineContext)
+
+   private var followedUserIdList: List<Int>? = null
+
+   // private var listUserIdImageUrl: HashMap<Int, String> = HashMap()
+
+   var mutableFollowNewTweet: MutableLiveData<HashMap<Int, String>> = MutableLiveData()
+
    suspend fun getTweets(id: Int) {
       try {
          val request = CallApi.retrofitServiceMain.getTweets(id)
 
          if (request.isSuccessful) {
-
             mainStatus.value = MainStatus.DONE
-
             tweets.value = request.body()!!
             isNewTweet(request.body()!!, tweetsRoomList.value)
             Log.e("TweetRepoGetPosts", request.body().toString())
@@ -78,6 +89,7 @@ class TweetRepository(
 
          if (response.isSuccessful) {
             tweetDao.tweetIsLiked(id, response.body()!!, true)
+            Log.e("TAGsss", response.toString())
          }
 
       } catch (e: Exception) {
@@ -157,7 +169,7 @@ class TweetRepository(
    suspend fun getTweetsRoom() {
 
       val tweetsRoomModelList = tweetDao.allTweet()
-
+      Log.e("tweetsRoomModelList", tweetsRoomModelList.toString())
       if (tweetsRoomModelList != null) {
 
          tweetsRoomList.value = tweetsRoomModelList
@@ -175,7 +187,7 @@ class TweetRepository(
          lTweet.forEach {
             var userRoomModel: UsersRoomModel? = null
             imageUri =
-               createImageUri(it!!.user?.id.toString() + "_" + it.user?.userName + "_user_profile.png")
+               createImageUri(it!!.userId.toString() + "_" + it.user?.userName + "_user_profile.png")
             if (!haveImageUri) {
                val bmp = getBitmap(it.user!!.photoUrl!!)//fotoğraf indiriliyor
                bmp.ifNotNull { storeBitmap(bmp) }//fotoğraf kayıt edilyior
@@ -239,7 +251,6 @@ class TweetRepository(
 
    private fun createImageUri(photoName: String): String {
       val image = File(application.filesDir, photoName)
-
       haveImageUri = image.isFile
 
       return FileProvider.getUriForFile(
@@ -247,7 +258,6 @@ class TweetRepository(
          "com.bhdr.twitterclone.fileProvider",
          image
       ).toString()
-
    }
 
    private fun storeBitmap(bmp: Bitmap) {
@@ -263,22 +273,22 @@ class TweetRepository(
       val tweetRoomUpdateList: MutableList<Posts> = mutableListOf()
       val tweetCloudAddToRoomList: MutableList<Posts> = mutableListOf()
       try {
-         if (roomTweet == null) {
+         if (roomTweet?.size == 0) {
             newTweetButton(cloudTweet, tweetRoomUpdateList)
          } else {
             if (cloudTweet.isNotEmpty()) {
-               if (roomTweet.size != cloudTweet.size) {
+               if (roomTweet!!.size != cloudTweet.size) {
                   roomTweet.forEach { itCloud ->
                      val tweet: Posts? = cloudTweet.find { itRoom ->
                         itCloud.id != itRoom.id
                      }
                      if (tweet != null) {
-                        hashMapFollowNewTweetHashMap[tweet.id!!] = tweet.user?.photoUrl.toString()
+                        hashMapFollowNewTweetHashMap[tweet.userId!!] =
+                           tweet.user?.photoUrl.toString()
                         tweetCloudAddToRoomList.add(tweet)
 
                      } else {
                         tweetRoomUpdateList.add(cloudTweet[itCloud.id!!])
-
                      }
                   }
                   newTweetButton(tweetCloudAddToRoomList, tweetRoomUpdateList)
@@ -293,13 +303,110 @@ class TweetRepository(
    }
 
    private suspend fun newTweetButton(addTweet: List<Posts>?, updateTweet: List<Posts>?) {
-      if (updateTweet != null) {
-         tweetsUpdate(updateTweet)
-      }
-      if (addTweet != null) {
-         mutableFollowNewTweetHashMap.value = hashMapFollowNewTweetHashMap
-         tweets.value = addTweet
+      try {
+         if (updateTweet != null) {
+            tweetsUpdate(updateTweet)
+         }
+         if (hashMapFollowNewTweetHashMap.size != 0) {
+            mutableFollowNewTweetHashMap.value = hashMapFollowNewTweetHashMap
+            tweets.value = addTweet
+         } else {
+            if (addTweet != null) {
+               tweetsRoomConvertAndAdd(addTweet)
+            }
+         }
+
+      } catch (e: Exception) {
+         Log.e("newTweetButton", e.toString())
       }
    }
+
+   ////////////////
+   suspend fun getFollowedUserIdList(userId: Int) {
+      val response = CallApi.retrofitServiceMain.getFollowedUserIdList(userId)
+      if (response.isSuccessful) {
+         followedUserIdList = response.body()
+      }
+      Log.e("response", response.body().toString())
+   }
+
+   fun tweetSignalR() {
+
+      try {
+//         val hubConnection =
+//            HubConnectionBuilder.create("http://192.168.3.136:9009/newTweetHub").build()
+
+         if (hubConnection.connectionState == HubConnectionState.DISCONNECTED) {
+            hubConnection.start()
+            Log.e("TAG", hubConnection.connectionState.toString())
+         }
+         Log.e("TAGww", hubConnection.connectionState.toString())
+         //NewTweet follow & not follow
+         try {
+            hubConnection.on(
+               "newTweets",
+               { id, imageUrl, userName, name, post ->
+                  Log.e("id", id.toString())
+                  Log.e("imageUrl", imageUrl.toString())
+                  Log.e("imageUrl", name.toString())
+                  try {
+                     IoScope.launch {
+                        signalRControl(
+                           id.toInt(),
+                           imageUrl,
+                        )
+                     }
+
+                  } catch (e: Throwable) {
+
+                     Log.e("imageUrl", e.toString())
+                  }
+               },
+               String::class.java,
+               String::class.java,
+               String::class.java,
+               String::class.java,
+               String::class.java
+            )
+
+         } catch (e: Throwable) {
+
+            Log.e("newTweets", e.toString())
+         }
+
+
+      } catch (e: Exception) {
+         Log.e("tweetSignalRException", e.toString())
+      }
+   }
+
+   private fun signalRControl(
+      id: Int,
+      imageUrl: String
+   ) {
+      try {
+         if (id != 0) {
+            //NewTweet follow
+            IoScope.launch {
+               CoroutineScope(Dispatchers.Main).launch {
+
+                  val userId = followedUserIdList?.find { it == id }
+
+                  if (userId != null) {
+                     hashMapFollowNewTweetHashMap[id] = imageUrl
+                     mutableFollowNewTweet.value = hashMapFollowNewTweetHashMap
+                  }
+               }
+            }
+         }
+      } catch (e: Exception) {
+         Log.e("signalRControlExTweet", e.toString())
+      }
+   }
+
+   //NotificationScreen
+   fun notificationTweet() = tweetDao.notificationListTweet()
+   fun notificationLike() = tweetDao.notificationListLike()
+
 }
 

@@ -2,24 +2,29 @@ package com.bhdr.twitterclone.repos
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.bhdr.twitterclone.helperclasses.DataItem
+import com.bhdr.twitterclone.helperclasses.hubConnection
 import com.bhdr.twitterclone.models.Posts
-import com.bhdr.twitterclone.models.SignalRModel
 import com.bhdr.twitterclone.network.CallApi
-import com.microsoft.signalr.HubConnectionBuilder
+import com.bhdr.twitterclone.room.TweetDaoInterface
+import com.bhdr.twitterclone.room.TweetsRoomModel
+import com.bhdr.twitterclone.room.UsersRoomModel
 import com.microsoft.signalr.HubConnectionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.util.*
 
-class MainRepository {
-   val followCount: MutableLiveData<Int> = MutableLiveData()
-   val followedCount: MutableLiveData<Int> = MutableLiveData()
-   private var listUserIdImageUrl = HashMap<Int, String>()
-   var mutableNotFollowTweetOrLike = MutableLiveData<List<SignalRModel>>()
-   var mutableFollowNewTweet = MutableLiveData<HashMap<Int, String>>()
+class MainRepository(private val tweetDao: TweetDaoInterface) {
+   var followCount = MutableLiveData<Int>()
+
+   var followedCount = MutableLiveData<Int>()
+
    private var followedUserIdList: List<Int>? = null
-   private var mutableNotFollowTweetOrLikeList: MutableList<SignalRModel>? = null
+
+   var notificationCount = MutableLiveData<Int>()
+
 
    private val job = Job()
    private val coroutineContext = Dispatchers.IO + job
@@ -61,18 +66,12 @@ class MainRepository {
    fun tweetSignalR(userId: Int) {
 
       try {
-         val hubConnection =
-            HubConnectionBuilder.create("http://192.168.3.136:9009/newTweetHub").build()
 
          if (hubConnection.connectionState == HubConnectionState.DISCONNECTED) {
             hubConnection.start()
-
          }
-
          //NewTweet follow & not follow
          try {
-
-
             hubConnection.on(
                "newTweets",
                { id, imageUrl, userName, name, post ->
@@ -139,61 +138,46 @@ class MainRepository {
       post: Posts?
    ) {
       try {
+         caScope.launch {
+            CoroutineScope(Dispatchers.Main).launch {
 
-         if (id == 0) {
-            //TODO SignalrModel id'si 0 ise tweeti beğenilmiş demek farklı
-            //Like tweeti beğinilmiş modele atılacak
+               if (id == 0) {
+                  //Like tweeti beğinilmiş modele atılacak
 
-            mutableNotFollowTweetOrLikeList?.add(
-               SignalRModel(
-                  id,
-                  imageUrl,
-                  userName,
-                  name,
-                  post!!
-               )
-            )
-            caScope.launch {
-               CoroutineScope(Dispatchers.Main).launch {
-                  mutableNotFollowTweetOrLike.value = mutableNotFollowTweetOrLikeList!!
-               }
-            }
-         } else {
-            Log.e("TAG", "haveID")
-            //NewTweet follow & not follow
-            val haveId = followedUserIdList?.find { it == id }
-            if (haveId != null) {
+                  saveNotificationLike(
+                     DataItem.NotificationLike(
+                        id,
+                        imageUrl,
+                        userName,
+                        name,
+                        Calendar.getInstance().time.toString(),
+                        tweetsRoomConvertAndAdd(post!!)
 
-               caScope.launch {
-                  CoroutineScope(Dispatchers.Main).launch {
+                     )
+                  )
+                  notificationCount.value = notificationCount.value?.toInt()?.plus(1)
 
-                     listUserIdImageUrl[id] = imageUrl
-                     Log.e("list", listUserIdImageUrl.values.toTypedArray()[0])
+               } else {
 
-                     mutableFollowNewTweet.value = listUserIdImageUrl
+                  //NewTweet follow & not follow
+                  val haveId = followedUserIdList?.find { it == id }
+                  if (haveId == null) {
+                     //Takipe etmiyor bildirim ekranında gösterilecek modelde olacak
+                     val getPost: Posts = tweetNew(postId)
 
-                     Log.e("mutable", mutableFollowNewTweet.value.toString())
+                     saveNotificationTweet(
+                        DataItem.NotificationTweet(
+                           id,
+                           imageUrl,
+                           userName,
+                           name,
+                           Calendar.getInstance().time.toString(),
+                           tweetsRoomConvertAndAdd(getPost)
+                        )
+                     )
+                     notificationCount.value = notificationCount.value?.toInt()?.plus(1)
                   }
                }
-            } else {
-               //Takipe etmiyor bildirim ekranında gösterilecek modelde olacak
-               val getPost: Posts = tweetNew(postId)
-               mutableNotFollowTweetOrLikeList?.add(
-                  SignalRModel(
-                     id,
-                     imageUrl,
-                     userName,
-                     name,
-                     getPost
-                  )
-               )
-//               caScope.launch {
-//                  CoroutineScope(Dispatchers.Main).launch {
-//                     mutableNotFollowTweetOrLike.value = mutableNotFollowTweetOrLikeList!!
-//                  }
-//               }
-
-
             }
          }
       } catch (e: Exception) {
@@ -202,4 +186,39 @@ class MainRepository {
 
    }
 
+   private suspend fun saveNotificationTweet(it: DataItem.NotificationTweet) =
+      tweetDao.addNotificationTweet(it)
+
+   private suspend fun saveNotificationLike(it: DataItem.NotificationLike) =
+      tweetDao.addNotificationLike(it)
+
+   private fun tweetsRoomConvertAndAdd(tweet: Posts): TweetsRoomModel {
+      try {
+         var userRoomModel: UsersRoomModel? = null
+         tweet.user?.apply {
+            userRoomModel =
+               UsersRoomModel(
+                  id,
+                  photoUrl!!,
+                  userName,
+                  name
+               )
+         }
+         tweet.apply {
+            return TweetsRoomModel(
+               date,
+               id,
+               postContent,
+               postImageUrl,
+               postLike,
+               userRoomModel,
+               userId
+            )
+         }
+      } catch (e: Exception) {
+         Log.e("tweetsRoomConvertAndAdd", e.toString())
+         throw IllegalStateException("tweetsRoomConvertAndAdd")
+      }
+
+   }
 }

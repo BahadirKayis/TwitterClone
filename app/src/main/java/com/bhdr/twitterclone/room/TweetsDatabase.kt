@@ -5,9 +5,14 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.bhdr.twitterclone.helperclasses.DataItem
 
 
-@Database(entities = [TweetsRoomModel::class], version = 1, exportSchema = false)
+@Database(
+   entities = [TweetsRoomModel::class, DataItem.NotificationTweet::class, DataItem.NotificationLike::class],
+   version = 1,
+   exportSchema = false
+)
 @TypeConverters(Converters::class)
 abstract class TweetsDatabase : RoomDatabase() {
 
