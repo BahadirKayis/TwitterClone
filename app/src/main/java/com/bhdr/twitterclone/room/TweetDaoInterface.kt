@@ -35,4 +35,12 @@ interface TweetDaoInterface {
 
    @Query("SELECT * FROM notificationLike ORDER BY date DESC")
    fun notificationListLike(): LiveData<List<DataItem.NotificationLike>>
+
+   @Query("DELETE  FROM notificationLike")
+   suspend fun notificationDeleteLike()
+
+   @Query("DELETE  FROM notificationTweet")
+   suspend fun notificationDeleteTweet()
+
+
 }

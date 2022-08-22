@@ -47,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:backgroundTint="#03A9F4"
+            android:backgroundTint="@color/menu_tint"
             android:fontFamily="@font/roboto_medium"
             android:gravity="center"
             android:text="Hesap oluştur"

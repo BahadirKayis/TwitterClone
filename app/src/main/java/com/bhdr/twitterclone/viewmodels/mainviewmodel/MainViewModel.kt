@@ -43,4 +43,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
          mainRepository.getFollowedUserIdList(id)
       }
    }
+
+   fun roomDelete() {
+      viewModelScope.launch {
+         mainRepository.deleteAllRoom()
+      }
+   }
 }

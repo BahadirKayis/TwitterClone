@@ -1,6 +1,5 @@
 package com.bhdr.twitterclone
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -55,10 +54,9 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
             }
 
             else -> {
-//               when (destination.id) {
-//                  R.id.mainScreenFragment -> userRequest()
-//               }
-               userRequest()
+               when (destination.id) {
+                  R.id.mainScreenFragment -> userRequest()
+               }
                binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED)
                binding.bottomNav.visible()
             }
@@ -96,23 +94,27 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
    }
 
    private fun logOut() {
+      viewModel.roomDelete()
       this.sharedPref().edit().clear().apply()
+
    }
 
    private fun userRequest() {
-
-      observable()
-      shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
-      signalRStart = true
-      Log.e("TAG", "signalRSTART")
+      if (!signalRStart) {
+         signalRStart = true
+         observable()
+         shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
+         Log.e("TAG", "signalRSTART")
+      }
       viewModel.startSignalR(this@MainActivity.userId())
       viewModel.followCount(this.userId())
       viewModel.followedCount(this.userId())
       viewModel.getFollowedUserIdList(this.userId())
    }
 
-   @SuppressLint("SetTextI18n")
+
    private fun observable() {
+
       with(viewModel) {
          followCount.observe(this@MainActivity, Observer {
             itemsLayout!!.findViewById<TextView>(R.id.userFollow).text = it.toString()
@@ -120,8 +122,11 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
             itemsLayout!!.findViewById<TextView>(R.id.userNameSurname).text =
                this@MainActivity.sharedPref().getString("user_name", "").toString()
 
-            itemsLayout!!.findViewById<TextView>(R.id.userName).text = "@" +
-                    this@MainActivity.sharedPref().getString("user_userName", "").toString()
+            val userName = "@ ${this@MainActivity.sharedPref().getString("user_userName", "")}"
+            itemsLayout!!.findViewById<TextView>(R.id.userName).text = userName
+
+
+
 
             itemsLayout!!.findViewById<CircleImageView>(R.id.circleImageView)
                .picasso(this@MainActivity.userPhotoUrl())

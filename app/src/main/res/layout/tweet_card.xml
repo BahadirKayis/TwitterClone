@@ -54,7 +54,7 @@
         android:layout_marginStart="16dp"
         android:gravity="center"
         android:rotation="90"
-        android:text="."
+        android:text=""
         android:textAlignment="center"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/usernameText"

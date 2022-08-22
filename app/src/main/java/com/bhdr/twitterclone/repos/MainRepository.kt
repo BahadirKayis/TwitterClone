@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.bhdr.twitterclone.helperclasses.DataItem
 import com.bhdr.twitterclone.helperclasses.hubConnection
+import com.bhdr.twitterclone.helperclasses.toLongDate
 import com.bhdr.twitterclone.models.Posts
 import com.bhdr.twitterclone.network.CallApi
 import com.bhdr.twitterclone.room.TweetDaoInterface
@@ -14,9 +15,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.util.*
 
 class MainRepository(private val tweetDao: TweetDaoInterface) {
+
    var followCount = MutableLiveData<Int>()
 
    var followedCount = MutableLiveData<Int>()
@@ -138,27 +139,29 @@ class MainRepository(private val tweetDao: TweetDaoInterface) {
       post: Posts?
    ) {
       try {
+
          caScope.launch {
             CoroutineScope(Dispatchers.Main).launch {
-
                if (id == 0) {
+                  val rep = CallApi.retrofitServiceMain.getUser(post?.userId!!)
+                  post.user = rep.body()
                   //Like tweeti beğinilmiş modele atılacak
-
                   saveNotificationLike(
                      DataItem.NotificationLike(
                         id,
                         imageUrl,
                         userName,
                         name,
-                        Calendar.getInstance().time.toString(),
-                        tweetsRoomConvertAndAdd(post!!)
-
+                        toLongDate().toString(),
+                        tweetsRoomConvertAndAdd(post)
                      )
                   )
+                  if (notificationCount.value == null) {
+                     notificationCount.value = 0
+                  }
                   notificationCount.value = notificationCount.value?.toInt()?.plus(1)
 
                } else {
-
                   //NewTweet follow & not follow
                   val haveId = followedUserIdList?.find { it == id }
                   if (haveId == null) {
@@ -171,10 +174,13 @@ class MainRepository(private val tweetDao: TweetDaoInterface) {
                            imageUrl,
                            userName,
                            name,
-                           Calendar.getInstance().time.toString(),
+                           toLongDate().toString(),
                            tweetsRoomConvertAndAdd(getPost)
                         )
                      )
+                     if (notificationCount.value == null) {
+                        notificationCount.value = 0
+                     }
                      notificationCount.value = notificationCount.value?.toInt()?.plus(1)
                   }
                }
@@ -193,6 +199,7 @@ class MainRepository(private val tweetDao: TweetDaoInterface) {
       tweetDao.addNotificationLike(it)
 
    private fun tweetsRoomConvertAndAdd(tweet: Posts): TweetsRoomModel {
+
       try {
          var userRoomModel: UsersRoomModel? = null
          tweet.user?.apply {
@@ -221,4 +228,11 @@ class MainRepository(private val tweetDao: TweetDaoInterface) {
       }
 
    }
+
+   suspend fun deleteAllRoom() {
+      tweetDao.notificationDeleteLike()
+      tweetDao.notificationDeleteTweet()
+      tweetDao.deleteTweet()
+   }
+
 }

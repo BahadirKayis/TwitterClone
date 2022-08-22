@@ -70,8 +70,8 @@
             android:layout_height="25dp"
             android:layout_marginStart="10dp"
             android:src="@drawable/ic_update_tweet"
-
             android:translationZ="5dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

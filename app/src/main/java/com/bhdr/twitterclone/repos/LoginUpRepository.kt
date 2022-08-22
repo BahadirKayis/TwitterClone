@@ -3,12 +3,14 @@ package com.bhdr.twitterclone.repos
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.bhdr.twitterclone.helperclasses.toLongDate
 import com.bhdr.twitterclone.models.Users
 import com.bhdr.twitterclone.network.CallApi
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.runBlocking
+import java.util.*
 
 
 class LoginUpRepository() {
@@ -112,7 +114,7 @@ class LoginUpRepository() {
                   email,
                   phone,
                   profilePictureUrl,
-                  date
+                  toLongDate().toString()
                )
 
                if (signUp.isSuccessful) {

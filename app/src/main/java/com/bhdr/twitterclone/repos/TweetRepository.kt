@@ -11,6 +11,7 @@ import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.bhdr.twitterclone.helperclasses.hubConnection
+import com.bhdr.twitterclone.helperclasses.toLongDate
 import com.bhdr.twitterclone.models.Posts
 import com.bhdr.twitterclone.network.CallApi
 import com.bhdr.twitterclone.room.TweetDaoInterface
@@ -53,11 +54,10 @@ class TweetRepository(
    //SignalR
    private val job = Job()
    private val coroutineContext = Dispatchers.IO + job
-   private val IoScope = CoroutineScope(coroutineContext)
+   private val cIoScope = CoroutineScope(coroutineContext)
 
    private var followedUserIdList: List<Int>? = null
 
-   // private var listUserIdImageUrl: HashMap<Int, String> = HashMap()
 
    var mutableFollowNewTweet: MutableLiveData<HashMap<Int, String>> = MutableLiveData()
 
@@ -113,7 +113,10 @@ class TweetRepository(
 
                   runBlocking {
                      val addTweetResult =
-                        CallApi.retrofitServiceMain.addTweet(id, tweetText, tweetPictureUrl)
+                        CallApi.retrofitServiceMain.addTweet(
+                           id, tweetText, tweetPictureUrl,
+                           toLongDate().toString()
+                        )
                      if (addTweetResult.isSuccessful) {
                         mainStatus.value = MainStatus.DONE
                         tweetAdded.value = addTweetResult.body()
@@ -128,7 +131,12 @@ class TweetRepository(
             }
          } else {
             val addTweetResult =
-               CallApi.retrofitServiceMain.addTweet(id, tweetText, "null")
+               CallApi.retrofitServiceMain.addTweet(
+                  id,
+                  tweetText,
+                  "null",
+                  toLongDate().toString()
+               )
             if (addTweetResult.isSuccessful) {
                mainStatus.value = MainStatus.DONE
                tweetAdded.value = addTweetResult.body()
@@ -345,12 +353,12 @@ class TweetRepository(
          try {
             hubConnection.on(
                "newTweets",
-               { id, imageUrl, userName, name, post ->
+               { id, imageUrl, name ->
                   Log.e("id", id.toString())
                   Log.e("imageUrl", imageUrl.toString())
                   Log.e("imageUrl", name.toString())
                   try {
-                     IoScope.launch {
+                     cIoScope.launch {
                         signalRControl(
                            id.toInt(),
                            imageUrl,
@@ -364,9 +372,8 @@ class TweetRepository(
                },
                String::class.java,
                String::class.java,
-               String::class.java,
-               String::class.java,
                String::class.java
+
             )
 
          } catch (e: Throwable) {
@@ -387,7 +394,7 @@ class TweetRepository(
       try {
          if (id != 0) {
             //NewTweet follow
-            IoScope.launch {
+            cIoScope.launch {
                CoroutineScope(Dispatchers.Main).launch {
 
                   val userId = followedUserIdList?.find { it == id }
@@ -405,6 +412,7 @@ class TweetRepository(
    }
 
    //NotificationScreen
+
    fun notificationTweet() = tweetDao.notificationListTweet()
    fun notificationLike() = tweetDao.notificationListLike()
 

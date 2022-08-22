@@ -22,6 +22,9 @@ interface TwitterInterface {
       @Query("date") date: String?
    ): Response<Boolean>
 
+   @GET("user")
+   suspend fun getUser(@Query("UserId")userId: Int): Response<Users>
+
    @GET("userNameAndEmail")
    suspend fun getUsernameAndEmail(): Response<List<UsernameAndEmailControl>>
 
@@ -48,7 +51,8 @@ interface TwitterInterface {
    suspend fun addTweet(
       @Query("userId") userId: Int,
       @Query("content") content: String,
-      @Query("image_url") image_url: String
+      @Query("image_url") image_url: String,
+      @Query("date") date: String
    ): Response<Boolean>
 
    @POST("userFollow")

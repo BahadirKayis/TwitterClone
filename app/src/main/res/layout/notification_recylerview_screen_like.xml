@@ -39,56 +39,44 @@
         android:id="@+id/usernameTextLiked"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/nameTextLiked"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/nameTextLiked"
+        app:layout_constraintTop_toBottomOf="@id/nameTextLiked" />
 
-    <TextView
-        android:id="@+id/textView7Liked"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:gravity="center"
-        android:rotation="90"
-        android:text="."
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/usernameTextLiked"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/timeTextLiked"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxLength="10"
+        android:layout_marginStart="3dp"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/textView7Liked"
+        app:layout_constraintStart_toEndOf="@+id/nameTextLiked"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tweetTextLiked"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
-        android:autoLink="web"
-        android:linksClickable="true"
-        android:textColor="#000000"
-        android:textColorLink="@color/linkColor"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/cardViewLiked"
-        app:layout_constraintTop_toBottomOf="@+id/nameTextLiked" />
+    <!--    <TextView-->
+    <!--        android:id="@+id/tweetTextLiked"-->
+    <!--        android:layout_width="0dp"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginStart="8dp"-->
+    <!--        android:layout_marginTop="4dp"-->
+    <!--        android:autoLink="web"-->
+    <!--        android:linksClickable="true"-->
+    <!--        android:textColor="#000000"-->
+    <!--        android:textColorLink="@color/linkColor"-->
+    <!--        android:textSize="16sp"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toEndOf="@+id/cardViewLiked"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/nameTextLiked" />-->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/conss"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/notification_cons_border"
-        android:padding="20dp"
+        android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cardViewLiked">
@@ -194,7 +182,6 @@
         android:layout_height="1dp"
         android:layout_marginTop="8dp"
         android:background="?android:attr/listDivider"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/conss" />

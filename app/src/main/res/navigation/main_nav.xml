@@ -45,4 +45,9 @@
             android:id="@+id/action_addTweetFragment_to_mainScreenFragment"
             app:destination="@id/mainScreenFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/notificationsFragment"
+        android:name="com.bhdr.twitterclone.fragments.mainfragments.NotificationsFragment"
+        android:label="fragment_notifications"
+        tools:layout="@layout/fragment_notifications" />
 </navigation>

@@ -2,11 +2,25 @@
 
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="10dp">
+
+    <TextView
+        android:id="@+id/dateAndNewTweet"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:gravity="start"
+        android:text=" kullanıcı  tweetledi"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/nameText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/nameText"
+        app:layout_constraintTop_toTopOf="@id/nameText" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
@@ -41,10 +55,10 @@
         android:id="@+id/usernameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="5dp"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/nameText"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/cardView"
+        app:layout_constraintTop_toBottomOf="@id/nameText" />
 
     <TextView
         android:id="@+id/textView7"
@@ -56,64 +70,87 @@
         android:text="."
         android:textAlignment="center"
         android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/usernameText"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@+id/nameText"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/timeText"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:gravity="start"
         android:maxLength="10"
         android:textSize="16sp"
+        android:visibility="gone"
         app:layout_constraintStart_toEndOf="@+id/textView7"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/conss"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:background="@drawable/notification_cons_border"
-        android:padding="20dp"
+    <Button
+        android:id="@+id/followUserButton"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginBottom="5dp"
+        android:backgroundTint="@color/menu_tint"
+        android:text="Takip Et"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textSize="13sp"
+        app:cornerRadius="25dp"
+        app:layout_constraintBottom_toTopOf="@id/tweetText"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dateAndNewTweet" />
+
+    <Button
+        android:id="@+id/newTweetIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginStart="-5dp"
+        android:layout_marginTop="-10dp"
+        android:backgroundTint="@color/menu_tint"
+        android:text="Yeni Tweet"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:cornerRadius="25dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardView">
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/tweetText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="5dp"
+        android:autoLink="web"
+        android:linksClickable="true"
+        android:textColor="#000000"
+        android:textColorLink="@color/linkColor"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/cardView"
+        app:layout_constraintTop_toBottomOf="@+id/usernameText" />
 
-        <TextView
-            android:id="@+id/tweetText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:autoLink="web"
-            android:linksClickable="true"
-            android:textColor="#000000"
-            android:textColorLink="@color/linkColor"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/cardView"
+        app:layout_constraintTop_toBottomOf="@+id/tweetText">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardView2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            app:cardCornerRadius="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tweetText">
+        <ImageView
+            android:id="@+id/tweetImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            tools:srcCompat="@tools:sample/avatars" />
+    </androidx.cardview.widget.CardView>
 
-            <ImageView
-                android:id="@+id/tweetImage"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                tools:srcCompat="@tools:sample/avatars" />
-        </androidx.cardview.widget.CardView>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
         android:id="@+id/divider5"
@@ -124,7 +161,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/conss" />
-
+        app:layout_constraintTop_toBottomOf="@id/cardView2" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 

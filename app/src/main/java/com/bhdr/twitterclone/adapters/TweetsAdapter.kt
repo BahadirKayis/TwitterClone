@@ -17,6 +17,7 @@ import com.bhdr.twitterclone.databinding.TweetCardBinding
 import com.bhdr.twitterclone.diffcallback.TweetsCallBack
 import com.bhdr.twitterclone.fragments.mainfragments.MainScreenFragmentDirections
 import com.bhdr.twitterclone.helperclasses.picasso
+import com.bhdr.twitterclone.helperclasses.toCalendar
 import com.bhdr.twitterclone.room.TweetsRoomModel
 import com.bhdr.twitterclone.room.UsersRoomModel
 import com.like.LikeButton
@@ -24,7 +25,8 @@ import com.like.OnLikeListener
 
 
 class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
-   ListAdapter<TweetsRoomModel, TweetsAdapter.TweetViewHolder>(TweetsCallBack()) {
+   ListAdapter<TweetsRoomModel, TweetsAdapter.TweetViewHolder>(TweetsCallBack())
+{
 
    private var context: Context? = null
    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TweetViewHolder {
@@ -86,7 +88,7 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
 
                tweetText.text = model.postContent.toString()
                tweetImage.picasso(model.tweetImage.toString())
-               timeText.text = model.date.toString()
+               timeText.text = model.date!!.toLong().toCalendar()
 
                if (model.postContent?.contains("#") == true) {
 

@@ -53,7 +53,7 @@
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/retweet.xml" value="0.3425" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/settings.xml" value="0.3425" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/share.xml" value="0.3425" />
-        <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/tweetledi_button.xml" value="0.3425" />
+        <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/tweetledi_button.xml" value="0.25" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/twitter.xml" value="0.2985" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/font/roboto_thin.xml" value="0.21822916666666667" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/activity_main.xml" value="0.44419391206313413" />
@@ -77,11 +77,13 @@
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/loading_screen.xml" value="0.358695652173913" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/menu_nav_header.xml" value="0.5" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/nav_menu_layout.xml" value="0.3776041666666667" />
+        <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/notification_recylerview_screen_like.xml" value="0.5" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/notification_recylerview_screen_one.xml" value="0.33" />
+        <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/notification_recylerview_screen_tweet.xml" value="0.5" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/notification_recylerview_screen_two.xml" value="0.37864583333333335" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/notification_screen_one.xml" value="0.3776041666666667" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/top_menu_user_info.xml" value="0.33" />
-        <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/tweet_card.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/tweet_card.xml" value="0.33" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/who_to_follow_card.xml" value="0.358695652173913" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/menu/bottom_menu.xml" value="0.37864583333333335" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/menu/logout_menu.xml" value="0.5" />
