@@ -14,8 +14,6 @@ import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 class LogInFragment : Fragment(R.layout.fragment_log_in) {
 
    private val binding by viewBinding(FragmentLogInBinding::bind)
-
-
    private val viewModel by lazy { SignInViewModel() }
 
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -28,6 +26,7 @@ class LogInFragment : Fragment(R.layout.fragment_log_in) {
 
             else -> {}
          }
+
       }
 
       binding.signUpButton.setOnClickListener {

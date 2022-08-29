@@ -7,7 +7,6 @@ plugins {
     id 'com.google.gms.google-services'
     id 'kotlin-parcelize'
 
-
 }
 
 android {
@@ -126,5 +125,6 @@ dependencies {
     implementation "androidx.room:room-ktx:2.4.3"
 
     //ImageLoader
-    implementation"io.coil-kt:coil:2.1.0"
+    implementation "io.coil-kt:coil:2.1.0"
+    
 }

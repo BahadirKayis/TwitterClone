@@ -1,6 +1,5 @@
 package com.bhdr.twitterclone.adapters
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.text.Spannable
@@ -25,9 +24,7 @@ import com.like.OnLikeListener
 
 
 class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
-   ListAdapter<TweetsRoomModel, TweetsAdapter.TweetViewHolder>(TweetsCallBack())
-{
-
+   ListAdapter<TweetsRoomModel, TweetsAdapter.TweetViewHolder>(TweetsCallBack()) {
    private var context: Context? = null
    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TweetViewHolder {
       val binding =
@@ -37,44 +34,52 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
    }
 
    override fun onBindViewHolder(holder: TweetViewHolder, position: Int) {
-      val posts = getItem(position)
+      with(holder) {
+         with(binding) {
 
-      val userModel = posts.user
+            val posts = getItem(position)
+            val userModel = posts.user
 
-      if (posts.isLiked == true) {
-         holder.binding.favButton.isLiked = true
-      }
-      holder.binding.favButton.setOnLikeListener(object : OnLikeListener {
-         override fun liked(likeButton: LikeButton?) {
-            clickedTweetListener.crfButtonsListener("fav", posts.id!!, 1)
-            val postCont = 1 + posts.postLike!!
-            holder.binding.favText.text = postCont.toString()
-            posts.postLike = postCont
-            posts.isLiked = true
+            if (posts.isLiked == true) {
+               favButton.isLiked = true
+            }
+            favButton.setOnLikeListener(object : OnLikeListener {
+
+               override fun liked(likeButton: LikeButton?) {
+                  clickedTweetListener.crfButtonsListener("fav", posts.id!!, 1)
+                  with(posts) {
+                     val postCont = 1 + posts.postLike!!
+                     favText.text = postCont.toString()
+                     postLike = postCont
+                     isLiked = true
+                  }
+               }
+
+               override fun unLiked(likeButton: LikeButton?) {
+                  clickedTweetListener.crfButtonsListener("fav", posts.id!!, -1)
+                  with(posts) {
+                     val postCont = postLike!! - 1
+                     favText.text = postCont.toString()
+                     postLike = postCont
+                     isLiked = false
+                  }
+               }
+            })
+            try {
+               tweetMenuText.setOnClickListener {
+                  it.findNavController()
+                     .navigate(
+                        MainScreenFragmentDirections.actionMainScreenFragmentToTweetBottomDialog(
+                           "@" + userModel?.userName.toString()
+                        )
+                     )
+               }
+               post(posts)
+               userModel(userModel!!)
+            } catch (e: Exception) {
+               Log.e("TweetAdapterHolderCatch", e.toString())
+            }
          }
-
-         override fun unLiked(likeButton: LikeButton?) {
-            clickedTweetListener.crfButtonsListener("fav", posts.id!!, -1)
-            val postCont = posts.postLike!! - 1
-            holder.binding.favText.text = postCont.toString()
-            posts.postLike = postCont
-            posts.isLiked = false
-         }
-      })
-      try {
-         holder.binding.tweetMenuText.setOnClickListener {
-            it.findNavController()
-               .navigate(
-                  MainScreenFragmentDirections.actionMainScreenFragmentToTweetBottomDialog(
-                     "@" + userModel?.userName.toString()
-                  )
-               )
-         }
-
-         holder.post(posts)
-         holder.userModel(userModel!!)
-      } catch (e: Exception) {
-         Log.e("TweetAdapterHolderCatch", e.toString())
       }
    }
 
@@ -83,47 +88,49 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
 
       fun post(model: TweetsRoomModel) {
          try {
+            with(model) {
+               with(binding) {
 
-            binding.apply {
+                  tweetText.text = postContent.toString()
+                  tweetImage.picasso(tweetImage.toString())
+                  timeText.text = date!!.toLong().toCalendar()
 
-               tweetText.text = model.postContent.toString()
-               tweetImage.picasso(model.tweetImage.toString())
-               timeText.text = model.date!!.toLong().toCalendar()
+                  if (postContent?.contains("#") == true) {
 
-               if (model.postContent?.contains("#") == true) {
+                     tweetText.setSpannableFactory(spannableFactory())
 
-                  tweetText.setSpannableFactory(spannableFactory())
+                     tweetText.setText(
+                        postContent.replace("-n", "\n"),
+                        TextView.BufferType.SPANNABLE
+                     )
+                  }
 
-                  tweetText.setText(
-                     model.postContent.replace("-n", "\n"),
-                     TextView.BufferType.SPANNABLE
-                  )
+                  favText.text = postLike.toString()
                }
-
-               favText.text = model.postLike.toString()
             }
          } catch (e: Exception) {
             Log.e("TweetViewHolder", "post: $e")
          }
       }
 
-      @SuppressLint("SetTextI18n")
+
       fun userModel(model: UsersRoomModel) {
-         binding.apply {
-            try {
-               //   binding.profilePicture.load(Uri.parse(model.photo))
-               profilePicture.picasso(model.photo.toString())
-               nameText.text = model.name
-               usernameText.text = "@" + model.userName
-            } catch (e: Exception) {
-               Log.e("TweetAdapterModelCatch", e.toString())
+         with(binding) {
+            with(model) {
+               try {
+                  profilePicture.picasso(photo)
+                  nameText.text = name
+                  "@$userName".also { usernameText.text = it }
+               } catch (e: Exception) {
+                  Log.e("TweetAdapterModelCatch", e.toString())
+               }
             }
          }
       }
    }
 
    interface ClickedTweetListener {
-      fun crfButtonsListener(commentrtfav: String, tweetId: Int, currentlyCRFNumber: Int)
+      fun crfButtonsListener(commentRtFav: String, tweetId: Int, currentlyCRFNumber: Int)
    }
 
    private fun spannableFactory(): Spannable.Factory {

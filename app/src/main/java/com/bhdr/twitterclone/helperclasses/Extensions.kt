@@ -62,7 +62,6 @@ fun Context.checkNetworkConnection(): Boolean {
    return (capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
 }
 
-
 fun Long.toCalendar(): String {
    try {
       val aps: Long = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -73,10 +72,10 @@ fun Long.toCalendar(): String {
       val minutes = ((aps.seconds.inWholeMinutes)) - ((this.seconds.inWholeMinutes))
       return if (minutes in 60..1440) {
          "${(aps.seconds.inWholeHours) - (this.seconds.inWholeHours)}s. önce"
-      } else if (minutes in 2..59) {
+      } else if (minutes in 1..59) {
          "${(aps.seconds.inWholeMinutes) - (this.seconds.inWholeMinutes)}dk. önce"
       } else if (minutes < 1) {
-         "${(aps.seconds) - (this.seconds)}sn. önce"
+         "${(aps.seconds) - (this.seconds)}n. önce"
       } else {
          "${(aps.seconds.inWholeDays) - (this.seconds.inWholeDays)}g. önce"
       }
@@ -90,7 +89,6 @@ fun Long.toCalendar(): String {
 fun toLongDate(): Long {
    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       Calendar.getInstance().time.toInstant().epochSecond
-
    } else {
       Calendar.getInstance().time.time
    }

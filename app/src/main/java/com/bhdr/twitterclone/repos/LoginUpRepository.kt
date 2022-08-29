@@ -10,27 +10,21 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.runBlocking
-import java.util.*
 
 
-class LoginUpRepository() {
+class LoginUpRepository {
 
    enum class LogInUpStatus { LOADING, ERROR, DONE }
 
    private val db = Firebase.storage
 
-
    val userSaved = MutableLiveData<Boolean>()//SignUpViewModel
-
 
    val userStatus = MutableLiveData<LogInUpStatus>()//SignUpViewModel - ForgetPasswordViewModel
 
-
    val userModel = MutableLiveData<Users>()//SignInViewModel
 
-
    val userForgetId = MutableLiveData<Int>()
-
 
    val userChangePassword = MutableLiveData<Boolean>()
 
@@ -55,8 +49,7 @@ class LoginUpRepository() {
    suspend fun userChangePassword(userId: Int, password: String) {
       userStatus.value = LogInUpStatus.LOADING
 
-      val response =
-         CallApi.retrofitServiceLogInUp.getForgetChangePassword(userId, password)
+      val response = CallApi.retrofitServiceLogInUp.getForgetChangePassword(userId, password)
 
       if (response.isSuccessful) {
          userChangePassword.value = response.body()
@@ -139,19 +132,14 @@ class LoginUpRepository() {
    }
 
    private fun deleteImage(filename: String) {//apiden false döndüğünde firebase yüklenen fotoğrafı siliyorum
-      try {
+
          val photoRef: StorageReference = db.getReferenceFromUrl(filename)
          photoRef.delete().addOnSuccessListener {
             // File deleted successfully
             Log.e("TAG", "Photo is delete")
          }.addOnFailureListener { // Uh-oh, an error occurred!
-
+            userStatus.value = LogInUpStatus.ERROR
          }
-      } catch (e: Exception) {
-         userStatus.value = LogInUpStatus.ERROR
-         Log.e("TAG", e.toString())
-
-      }
 
    }
 

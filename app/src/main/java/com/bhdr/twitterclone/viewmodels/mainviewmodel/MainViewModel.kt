@@ -22,6 +22,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
    val followedCount: LiveData<Int>
       get() = mainRepository.followedCount
 
+   val roomDelete: LiveData<Boolean> get() = mainRepository.roomDelete
+
    fun followCount(userId: Int) {
       viewModelScope.launch {
          mainRepository.followCount(userId)

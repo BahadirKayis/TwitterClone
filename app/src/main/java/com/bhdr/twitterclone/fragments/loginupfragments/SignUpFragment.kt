@@ -21,62 +21,60 @@ import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentSignUpBinding
 import com.bhdr.twitterclone.helperclasses.gone
 import com.bhdr.twitterclone.helperclasses.snackBar
+import com.bhdr.twitterclone.helperclasses.toLongDate
 import com.bhdr.twitterclone.helperclasses.visible
 import com.bhdr.twitterclone.repos.LoginUpRepository
 import com.bhdr.twitterclone.viewmodels.loginupviewmodel.SignUpViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import java.io.IOException
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 
 class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
+
    private val binding by viewBinding(FragmentSignUpBinding::bind)
-
-
-   private val viewModelSignUp by lazy { SignUpViewModel() }
-
+   private val viewModel by lazy { SignUpViewModel() }
    private lateinit var permissionLauncher: ActivityResultLauncher<String>
    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
    var selectedPicture: Uri? = null
    var selectedBitmap: Bitmap? = null
-   var userSaved: Boolean? = null
-
 
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
       super.onViewCreated(view, savedInstanceState)
 
-      binding.apply {
 
+
+
+      binding()
+      registerLauncher()
+      observable()
+   }
+
+   private fun binding() {
+      with(binding) {
 
          back.setOnClickListener {
             findNavController().popBackStack()
          }
+
          profilePicture.setOnClickListener {
             selectImage()
          }
 
          signUpButton.setOnClickListener {
-
-            val current = LocalDateTime.now()
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-            val formatted = current.format(formatter)
             createUser(
-
                usernameEditText.text.toString(),
                passwordEditText.text.toString(),
                nameEditText.text.toString(),
                emailEditText.text.toString(),
                phoneEditText.text.toString(),
-               formatted.toString()
+               toLongDate().toString()
             )
          }
 
       }
-      registerLauncher()
-      createUserObservable()
+
    }
 
    private fun selectImage() {
@@ -164,7 +162,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             val imageName = "$uuid.jpg"
 
             if (selectedPicture != null) {
-               viewModelSignUp.createUser(
+               viewModel.createUser(
                   userName,
                   password,
                   name,
@@ -175,23 +173,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                   selectedPicture
 
                )
-//                    viewModelGetUserNE.userData.observe(viewLifecycleOwner) { it ->
-//                        var control = it.find { it.userName == userName }
-//
-//                        if (control != null) {
-//
-//                            snackBar(requireView(), "Bu Kullanıcı Adı mevcut!", 1500)
-//                        } else {
-//
-//                            control = it.find { it.email == email }
-//                            if (control != null) {
-//                                snackBar(requireView(), "Bu Email  mevcut!", 1500)
-//                            } else {
-//
-//                            }
-//                        }
-//
-//                    }
+
 
             } else {
                snackBar(requireView(), "Lütfen profil resmi seçiniz!", 1000)
@@ -210,39 +192,39 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
    }
 
-   private fun createUserObservable() {
-      viewModelSignUp.apply {
+   private fun observable() {
+      with(viewModel) {
+         with(binding) {
 
+            userSavedStatus.observe(viewLifecycleOwner) {
+               when (it!!) {
+                  LoginUpRepository.LogInUpStatus.LOADING -> lottiAnim.visible()
+                  LoginUpRepository.LogInUpStatus.ERROR -> {
+                     lottiAnim.gone()
+                     snackBar(requireView(), "Hata oluştu lütfen daha sonra tekrar deneyiniz", 2000)
+                  }
+                  LoginUpRepository.LogInUpStatus.DONE -> {
+                     lottiAnim.gone()
+                  }
+               }
 
-         userSavedStatus.observe(viewLifecycleOwner) {
-            when (it!!) {
-               LoginUpRepository.LogInUpStatus.LOADING -> binding.lottiAnim.visible()
-               LoginUpRepository.LogInUpStatus.ERROR -> {
-                  binding.lottiAnim.gone()
-                  snackBar(requireView(), "Hata oluştu lütfen daha sonra tekrar deneyiniz", 2000)
-               }
-               LoginUpRepository.LogInUpStatus.DONE -> {
-                  binding.lottiAnim.gone()
-               }
             }
 
-         }
-         userSaved.observe(viewLifecycleOwner) {
-            when (it) {
+            userSaved.observe(viewLifecycleOwner) {
+               when (it) {
+                  true -> {
+                     snackBar(requireView(), "Hesap Oluşturuldu", 2000)
+                     lottiAnim.gone()
+                  }
 
-               true -> {
-                  snackBar(requireView(), "Hesap Oluşturuldu", 2000)
-                  binding.lottiAnim.gone()
-               }
-
-
-               false -> {
-                  binding.lottiAnim.gone()
-                  snackBar(
-                     requireView(),
-                     "Girilen bilgiler mevcut",
-                     2000
-                  )
+                  false -> {
+                     lottiAnim.gone()
+                     snackBar(
+                        requireView(),
+                        "Girilen bilgiler mevcut",
+                        2000
+                     )
+                  }
                }
             }
          }

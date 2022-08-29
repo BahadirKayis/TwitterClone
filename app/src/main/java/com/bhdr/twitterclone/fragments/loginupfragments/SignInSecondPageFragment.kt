@@ -1,7 +1,6 @@
 package com.bhdr.twitterclone.fragments.loginupfragments
 
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
@@ -10,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.databinding.FragmentSigInSecondPageBinding
+import com.bhdr.twitterclone.helperclasses.sharedPref
 import com.bhdr.twitterclone.models.Users
 import com.google.android.material.snackbar.Snackbar
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
@@ -23,25 +23,9 @@ class SignInSecondPageFragment : Fragment(R.layout.fragment_sig_in_second_page) 
 
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
       super.onViewCreated(view, savedInstanceState)
-      shared = requireContext().getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
+      shared = requireContext().sharedPref()
       userModel = args.userModel
-
-      binding.apply {
-
-         cancel.setOnClickListener {
-            findNavController().popBackStack()
-
-         }
-         forgetPasswordText.setOnClickListener {
-            findNavController().navigate(R.id.action_sigInSecondPageFragment_to_sigInForgetPasswordFragment)
-         }
-
-         signInButton.setOnClickListener {
-            nextButton()
-         }
-      }
-      //kaydetme yeri
-
+      binding()
 
    }
 
@@ -67,6 +51,22 @@ class SignInSecondPageFragment : Fragment(R.layout.fragment_sig_in_second_page) 
          }
       } else {
          Snackbar.make(requireView(), "Şifre Giriniz ", 2000).show()
+      }
+   }
+
+   private fun binding() {
+      with(binding) {
+         cancel.setOnClickListener {
+            findNavController().popBackStack()
+
+         }
+         forgetPasswordText.setOnClickListener {
+            findNavController().navigate(R.id.action_sigInSecondPageFragment_to_sigInForgetPasswordFragment)
+         }
+
+         signInButton.setOnClickListener {
+            nextButton()
+         }
       }
    }
 

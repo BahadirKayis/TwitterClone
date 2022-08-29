@@ -1,21 +1,25 @@
 package com.bhdr.twitterclone.adapters
 
-import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bhdr.twitterclone.databinding.NotificationRecylerviewScreenLikeBinding
 import com.bhdr.twitterclone.databinding.NotificationRecylerviewScreenTweetBinding
+import com.bhdr.twitterclone.diffcallback.SetUserFollowCallBack
 import com.bhdr.twitterclone.helperclasses.DataItem
 import com.bhdr.twitterclone.helperclasses.Database.TYPE_LIKE
 import com.bhdr.twitterclone.helperclasses.Database.TYPE_TWEET
+import com.bhdr.twitterclone.helperclasses.gone
 import com.bhdr.twitterclone.helperclasses.picasso
 import com.bhdr.twitterclone.helperclasses.toCalendar
 
-class NotificationsAdapter :
-   RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-   private var notificationList: List<Any> = listOf()
-
+class NotificationsAdapter(
+   private val clickedUserFollow: ClickedUserFollow
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+   private var userFollow: List<Int> = emptyList()
+   private var notificationList: List<Any> = emptyList()
 
    inner class LikeViewHolder(private val likeBinding: NotificationRecylerviewScreenLikeBinding) :
       RecyclerView.ViewHolder(likeBinding.root) {
@@ -24,19 +28,27 @@ class NotificationsAdapter :
          with(likeBinding) {
             with(item) {
                profilePictureLiked.picasso(imageUrl.toString())
+
                nameTextLiked.text = name
-               usernameTextLiked.text = "@$userName"
-               timeTextLiked.text = "tweetini ${date!!.toLong().toCalendar()} beğendi"
+
+               "@$userName".also { usernameTextLiked.text = it }
+
+               "tweetini ${date!!.toLong().toCalendar()} beğendi".also { timeTextLiked.text = it }
+
                with(tweet) {
+
                   if (this!!.tweetImage != null) {
                      likeBinding.tweetImage.picasso(tweetImage!!)
+
                   }
+
                   tweetText.text = postContent
 
                   with(user!!) {
+
                      profilePicture.picasso(photo)
                      nameText.text = name
-                     usernameText.text = "@$userName"
+                     "@$userName".also { usernameText.text = it }
                      timeText.text = date!!.toLong().toCalendar()
 
                   }
@@ -52,11 +64,29 @@ class NotificationsAdapter :
       fun bind(item: DataItem.NotificationTweet) {
          with(tweetBinding) {
             with(item) {
+
+               userFollow.find { it == id }.apply {
+                  if (this != null) {
+                     followUserButton.gone()
+                  }
+               }
+
+               followUserButton.setOnClickListener {
+                  clickedUserFollow.followButtonsListener(id!!)
+               }
+
                profilePicture.picasso(imageUrl.toString())
+
                nameText.text = name
-               usernameText.text = "@$userName"
+
+               "@$userName".also { usernameText.text = it }
+
                timeText.text = date!!.toLong().toCalendar()
-               dateAndNewTweet.text = " adlı kullanıcı ${date!!.toLong().toCalendar()} tweetledi"
+
+               " adlı kullanıcı ${
+                  date!!.toLong().toCalendar()
+               } tweetledi".also { dateAndNewTweet.text = it }
+
                with(tweet) {
                   tweetText.text = this!!.postContent
                   if (tweetImage != null) {
@@ -89,10 +119,6 @@ class NotificationsAdapter :
       }
    }
 
-   fun updateList(notificationListFun: List<Any>) {
-      notificationList = notificationListFun
-      notifyDataSetChanged()
-   }
 
    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
       when (holder) {
@@ -102,6 +128,7 @@ class NotificationsAdapter :
    }
 
    override fun getItemCount(): Int = notificationList.size
+
    override fun getItemViewType(position: Int): Int {
       return when (notificationList[position]) {
          is DataItem.NotificationTweet -> TYPE_TWEET
@@ -111,4 +138,25 @@ class NotificationsAdapter :
    }
 
 
+   fun setUserFollow(newList: List<Int>) {
+      try {
+         val diffUtil = SetUserFollowCallBack(newList, userFollow)
+         val diffResults = DiffUtil.calculateDiff(diffUtil)
+         userFollow = newList
+         diffResults.dispatchUpdatesTo(this)
+      } catch (e: IndexOutOfBoundsException) {
+         Log.e("setUserFollow-Ex", e.toString())
+      }
+
+   }
+
+   fun setUserFollowItem(newList: List<Any>) {
+      notificationList = newList
+      notifyDataSetChanged()
+
+   }
+
+   interface ClickedUserFollow {
+      fun followButtonsListener(followId: Int)
+   }
 }

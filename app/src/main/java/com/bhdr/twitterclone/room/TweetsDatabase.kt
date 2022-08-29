@@ -10,7 +10,7 @@ import com.bhdr.twitterclone.helperclasses.DataItem
 
 @Database(
    entities = [TweetsRoomModel::class, DataItem.NotificationTweet::class, DataItem.NotificationLike::class],
-   version = 4,
+   version = 5,
    exportSchema = false
 )
 @TypeConverters(Converters::class)

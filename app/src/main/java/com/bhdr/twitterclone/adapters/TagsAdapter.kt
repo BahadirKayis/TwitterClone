@@ -16,11 +16,15 @@ class TagsAdapter(private val tagsList: List<String>) :
    }
 
    override fun onBindViewHolder(holder: TagsViewHolder, position: Int) {
-      holder.binding.categoryText.text = "Türkiye konumunda gündemde"
-      holder.binding.hashtagText.text = tagsList[position + 1]
+      with(holder) {
+         with(binding) {
+            "Türkiye konumunda gündemde".also { categoryText.text = it }
+            hashtagText.text = tagsList[position + 1]
+         }
+      }
+
       //  holder.binding.tweetNumberText.text=tagsList[position].TweetSayısı
       //tage tıklanınca başka sayfada o tagli postları açacak
-
    }
 
    override fun getItemCount(): Int {
@@ -29,7 +33,5 @@ class TagsAdapter(private val tagsList: List<String>) :
 
    inner class TagsViewHolder(val binding: AgendaCardBinding) :
       RecyclerView.ViewHolder(binding.root) {
-
-
    }
 }

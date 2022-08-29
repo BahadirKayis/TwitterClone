@@ -3,6 +3,7 @@ package com.bhdr.twitterclone.fragments.loginupfragments
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.bhdr.twitterclone.R
@@ -14,15 +15,33 @@ import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 
 class SignInFragment : Fragment(R.layout.fragment_sig_in) {
    private val binding by viewBinding(FragmentSigInBinding::bind)
-   private val sigInModelView by lazy { SignInViewModel() }
+   private val viewModel: SignInViewModel by viewModels()
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
       super.onViewCreated(view, savedInstanceState)
+      observable()
+      binding()
+   }
 
-      getUserModelObservable()
-      binding.apply {
+   private fun observable() {
+      with(viewModel) {
+         userModel.observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+               findNavController().navigate(
+                  SignInFragmentDirections.actionSigInFragmentToSigInSecondPageFragment(it)
+               )
+            } else {
+               snackBar(requireView(), "Girilen kullanıcı adı bulunamadı", 1500)
+            }
+
+         })
+      }
+   }
+
+   private fun binding() {
+      with(binding) {
          nextButton.setOnClickListener {
             if (emailphonenicknameEditText.text.isNotEmpty()) {
-               sigInModelView.getUserSigIn(emailphonenicknameEditText.text.toString())
+               viewModel.getUserSigIn(emailphonenicknameEditText.text.toString())
 
             } else {
 
@@ -36,20 +55,6 @@ class SignInFragment : Fragment(R.layout.fragment_sig_in) {
             findNavController().navigate(R.id.action_sigInFragment_to_sigInForgetPasswordFragment2)
          }
       }
-
-   }
-
-   private fun getUserModelObservable() {
-      sigInModelView.userModel.observe(viewLifecycleOwner, Observer {
-         if (it != null) {
-            findNavController().navigate(
-               SignInFragmentDirections.actionSigInFragmentToSigInSecondPageFragment(it)
-            )
-         } else {
-            snackBar(requireView(), "Girilen kullanıcı adı bulunamadı", 1500)
-         }
-
-      })
    }
 }
 

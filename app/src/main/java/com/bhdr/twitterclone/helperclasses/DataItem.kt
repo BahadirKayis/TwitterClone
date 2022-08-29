@@ -8,7 +8,9 @@ import com.bhdr.twitterclone.room.TweetsRoomModel
 sealed class DataItem {
    @Entity(tableName = "notificationLike")
    data class NotificationLike(
+
       @PrimaryKey(autoGenerate = true)
+      val roomId: Int? = 0,
       @ColumnInfo(name = "id")
       var id: Int?,
       @ColumnInfo(name = "imageUrl")
@@ -26,6 +28,7 @@ sealed class DataItem {
    @Entity(tableName = "notificationTweet")
    data class NotificationTweet(
       @PrimaryKey(autoGenerate = true)
+      val roomId: Int? = 0,
       var id: Int?,
       var imageUrl: String?,
       var userName: String?,

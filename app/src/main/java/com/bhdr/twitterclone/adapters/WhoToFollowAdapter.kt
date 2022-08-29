@@ -8,10 +8,10 @@ import com.bhdr.twitterclone.helperclasses.picasso
 import com.bhdr.twitterclone.models.Users
 
 class WhoToFollowAdapter(
-   private val clickedUserFollow: ClickedUserFollow,
-   private val userFollow: List<Users>, val onClickDelete: (Int) -> Unit
+   private val clickedUserFollow: ClickedUserFollow, private val userList: List<Users>,
+   val onClickDelete: (Int) -> Unit
 ) : RecyclerView.Adapter<WhoToFollowAdapter.ViewHolder>() {
-   private var listData = userFollow
+   private var user: List<Users> = userList
 
    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
       val binding =
@@ -20,41 +20,33 @@ class WhoToFollowAdapter(
    }
 
    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-      val user = listData[position]
+      val user = user[position]
       holder.binding.apply {
          profilePicture.picasso(user.photoUrl.toString())
          nameText.text = user.name
          followButton.setOnClickListener {
             onClickDelete(position)
             clickedUserFollow.followButtonsListener(user.id!!)
-
          }
-         idText.text = "@" + user.userName
+         "@${user.userName}".also { idText.text = it }
       }
-
-
    }
 
    override fun getItemCount(): Int {
-      return listData.size
+      return user.size
    }
 
    inner class ViewHolder(val binding: WhoToFollowCardBinding) :
       RecyclerView.ViewHolder(binding.root) {
-
    }
 
    interface ClickedUserFollow {
       fun followButtonsListener(followId: Int)
    }
 
-   fun setItem(items: List<Users>) {
-      listData = items
-      notifyDataSetChanged()
+   fun setItem(items: List<Users>, position: Int) {
+      user = items
+      notifyItemRemoved(position)
    }
-//    fun deleteItem(index: Int) {
-//          listData.removeAt(index)
-//        notifyDataSetChanged()
-//    }
 }
 

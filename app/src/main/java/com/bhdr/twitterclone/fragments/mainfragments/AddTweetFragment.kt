@@ -1,9 +1,7 @@
 package com.bhdr.twitterclone.fragments.mainfragments
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
@@ -38,27 +36,16 @@ class AddTweetFragment : Fragment(R.layout.fragment_add_tweet) {
    private lateinit var permissionLauncher: ActivityResultLauncher<String>
    var selectedBitmap: Bitmap? = null
    var tweetImage: Uri? = null
-   var shared: SharedPreferences? = null
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
       super.onViewCreated(view, savedInstanceState)
-
-      shared =
-         requireActivity().getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
-
-      binding.apply {
-         profilePicture.picasso(requireContext().userPhotoUrl())
-         addImage.setOnClickListener { selectImage() }
-         cancel.setOnClickListener { cancel() }
-         addTweetButton.setOnClickListener { addTweet(tweetEditText.text.toString()) }
-      }
+      binding()
       registerLauncher()
-      tweetViewModelObservable()
+      observable()
    }
 
    private fun addTweet(tweetText: String) {
       val uuid = UUID.randomUUID()
       val tweetImageName = "$uuid.jpg"
-
       if (tweetText.isNotEmpty()) {
          if (tweetImage != null) {
 
@@ -78,10 +65,6 @@ class AddTweetFragment : Fragment(R.layout.fragment_add_tweet) {
          Snackbar.make(requireView(), "Lütfen metin giriniz!", 1000).show()
       }
 
-   }
-
-   private fun cancel() {
-      Navigation.findNavController(requireView()).popBackStack()
    }
 
    private fun selectImage() {
@@ -153,21 +136,32 @@ class AddTweetFragment : Fragment(R.layout.fragment_add_tweet) {
          }
    }
 
-   private fun tweetViewModelObservable() {
-      viewModel.mainStatus.observe(viewLifecycleOwner) {
-         when (it!!) {
-            TweetRepository.MainStatus.LOADING -> binding.lottiAnim.visible()
-            TweetRepository.MainStatus.DONE -> binding.lottiAnim.gone()
-            TweetRepository.MainStatus.ERROR -> binding.lottiAnim.gone()
-         }
+   private fun observable() {
+      with(viewModel) {
+         mainStatus.observe(viewLifecycleOwner) {
+            when (it!!) {
+               TweetRepository.MainStatus.LOADING -> binding.lottiAnim.visible()
+               TweetRepository.MainStatus.DONE -> binding.lottiAnim.gone()
+               TweetRepository.MainStatus.ERROR -> binding.lottiAnim.gone()
+            }
 
-      }
-      viewModel.tweetAdded.observe(viewLifecycleOwner) {
-         when (it) {
-            true -> Navigation.findNavController(requireView())
-               .navigate(R.id.action_addTweetFragment_to_mainScreenFragment)
-            else -> snackBar(requireView(), "Sorun oluştu lütfen tekrar deneyiniz", 1000)
          }
+         tweetAdded.observe(viewLifecycleOwner) {
+            when (it) {
+               true -> Navigation.findNavController(requireView())
+                  .navigate(R.id.action_addTweetFragment_to_mainScreenFragment)
+               else -> snackBar(requireView(), "Sorun oluştu lütfen tekrar deneyiniz", 1000)
+            }
+         }
+      }
+   }
+
+   private fun binding() {
+      with(binding) {
+         profilePicture.picasso(requireContext().userPhotoUrl())
+         addImage.setOnClickListener { selectImage() }
+         cancel.setOnClickListener { Navigation.findNavController(requireView()).popBackStack() }
+         addTweetButton.setOnClickListener { addTweet(tweetEditText.text.toString()) }
       }
    }
 }

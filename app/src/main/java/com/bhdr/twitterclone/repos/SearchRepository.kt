@@ -14,7 +14,7 @@ class SearchRepository {
    val followedUser = MutableLiveData<Boolean>()
    val tags = MutableLiveData<List<String>>()
 
-
+   var followedCount = MutableLiveData<List<Int>>()
    suspend fun getSearchFollowUser(id: Int) {
 
       try {
@@ -34,14 +34,13 @@ class SearchRepository {
    }
 
    suspend fun getTags() {
-      var response = CallApi.retrofitServiceMain.getPopularTags()
+      val response = CallApi.retrofitServiceMain.getPopularTags()
 
       if (response.isSuccessful) {
          tags.value = response.body()
 
       } else {
          Log.e("TAG", "getTags else ")
-         //tags.value = null
       }
    }
 
@@ -67,5 +66,14 @@ class SearchRepository {
          followedUser.value = false
          Log.e("TAG5", e.toString())
       }
+   }
+
+   suspend fun followUserList(userId: Int) {
+      val response = CallApi.retrofitServiceMain.getFollowedUserIdList(userId)
+
+      if (response.isSuccessful) {
+         followedCount.postValue(response.body())
+      }
+
    }
 }

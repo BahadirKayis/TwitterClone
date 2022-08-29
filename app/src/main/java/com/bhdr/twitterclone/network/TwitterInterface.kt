@@ -9,8 +9,6 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface TwitterInterface {
-
-   //LoginUpController
    @POST("signUp")
    suspend fun createUser(
       @Query("user_name") userName: String,
@@ -23,7 +21,7 @@ interface TwitterInterface {
    ): Response<Boolean>
 
    @GET("user")
-   suspend fun getUser(@Query("UserId")userId: Int): Response<Users>
+   suspend fun getUser(@Query("UserId") userId: Int): Response<Users>
 
    @GET("userNameAndEmail")
    suspend fun getUsernameAndEmail(): Response<List<UsernameAndEmailControl>>

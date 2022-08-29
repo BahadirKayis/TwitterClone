@@ -31,18 +31,15 @@ class MainRepository(private val tweetDao: TweetDaoInterface) {
    private val coroutineContext = Dispatchers.IO + job
    private val caScope = CoroutineScope(coroutineContext)
 
+   val roomDelete = MutableLiveData<Boolean>()
+
    suspend fun followCount(userId: Int) {
-      try {
-         val response = CallApi.retrofitServiceMain.getFollowCount(userId)
 
-         if (response.isSuccessful) {
-            followCount.postValue(response.body())
-         }
-
-      } catch (e: Exception) {
-         Log.e("Ex", e.toString())
-
+      val response = CallApi.retrofitServiceMain.getFollowCount(userId)
+      if (response.isSuccessful) {
+         followCount.postValue(response.body())
       }
+
    }
 
    suspend fun followedCount(userId: Int) {
@@ -60,7 +57,6 @@ class MainRepository(private val tweetDao: TweetDaoInterface) {
       if (response.isSuccessful) {
          followedUserIdList = response.body()
       }
-      Log.e("response", response.body().toString())
    }
 
 
@@ -93,7 +89,7 @@ class MainRepository(private val tweetDao: TweetDaoInterface) {
 
                   } catch (e: Throwable) {
 
-                     Log.e("imageUrl", e.toString())
+                     Log.e("newTweets-EX", e.toString())
                   }
                },
                String::class.java,
@@ -108,7 +104,6 @@ class MainRepository(private val tweetDao: TweetDaoInterface) {
             Log.e("newTweets", e.toString())
          }
 
-//Like imagUrl.PhotoUrl,imagUrl.UserName,imagUrl.Name,post
          hubConnection.on(
             userId.toString(), { imageUrl, userName, name, post ->
                caScope.launch {
@@ -119,7 +114,6 @@ class MainRepository(private val tweetDao: TweetDaoInterface) {
             String::class.java,
             Posts::class.java
          )
-
       } catch (e: Exception) {
          Log.e("tweetSignalRException", e.toString())
       }
@@ -148,6 +142,7 @@ class MainRepository(private val tweetDao: TweetDaoInterface) {
                   //Like tweeti beğinilmiş modele atılacak
                   saveNotificationLike(
                      DataItem.NotificationLike(
+                        null,
                         id,
                         imageUrl,
                         userName,
@@ -170,6 +165,7 @@ class MainRepository(private val tweetDao: TweetDaoInterface) {
 
                      saveNotificationTweet(
                         DataItem.NotificationTweet(
+                           null,
                            id,
                            imageUrl,
                            userName,
@@ -223,7 +219,7 @@ class MainRepository(private val tweetDao: TweetDaoInterface) {
             )
          }
       } catch (e: Exception) {
-         Log.e("tweetsRoomConvertAndAdd", e.toString())
+         Log.e("RoomConvertAndAdd-ExM", e.toString())
          throw IllegalStateException("tweetsRoomConvertAndAdd")
       }
 
@@ -232,7 +228,9 @@ class MainRepository(private val tweetDao: TweetDaoInterface) {
    suspend fun deleteAllRoom() {
       tweetDao.notificationDeleteLike()
       tweetDao.notificationDeleteTweet()
-      tweetDao.deleteTweet()
+      val response = tweetDao.deleteTweet()
+      roomDelete.value = response != null
+
    }
 
 }

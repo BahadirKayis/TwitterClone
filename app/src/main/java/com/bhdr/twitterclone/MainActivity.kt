@@ -52,7 +52,6 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
                binding.bottomNav.gone()
                binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             }
-
             else -> {
                when (destination.id) {
                   R.id.mainScreenFragment -> userRequest()
@@ -71,19 +70,33 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
       binding.navMenu.setNavigationItemSelectedListener {
          when (it.itemId) {
             R.id.logInFragment -> {
-               snackBar(
-                  binding.drawerLayout,
-                  "Çıkış Yapılıyor",
-                  1000
-               )
-               binding.drawerLayout.close()
                logOut()
+               viewModel.roomDelete.observe(this) {
+                  when (it) {
+                     true -> {
+                        snackBar(
+                           binding.drawerLayout,
+                           "Çıkış Yapılıyor",
+                           1000
+                        )
+                        binding.drawerLayout.close()
 
-               this.lifecycleScope.launch {
-                  delay(1100)
-                  navHostFragment.navController.navigate(
-                     R.id.logInFragment
-                  )
+                        this.lifecycleScope.launch {
+                           delay(1100)
+                           navHostFragment.navController.navigate(
+                              R.id.logInFragment
+                           )
+                        }
+                     }
+                     false -> {
+                        snackBar(
+                           binding.drawerLayout,
+                           "Çıkış yapılamıyor",
+                           1000
+                        )
+                     }
+
+                  }
                }
 
             }
@@ -96,7 +109,6 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
    private fun logOut() {
       viewModel.roomDelete()
       this.sharedPref().edit().clear().apply()
-
    }
 
    private fun userRequest() {
@@ -104,7 +116,7 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
          signalRStart = true
          observable()
          shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
-         Log.e("TAG", "signalRSTART")
+         Log.i("userRequest", "signalRSTART")
       }
       viewModel.startSignalR(this@MainActivity.userId())
       viewModel.followCount(this.userId())

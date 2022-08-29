@@ -36,13 +36,11 @@ class TweetRepository(
 
    val mainStatus = MutableLiveData<MainStatus>()
 
-
    val tweets = MutableLiveData<List<Posts>?>()
+
    val tweetsRoomList = MutableLiveData<List<TweetsRoomModel>?>()
 
-
    val tweetAdded = MutableLiveData<Boolean>()
-
 
    private lateinit var imageUri: String
    private var haveImageUri: Boolean = false
@@ -58,13 +56,13 @@ class TweetRepository(
 
    private var followedUserIdList: List<Int>? = null
 
-
    var mutableFollowNewTweet: MutableLiveData<HashMap<Int, String>> = MutableLiveData()
+
+   var mutableNotificationList = MutableLiveData<List<Any>>()
 
    suspend fun getTweets(id: Int) {
       try {
          val request = CallApi.retrofitServiceMain.getTweets(id)
-
          if (request.isSuccessful) {
             mainStatus.value = MainStatus.DONE
             tweets.value = request.body()!!
@@ -74,8 +72,8 @@ class TweetRepository(
             mainStatus.value = MainStatus.ERROR
          }
       } catch (e: Exception) {
+         Log.e("getTweets-Ex", e.toString())
          mainStatus.value = MainStatus.ERROR
-         Log.e("TweetRepoGetPostsEX", e.toString())
          if (e.message == "timeout") {
             getTweets(id)
          }
@@ -88,12 +86,16 @@ class TweetRepository(
          val response = CallApi.retrofitServiceMain.postLiked(userId, id, count)
 
          if (response.isSuccessful) {
-            tweetDao.tweetIsLiked(id, response.body()!!, true)
-            Log.e("TAGsss", response.toString())
+            if (count == 1) {
+               tweetDao.tweetIsLiked(id, response.body()!!, true)
+
+            } else {
+               tweetDao.tweetIsLiked(id, response.body()!!, false)
+            }
          }
 
       } catch (e: Exception) {
-         Log.e("postLiked", e.toString())
+         Log.e("tweetLikedEx", e.toString())
       }
    }
 
@@ -124,7 +126,7 @@ class TweetRepository(
                         mainStatus.value = MainStatus.ERROR
                         tweetAdded.value = false
                      }
-                     Log.e("TweetRepositoryAddTweet", addTweetResult.errorBody().toString())
+                     Log.e("AddTweet-errorBody", addTweetResult.errorBody().toString())
                   }
 
                }
@@ -150,7 +152,7 @@ class TweetRepository(
       } catch (e: Exception) {
          mainStatus.value = MainStatus.ERROR
          tweetAdded.value = false
-         Log.e("TweetRepositoryAdTwEx", e.toString())
+         Log.e("RepositoryAdT-EX", e.toString())
       }
 
    }
@@ -161,35 +163,33 @@ class TweetRepository(
          tweetDao.addTweet(tweets)
          delay(500)
          getTweetsRoom()
-      } catch (e: ClassCastException) {
-         Log.e("tweetsInsertEx", e.toString())
+      } catch (e: Exception) {
+
+         Log.e("tweetsInsert-Ex", e.toString())
       }
    }
 
    private suspend fun tweetsUpdate(tweets: List<Posts>) {
       tweets.forEach {
          tweetDao.updateTweet(it.id!!, it.postLike!!)
-
       }
       getTweetsRoom()
    }
 
    suspend fun getTweetsRoom() {
-
+      mainStatus.value = MainStatus.LOADING
       val tweetsRoomModelList = tweetDao.allTweet()
-      Log.e("tweetsRoomModelList", tweetsRoomModelList.toString())
+      Log.i("tweetsRoomModelList", tweetsRoomModelList.toString())
       if (tweetsRoomModelList != null) {
-
+         mainStatus.value = MainStatus.DONE
          tweetsRoomList.value = tweetsRoomModelList
-
       } else {
          tweetsRoomList.value = null
-
       }
    }
 
    suspend fun tweetsRoomConvertAndAdd(lTweet: List<Posts?>) {
-      mainStatus.value = MainStatus.LOADING
+
       val tweetsAddRoom: MutableList<TweetsRoomModel> = mutableListOf()
       try {
          lTweet.forEach {
@@ -198,7 +198,7 @@ class TweetRepository(
                createImageUri(it!!.userId.toString() + "_" + it.user?.userName + "_user_profile.png")
             if (!haveImageUri) {
                val bmp = getBitmap(it.user!!.photoUrl!!)//fotoğraf indiriliyor
-               bmp.ifNotNull { storeBitmap(bmp) }//fotoğraf kayıt edilyior
+               bmp.ifNotNull { storeBitmap(bmp) }//fotoğraf kayıt ediliyior
             }
             it.user?.apply {
                userRoomModel =
@@ -231,15 +231,13 @@ class TweetRepository(
                      userId
                   )
                )
-
             }
-
             tweetsInsert(tweetsAddRoom)
          }
          mainStatus.value = MainStatus.DONE
 
       } catch (e: Exception) {
-         Log.e("tweetsRoomConvertAndAdd", e.toString())
+         Log.e("RoomConvertAndAdd-Ex", e.toString())
       }
    }
 
@@ -252,6 +250,7 @@ class TweetRepository(
          val result = (loading.execute(request) as SuccessResult).drawable
          return (result as BitmapDrawable).bitmap
       } catch (e: Exception) {
+         Log.e("getBitmap-Ex", e.toString())
          throw  e
       }
 
@@ -306,7 +305,7 @@ class TweetRepository(
             }
          }
       } catch (e: Exception) {
-         Log.e("isNewTweet", e.toString())
+         Log.e("isNewTweet-Ex", e.toString())
       }
    }
 
@@ -325,7 +324,7 @@ class TweetRepository(
          }
 
       } catch (e: Exception) {
-         Log.e("newTweetButton", e.toString())
+         Log.e("newTweetButton-Ex", e.toString())
       }
    }
 
@@ -335,20 +334,17 @@ class TweetRepository(
       if (response.isSuccessful) {
          followedUserIdList = response.body()
       }
-      Log.e("response", response.body().toString())
+      Log.i("getFollowedUserIdList", response.body().toString())
    }
 
    fun tweetSignalR() {
 
       try {
-//         val hubConnection =
-//            HubConnectionBuilder.create("http://192.168.3.136:9009/newTweetHub").build()
-
          if (hubConnection.connectionState == HubConnectionState.DISCONNECTED) {
             hubConnection.start()
-            Log.e("TAG", hubConnection.connectionState.toString())
+
          }
-         Log.e("TAGww", hubConnection.connectionState.toString())
+         Log.i("tweetSignalR", hubConnection.connectionState.toString())
          //NewTweet follow & not follow
          try {
             hubConnection.on(
@@ -367,7 +363,7 @@ class TweetRepository(
 
                   } catch (e: Throwable) {
 
-                     Log.e("imageUrl", e.toString())
+                     Log.e("newTweets-Ex", e.toString())
                   }
                },
                String::class.java,
@@ -383,7 +379,7 @@ class TweetRepository(
 
 
       } catch (e: Exception) {
-         Log.e("tweetSignalRException", e.toString())
+         Log.e("tweetSignalR-Ex", e.toString())
       }
    }
 
@@ -407,14 +403,17 @@ class TweetRepository(
             }
          }
       } catch (e: Exception) {
-         Log.e("signalRControlExTweet", e.toString())
+         Log.e("signalRControl-Ex", e.toString())
       }
    }
 
    //NotificationScreen
 
-   fun notificationTweet() = tweetDao.notificationListTweet()
-   fun notificationLike() = tweetDao.notificationListLike()
-
+   suspend fun notificationList() {
+      val tweetList: MutableList<Any> = mutableListOf()
+      tweetList.addAll(tweetDao.notificationListLike())
+      tweetList.addAll(tweetDao.notificationListTweet())
+      mutableNotificationList.value = tweetList
+   }
 }
 

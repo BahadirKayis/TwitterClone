@@ -39,9 +39,6 @@ class TweetBottomDialog : BottomSheetDialogFragment() {
          override fun newSpannable(source: CharSequence?): Spannable {
             val spannable = source!!.toSpannable()
             val len1 = source.split(" ")[0].length
-
-
-
             spannable.setSpan(
                ForegroundColorSpan(Color.parseColor("#03A9F4")),
                0,
@@ -52,14 +49,15 @@ class TweetBottomDialog : BottomSheetDialogFragment() {
             return spannable
          }
       }
-      binding.apply {
+      with (binding) {
          blocktext.setSpannableFactory(spannableFactory)
          followtext.setSpannableFactory(spannableFactory)
          mutetext.setSpannableFactory(spannableFactory)
 
-         blocktext.setText("$name adlı kişiyi engelle", TextView.BufferType.SPANNABLE)
-         followtext.setText("$name adlı kişiyi takip et", TextView.BufferType.SPANNABLE)
-         mutetext.setText("$name adlı kişiyi sustur", TextView.BufferType.SPANNABLE)
+         "$name adlı kişiyi engelle".also { blocktext.setText(it, TextView.BufferType.SPANNABLE) }
+         "$name adlı kişiyi takipten çık".also { followtext.setText(it, TextView.BufferType.SPANNABLE) }
+         "$name adlı kişiyi sustur".also { mutetext.setText(it, TextView.BufferType.SPANNABLE) }
+
       }
 
 

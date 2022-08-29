@@ -1,10 +1,6 @@
 package com.bhdr.twitterclone.room
 
-import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.bhdr.twitterclone.helperclasses.DataItem
 
 @Dao
@@ -18,8 +14,9 @@ interface TweetDaoInterface {
    @Query("UPDATE tweets SET postLike=:postLikeCount , is_liked=:liked WHERE id=:tweetId")
    suspend fun tweetIsLiked(tweetId: Int, postLikeCount: Int, liked: Boolean)
 
+   @Transaction
    @Query("DELETE FROM tweets")
-   suspend fun deleteTweet()
+   suspend fun deleteTweet(): Int?
 
    @Query("SELECT * FROM tweets ORDER BY date DESC")
    suspend fun allTweet(): List<TweetsRoomModel>?
@@ -31,10 +28,10 @@ interface TweetDaoInterface {
    suspend fun addNotificationLike(tweet: DataItem.NotificationLike)
 
    @Query("SELECT * FROM notificationTweet ORDER BY date DESC")
-   fun notificationListTweet(): LiveData<List<DataItem.NotificationTweet>>
+   suspend fun notificationListTweet(): List<DataItem.NotificationTweet>
 
    @Query("SELECT * FROM notificationLike ORDER BY date DESC")
-   fun notificationListLike(): LiveData<List<DataItem.NotificationLike>>
+   suspend fun notificationListLike(): List<DataItem.NotificationLike>
 
    @Query("DELETE  FROM notificationLike")
    suspend fun notificationDeleteLike()

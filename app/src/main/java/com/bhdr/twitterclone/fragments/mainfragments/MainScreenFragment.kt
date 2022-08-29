@@ -30,8 +30,6 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
    private val tweetAdapter by lazy { TweetsAdapter(this) }
    private var userProfileClickListener: MainScreenInterFace? = null
 
-   var userId: Int = 0
-
    override fun onAttach(context: Context) {
       super.onAttach(context)
       if (context is MainScreenInterFace) {
@@ -44,12 +42,11 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
       viewModel = ViewModelProvider(requireParentFragment())[TweetViewModel::class.java]
       super.onViewCreated(view, savedInstanceState)
-      userId = requireContext().userId()
       viewModelObservable()
       binding()
       lifecycleScope.launch {
          delay(5000)
-         viewModel.getFollowedUserIdList(userId)
+         viewModel.getFollowedUserIdList(requireContext().userId())
          netWorkControlAndCloudRequestTweets()
       }
    }
@@ -60,10 +57,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
          allRoomTweets.observe(viewLifecycleOwner) {
             if (it != null) {
                tweetAdapter.submitList(it)
-               //    tweetsRoom = it
             }
-
-
          }
          mainStatus.observe(viewLifecycleOwner) {
             when (it!!) {
@@ -75,10 +69,11 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
 
          mutableFollowNewTweet.observe(viewLifecycleOwner) {
             //SignalR dinliyor ve 2'den fazla tweet atılırsa clouddan tweetleri çekip tweetObserveden devam ediyor
-            Log.e("try", it.size.toString())
+            Log.i("mutableFollowNewTweet", it.size.toString())
 
-            if (it!!.size >= 1) {
-               viewModel.getTweets(userId)
+            //Test için 1 tweet
+            if (it!!.size >= 2) {
+               viewModel.getTweets(requireContext().userId())
                viewModel.mutableFollowNewTweet.value!!.clear()
                snackBar(requireView(), "Yeni Tweet Paylaşıldı", 2000)
             }
@@ -115,10 +110,10 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
    private fun netWorkControlAndCloudRequestTweets() {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
          if (requireContext().checkNetworkConnection()) {
-            viewModel.getTweets(userId)
+            viewModel.getTweets(requireContext().userId())
          }
       } else {
-         viewModel.getTweets(userId)
+         viewModel.getTweets(requireContext().userId())
       }
    }
 
@@ -128,30 +123,38 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
 
             tweets.observe(viewLifecycleOwner) { tweet ->
                seeNewTweet.setOnClickListener {
+
                   seeNewTweet.gone()
                   userPhoto1.gone()
                   userPhoto2.gone()
                   userPhoto3.gone()
+
                   tweetsRoomConvertAndAdd(tweet!!)
                }
             }
             mutableFollowNewTweetHashMap.observe(viewLifecycleOwner) {
-               if (it.size == 1) {
+
+               if (it.size == 2) {
+
                   Picasso.get().load(it.values.toTypedArray()[0]).into(userPhoto1)
+                  Picasso.get().load(it.values.toTypedArray()[1]).into(userPhoto2)
+
                   seeNewTweet.visible()
                   userPhoto1.visible()
-               } else if (it.size == 2) {
-                  seeNewTweet.visible()
-                  Picasso.get().load(it.values.toTypedArray()[1]).into(userPhoto2)
                   userPhoto2.visible()
+                  updateIcon.visible()
+
                } else if (it.size >= 3) {
-                  seeNewTweet.visible()
+
                   Picasso.get().load(it.values.toTypedArray()[0]).into(userPhoto1)
-                  userPhoto1.visible()
                   Picasso.get().load(it.values.toTypedArray()[1]).into(userPhoto2)
-                  userPhoto2.visible()
                   Picasso.get().load(it.values.toTypedArray()[2]).into(userPhoto3)
+
+                  userPhoto2.visible()
+                  userPhoto1.visible()
                   userPhoto3.visible()
+                  updateIcon.visible()
+                  seeNewTweet.visible()
                }
             }
          }

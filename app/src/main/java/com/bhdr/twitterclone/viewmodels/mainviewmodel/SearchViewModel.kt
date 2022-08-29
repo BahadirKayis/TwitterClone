@@ -26,7 +26,7 @@ class SearchViewModel : ViewModel() {
       getTags()
    }
 
-   fun getSearchFollowUser(id: Int) {
+   fun getSearchNotFollowUser(id: Int) {
       viewModelScope.launch {
          searchRepository.getSearchFollowUser(id)
       }
