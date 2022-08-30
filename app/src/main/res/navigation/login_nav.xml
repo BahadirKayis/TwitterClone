@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/logInFragment"
-        android:name="com.bhdr.twitterclone.fragments.loginupfragments.LogInFragment"
+        android:name="com.bhdr.twitterclone.ui.login.LogInFragment"
         android:label="fragment_log_in"
         tools:layout="@layout/fragment_log_in">
         <action
@@ -22,7 +22,7 @@
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.bhdr.twitterclone.fragments.loginupfragments.SignUpFragment"
+        android:name="com.bhdr.twitterclone.ui.signup.SignUpFragment"
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up">
         <action
@@ -31,7 +31,7 @@
     </fragment>
     <fragment
         android:id="@+id/sigInFragment"
-        android:name="com.bhdr.twitterclone.fragments.loginupfragments.SignInFragment"
+        android:name="com.bhdr.twitterclone.ui.signin.SignInFragment"
         android:label="fragment_sig_in"
         tools:layout="@layout/fragment_sig_in">
         <action
@@ -47,7 +47,7 @@
     </fragment>
     <fragment
         android:id="@+id/sigInSecondPageFragment"
-        android:name="com.bhdr.twitterclone.fragments.loginupfragments.SignInSecondPageFragment"
+        android:name="com.bhdr.twitterclone.ui.signinsecond.SignInSecondPageFragment"
         android:label="fragment_sig_in_second_page"
         tools:layout="@layout/fragment_sig_in_second_page">
         <action
@@ -65,7 +65,7 @@
     </fragment>
     <fragment
         android:id="@+id/sigInForgetPasswordFragment"
-        android:name="com.bhdr.twitterclone.fragments.loginupfragments.SignInForgetPasswordFragment"
+        android:name="com.bhdr.twitterclone.ui.forgetpassword.SignInForgetPasswordFragment"
         android:label="fragment_sig_in_forget_password"
         tools:layout="@layout/fragment_sig_in_forget_password">
 
@@ -75,7 +75,7 @@
     </fragment>
     <fragment
         android:id="@+id/signInForgetPasswordSecondFragment"
-        android:name="com.bhdr.twitterclone.fragments.loginupfragments.SignInForgetPasswordSecondFragment"
+        android:name="com.bhdr.twitterclone.ui.forgetsecondpassword.SignInForgetPasswordSecondFragment"
         android:label="fragment_sign_in_forget_password_second"
         tools:layout="@layout/fragment_sign_in_forget_password_second">
         <argument
@@ -85,7 +85,7 @@
     <include app:graph="@navigation/main_nav" />
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.bhdr.twitterclone.fragments.splashscreen.SplashFragment"
+        android:name="com.bhdr.twitterclone.ui.splash.SplashFragment"
         android:label="SplashFragment"
         tools:layout="@layout/fragment_splash"
         >

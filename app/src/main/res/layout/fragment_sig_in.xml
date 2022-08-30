@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingStart="15dp"
     android:paddingEnd="15dp"
-    tools:context=".fragments.loginupfragments.SignInFragment">
+    tools:context=".ui.signin.SignInFragment">
 
     <ImageView
         android:id="@+id/cancel"

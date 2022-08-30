@@ -6,7 +6,7 @@
     app:startDestination="@id/mainScreenFragment">
     <fragment
         android:id="@+id/mainScreenFragment"
-        android:name="com.bhdr.twitterclone.fragments.mainfragments.MainScreenFragment"
+        android:name="com.bhdr.twitterclone.ui.main.MainScreenFragment"
         android:label="MainScreenFragment"
         tools:layout="@layout/fragment_main_screen"
         >
@@ -19,7 +19,7 @@
     </fragment>
     <dialog
         android:id="@+id/tweetBottomDialog"
-        android:name="com.bhdr.twitterclone.fragments.dialogfragments.TweetBottomDialog"
+        android:name="com.bhdr.twitterclone.ui.tweetinfodialog.TweetBottomDialog"
         android:label="TweetBottomDialog"
         tools:layout="@layout/fragment_tweet_bottom_dialog"
         >
@@ -29,7 +29,7 @@
     </dialog>
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.bhdr.twitterclone.fragments.mainfragments.SearchFragment"
+        android:name="com.bhdr.twitterclone.ui.search.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" >
         <action
@@ -38,7 +38,7 @@
     </fragment>
     <fragment
         android:id="@+id/addTweetFragment"
-        android:name="com.bhdr.twitterclone.fragments.mainfragments.AddTweetFragment"
+        android:name="com.bhdr.twitterclone.ui.addtweet.AddTweetFragment"
         android:label="fragment_add_tweet"
         tools:layout="@layout/fragment_add_tweet" >
         <action
@@ -47,7 +47,7 @@
     </fragment>
     <fragment
         android:id="@+id/notificationsFragment"
-        android:name="com.bhdr.twitterclone.fragments.mainfragments.NotificationsFragment"
+        android:name="com.bhdr.twitterclone.ui.notification.NotificationsFragment"
         android:label="fragment_notifications"
         tools:layout="@layout/fragment_notifications" />
 </navigation>

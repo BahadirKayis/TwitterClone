@@ -6,7 +6,7 @@
     android:paddingStart="30dp"
     android:paddingEnd="30dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.loginupfragments.LogInFragment">
+    tools:context=".ui.login.LogInFragment">
 
     <ImageView
         android:id="@+id/twitterLogo"
