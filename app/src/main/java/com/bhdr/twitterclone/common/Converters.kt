@@ -28,15 +28,4 @@ class Converters {
       val objectType = object : TypeToken<TweetsRoomModel>() {}.type
       return Gson().fromJson(tweetRoom, objectType)
    }
-//
-//   @TypeConverter
-//   fun fromTweetDataDate(date: Calendar): String {
-//      return Gson().toJson(date)
-//   }
-//
-//   @TypeConverter
-//   fun toTweetDataDate(date: String): Calendar {
-//      val objectType = object : TypeToken<Calendar>() {}.type
-//      return Gson().fromJson(date, objectType)
-//   }
 }

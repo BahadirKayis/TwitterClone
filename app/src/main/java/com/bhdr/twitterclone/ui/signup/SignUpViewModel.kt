@@ -2,19 +2,25 @@ package com.bhdr.twitterclone.ui.signup
 
 import android.net.Uri
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bhdr.twitterclone.common.Status
-import com.bhdr.twitterclone.data.repos.LoginUpRepositoryImpl
+import com.bhdr.twitterclone.domain.repository.LoginUpRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SignUpViewModel @Inject constructor(private var loginRepo: LoginUpRepositoryImpl) : ViewModel() {
+class SignUpViewModel @Inject constructor(private var loginRepo: LoginUpRepository) :
+   ViewModel() {
 
-   val userSaved: LiveData<Boolean> = loginRepo.userSaved
-   val userSavedStatus: LiveData<Status> = loginRepo.userStatus
+   var userSavedM = MutableLiveData<Boolean>()
+   val userSaved: LiveData<Boolean> = userSavedM
+
+
+   var userSavedStatusM = MutableLiveData<Status>()
+   val userSavedStatus: LiveData<Status> = userSavedStatusM
 
    fun createUser(
       userName: String,
@@ -27,7 +33,8 @@ class SignUpViewModel @Inject constructor(private var loginRepo: LoginUpReposito
       selectedPicture: Uri?
    ) {
       viewModelScope.launch {
-         loginRepo.signUP(
+         userSavedStatusM.value = Status.LOADING
+         userSavedM.value = loginRepo.signUP(
             userName,
             password,
             name,
@@ -37,7 +44,9 @@ class SignUpViewModel @Inject constructor(private var loginRepo: LoginUpReposito
             imageName,
             selectedPicture
          )
+
       }
+      userSavedStatusM.value = Status.DONE
 
    }
 }

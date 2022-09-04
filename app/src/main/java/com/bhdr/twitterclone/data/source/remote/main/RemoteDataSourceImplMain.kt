@@ -5,7 +5,7 @@ import com.bhdr.twitterclone.data.model.remote.Users
 import com.bhdr.twitterclone.domain.source.remote.main.RemoteDataSourceMain
 import retrofit2.Response
 
-class RemoteDataSourceImplMain (private val tweetMain: TweetRemoteServiceMAIN):
+class RemoteDataSourceImplMain(private val tweetMain: TweetRemoteServiceMain) :
    RemoteDataSourceMain {
    override suspend fun addTweet(
       userId: Int,
@@ -14,6 +14,7 @@ class RemoteDataSourceImplMain (private val tweetMain: TweetRemoteServiceMAIN):
       date: String
    ): Response<Boolean> = tweetMain.addTweet(userId, content, image_url, date)
 
+   override suspend fun getUser(userId: Int): Response<Users> = tweetMain.getUser(userId)
    override suspend fun postUserFollow(userId: Int, followId: Int): Response<Boolean> =
       tweetMain.postUserFollow(userId, followId)
 

@@ -158,7 +158,7 @@ class NotificationsAdapter(
       fun followButtonsListener(followId: Int)
    }
 
-   enum class Database(val viewType:Int) {
-      TYPE_TWEET(0)
-      , TYPE_LIKE(1) }
+   enum class Database(val viewType: Int) {
+      TYPE_TWEET(0), TYPE_LIKE(1)
+   }
 }

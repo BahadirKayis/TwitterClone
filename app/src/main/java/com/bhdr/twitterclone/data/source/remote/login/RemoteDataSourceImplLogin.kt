@@ -4,7 +4,7 @@ import com.bhdr.twitterclone.data.model.remote.Users
 import com.bhdr.twitterclone.domain.source.remote.login.RemoteDataSourceLogin
 import retrofit2.Response
 
-class RemoteDatabaseImplLOGIN  (private val tweetInterFace: TweetRemoteServiceLOGIN) :
+class RemoteDataSourceImplLogin constructor (private val tweetInterFace: TweetRemoteServiceLogin) :
    RemoteDataSourceLogin {
    override suspend fun createUser(
       userName: String,
@@ -16,8 +16,6 @@ class RemoteDatabaseImplLOGIN  (private val tweetInterFace: TweetRemoteServiceLO
       date: String?
    ): Response<Boolean> =
       tweetInterFace.createUser(userName, password, name, email, phone, photoUrl, date)
-
-   override suspend fun getUser(userId: Int): Response<Users> = tweetInterFace.getUser(userId)
 
    override suspend fun signIn(userName: String): Response<Users> = tweetInterFace.signIn(userName)
 

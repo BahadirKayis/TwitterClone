@@ -1,44 +1,50 @@
 package com.bhdr.twitterclone.ui.notification
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bhdr.twitterclone.data.repos.SearchRepositoryImpl
-import com.bhdr.twitterclone.data.repos.TweetRepositoryImpl
+import com.bhdr.twitterclone.domain.repository.SearchRepository
+import com.bhdr.twitterclone.domain.repository.TweetRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NotificationViewModel @Inject constructor(private val tweetRepositoryImpl: TweetRepositoryImpl, private val searchRepositoryImpl: SearchRepositoryImpl) :
+class NotificationViewModel @Inject constructor(
+   private val tweetRepositoryImpl: TweetRepository,
+   private val searchRepositoryImpl: SearchRepository
+) :
    ViewModel() {
 
+   var mutableNotificationList = MutableLiveData<List<Any>>()
+   val notificationList: LiveData<List<Any>> = mutableNotificationList
 
-   val notificationList: LiveData<List<Any>> = tweetRepositoryImpl.mutableNotificationList
 
-
+   var followedCountM = MutableLiveData<List<Int>>()
    val followedCount: LiveData<List<Int>>
-      get() = searchRepositoryImpl.followedCount
+      get() = followedCountM
+
 
    fun notificationList() {
       viewModelScope.launch {
-         tweetRepositoryImpl.notificationList()
+         mutableNotificationList.value = tweetRepositoryImpl.notificationList()
       }
    }
 
-
+   var followedUserM = MutableLiveData<Boolean>()
    val followedUser: LiveData<Boolean>
-      get() = searchRepositoryImpl.followedUser
+      get() = followedUserM
 
    fun getSearchFollowUser(userId: Int, followId: Int) {
       viewModelScope.launch {
-         searchRepositoryImpl.postUserFollow(userId, followId)
+         followedUserM.value= searchRepositoryImpl.postUserFollow(userId, followId)
       }
    }
 
    fun followUserList(userId: Int) {
       viewModelScope.launch {
-         searchRepositoryImpl.followUserList(userId)
+         followedCountM.value = searchRepositoryImpl.followUserList(userId)
       }
    }
 

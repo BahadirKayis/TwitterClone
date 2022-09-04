@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -25,7 +26,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
    TweetsAdapter.ClickedTweetListener {
 
    private val binding by viewBinding(FragmentMainScreenBinding::bind)
-   private  val viewModel: TweetViewModel by viewModels()
+   private val viewModel: TweetViewModel by viewModels()
    private val tweetAdapter by lazy { TweetsAdapter(this) }
    private var userProfileClickListener: MainScreenInterFace? = null
 
@@ -39,30 +40,32 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
    }
 
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-     // viewModel = ViewModelProvider(requireParentFragment())[TweetViewModel::class.java]
+      // viewModel = ViewModelProvider(requireParentFragment())[TweetViewModel::class.java]
       super.onViewCreated(view, savedInstanceState)
       viewModelObservable()
       binding()
       remoteTweetRequest()
    }
-private fun remoteTweetRequest(){
-   lifecycleScope.launch {
-      delay(5000)
-      viewModel.getFollowedUserIdList(requireContext().userId())
-      netWorkControlAndCloudRequestTweets()
+
+   private fun remoteTweetRequest() {
+      lifecycleScope.launch {
+         delay(5000)
+         viewModel.getFollowedUserIdList(requireContext().userId())
+         netWorkControlAndCloudRequestTweets()
+      }
    }
-}
+
    private fun viewModelObservable() {
 
       with(viewModel) {
          allRoomTweets.observe(viewLifecycleOwner) {
             if (it != null) {
                tweetAdapter.submitList(it)
-            }else {
+            } else {
                netWorkControlAndCloudRequestTweets()
             }
          }
-         mainStatus.observe(viewLifecycleOwner) {
+         mainStatusL.observe(viewLifecycleOwner) {
             when (it!!) {
                Status.LOADING -> binding.lottiAnim.visible()
                Status.ERROR -> binding.lottiAnim.gone()
@@ -75,7 +78,7 @@ private fun remoteTweetRequest(){
             Log.i("mutableFollowNewTweet", it.size.toString())
 
             //Test için 1 tweet
-            if (it!!.size >= 2) {
+            if (it!!.size >= 1) {
                viewModel.getTweets(requireContext().userId())
                viewModel.mutableFollowNewTweet.value!!.clear()
                snackBar(requireView(), "Yeni Tweet Paylaşıldı", 2000)
@@ -126,7 +129,6 @@ private fun remoteTweetRequest(){
 
             tweets.observe(viewLifecycleOwner) { tweet ->
                seeNewTweet.setOnClickListener {
-
                   seeNewTweet.gone()
                   userPhoto1.gone()
                   userPhoto2.gone()
@@ -135,7 +137,13 @@ private fun remoteTweetRequest(){
                   tweetsRoomConvertAndAdd(tweet!!)
                }
             }
-            mutableFollowNewTweetHashMap.observe(viewLifecycleOwner) {
+            mutableFollowNewTweetHashMapL.observe(viewLifecycleOwner) {
+               if (it.size == 1) {
+                  Picasso.get().load(it.values.toTypedArray()[0]).into(userPhoto1)
+                  seeNewTweet.visible()
+                  userPhoto1.visible()
+                  updateIcon.visible()
+               }
 
                if (it.size == 2) {
 
@@ -165,11 +173,11 @@ private fun remoteTweetRequest(){
    }
 
    override fun crfButtonsListener(
-      commentrtfav: String,
+      commentRtFav: String,
       tweetId: Int,
       currentlyCRFNumber: Int
    ) {
-      when (commentrtfav) {
+      when (commentRtFav) {
          "fav" -> viewModel.postLiked(tweetId, currentlyCRFNumber, requireContext().userId())
          // "comment" -> viewModel.commentTweet(tweetDocId, currentlyCRFNumber)
          // "rt" -> viewModel.rtTweet(tweetDocId, currentlyCRFNumber)

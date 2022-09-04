@@ -1,21 +1,23 @@
 package com.bhdr.twitterclone.ui.splash
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bhdr.twitterclone.data.repos.LoginUpRepositoryImpl
+import com.bhdr.twitterclone.domain.repository.LoginUpRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @HiltViewModel
-class SplashViewModel @Inject constructor(private val loginRepo: LoginUpRepositoryImpl) : ViewModel(){
+class SplashViewModel @Inject constructor(private val loginRepo: LoginUpRepository) : ViewModel() {
 
-   val loginAuto: LiveData<Boolean> = loginRepo.loginAuto
+   var loginAutoM = MutableLiveData<Boolean>()
+   val loginAuto: LiveData<Boolean> = loginAutoM
    fun getLoginUserNameAndPassword(userName: String, password: String) {
       viewModelScope.launch {
-         loginRepo.getLoginUserNameAndPassword(userName, password)
+         loginAutoM.value = loginRepo.getLoginUserNameAndPassword(userName, password)
       }
-}
+   }
 }

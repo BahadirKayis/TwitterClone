@@ -12,11 +12,11 @@ import androidx.core.text.toSpannable
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bhdr.twitterclone.databinding.TweetCardBinding
 import com.bhdr.twitterclone.common.picasso
 import com.bhdr.twitterclone.common.toCalendar
 import com.bhdr.twitterclone.data.model.locale.TweetsRoomModel
 import com.bhdr.twitterclone.data.model.locale.UsersRoomModel
+import com.bhdr.twitterclone.databinding.TweetCardBinding
 import com.like.LikeButton
 import com.like.OnLikeListener
 
@@ -90,7 +90,7 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
                with(binding) {
 
                   tweetText.text = postContent.toString()
-                  tweetImage.picasso(tweetImage.toString())
+                  tweetImage.picasso(model.tweetImage.toString())
                   timeText.text = date!!.toLong().toCalendar()
 
                   if (postContent?.contains("#") == true) {

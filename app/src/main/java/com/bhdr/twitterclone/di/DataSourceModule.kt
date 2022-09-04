@@ -2,10 +2,10 @@ package com.bhdr.twitterclone.di
 
 import com.bhdr.twitterclone.data.source.locale.LocalDatabaseImpl
 import com.bhdr.twitterclone.data.source.locale.TweetDaoInterface
-import com.bhdr.twitterclone.data.source.remote.login.RemoteDatabaseImplLOGIN
-import com.bhdr.twitterclone.data.source.remote.login.TweetRemoteServiceLOGIN
+import com.bhdr.twitterclone.data.source.remote.login.RemoteDataSourceImplLogin
+import com.bhdr.twitterclone.data.source.remote.login.TweetRemoteServiceLogin
 import com.bhdr.twitterclone.data.source.remote.main.RemoteDataSourceImplMain
-import com.bhdr.twitterclone.data.source.remote.main.TweetRemoteServiceMAIN
+import com.bhdr.twitterclone.data.source.remote.main.TweetRemoteServiceMain
 import com.bhdr.twitterclone.domain.source.locale.LocalDataSource
 import com.bhdr.twitterclone.domain.source.remote.login.RemoteDataSourceLogin
 import com.bhdr.twitterclone.domain.source.remote.main.RemoteDataSourceMain
@@ -22,13 +22,13 @@ object DataSourceModule {
 
    @Provides
    @Singleton
-   fun providerRemoteDataSourceLogin(tweetInterFace: TweetRemoteServiceLOGIN):
+   fun providerRemoteDataSourceLogin(tweetInterFace: TweetRemoteServiceLogin):
            RemoteDataSourceLogin =
-      RemoteDatabaseImplLOGIN(tweetInterFace)
+      RemoteDataSourceImplLogin(tweetInterFace)
 
    @Provides
    @Singleton
-   fun providerRemoteDataSourceMain(tweetInterFace: TweetRemoteServiceMAIN):
+   fun providerRemoteDataSourceMain(tweetInterFace: TweetRemoteServiceMain):
            RemoteDataSourceMain =
       RemoteDataSourceImplMain(tweetInterFace)
 

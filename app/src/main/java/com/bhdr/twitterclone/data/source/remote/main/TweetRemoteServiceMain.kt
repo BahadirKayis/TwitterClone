@@ -1,5 +1,6 @@
 package com.bhdr.twitterclone.data.source.remote.main
 
+import com.bhdr.twitterclone.common.Constants
 import com.bhdr.twitterclone.common.Constants.CREATE_TWEET
 import com.bhdr.twitterclone.common.Constants.FOLLOWED_COUNT
 import com.bhdr.twitterclone.common.Constants.FOLLOW_COUNT
@@ -10,6 +11,7 @@ import com.bhdr.twitterclone.common.Constants.TWEETS
 import com.bhdr.twitterclone.common.Constants.TWEETS_ONE
 import com.bhdr.twitterclone.common.Constants.TWEET_LIKED
 import com.bhdr.twitterclone.common.Constants.USER_FOLLOW
+import com.bhdr.twitterclone.common.Constants.USER_INFO_ID
 import com.bhdr.twitterclone.data.model.remote.Posts
 import com.bhdr.twitterclone.data.model.remote.Users
 import retrofit2.Response
@@ -17,7 +19,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 
-interface TweetRemoteServiceMAIN {
+interface TweetRemoteServiceMain {
 
    @POST(CREATE_TWEET)
    suspend fun addTweet(
@@ -26,6 +28,9 @@ interface TweetRemoteServiceMAIN {
       @Query("image_url") image_url: String,
       @Query("date") date: String
    ): Response<Boolean>
+
+   @GET(USER_INFO_ID)
+   suspend fun getUser(@Query("UserId") userId: Int): Response<Users>
 
    @POST(USER_FOLLOW)
    suspend fun postUserFollow(

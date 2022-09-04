@@ -1,35 +1,32 @@
 package com.bhdr.twitterclone.ui.forgetpassword
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bhdr.twitterclone.common.Status
-import com.bhdr.twitterclone.data.repos.LoginUpRepositoryImpl
+import com.bhdr.twitterclone.domain.repository.LoginUpRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ForgetPasswordViewModel @Inject constructor(private val loginRepo: LoginUpRepositoryImpl) : ViewModel() {
+class ForgetPasswordViewModel @Inject constructor(private val loginRepo: LoginUpRepository) :
+   ViewModel() {
 
-   val userId: LiveData<Int> = loginRepo.userForgetId
+   private var userIdM = MutableLiveData<Int>()
+   val userId: LiveData<Int> = userIdM
 
-   val userChangePassword: LiveData<Boolean> = loginRepo.userChangePassword
 
-
-   var executeStatus: LiveData<Status> = loginRepo.userStatus
+   var status = MutableLiveData<Status>()
+   val executeStatus: LiveData<Status> = status
 
    fun userForgetId(userName: String) {
       viewModelScope.launch {
-         loginRepo.userForgetId(userName)
-      }
+         status.value = Status.LOADING
+         userIdM.value = loginRepo.userForgetId(userName)
+         status.value = Status.DONE
 
-   }
-
-   fun userChangePassword(userId: Int, password: String) {
-      viewModelScope.launch {
-         loginRepo.userChangePassword(userId, password)
       }
 
    }

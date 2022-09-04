@@ -14,7 +14,7 @@ interface RemoteDataSourceLogin {
       date: String?
    ): Response<Boolean>
 
-   suspend fun getUser(userId: Int): Response<Users>
+
    suspend fun signIn(userName: String): Response<Users>
    suspend fun getLoginUserNameAndPassword(
       userName: String,

@@ -11,7 +11,7 @@ interface RemoteDataSourceMain {
       image_url: String,
       date: String
    ): Response<Boolean>
-
+   suspend fun getUser(userId: Int): Response<Users>
    suspend fun postUserFollow(userId: Int, followId: Int): Response<Boolean>
    suspend fun getFollowedUserIdList(userId: Int): Response<List<Int>>
    suspend fun getSearchNotFollow(userId: Int): Response<List<Users>>

@@ -55,7 +55,7 @@
             app:destination="@id/sigInForgetPasswordFragment" />
         <argument
             android:name="userModel"
-            app:argType="com.bhdr.twitterclone.models.Users"
+            app:argType="com.bhdr.twitterclone.data.model.remote.Users"
             app:nullable="true" />
         <action
             android:id="@+id/action_sigInSecondPageFragment_to_main_nav"

@@ -13,7 +13,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 
-interface TweetRemoteServiceLOGIN {
+interface TweetRemoteServiceLogin {
    @POST(SIGN_UP)
    suspend fun createUser(
       @Query("user_name") userName: String,
@@ -25,8 +25,7 @@ interface TweetRemoteServiceLOGIN {
       @Query("date") date: String?
    ): Response<Boolean>
 
-   @GET(USER_INFO_ID)
-   suspend fun getUser(@Query("UserId") userId: Int): Response<Users>
+
 
 //   @GET("userNameAndEmail")
 //   suspend fun getUsernameAndEmail(): Response<List<UsernameAndEmailControl>>

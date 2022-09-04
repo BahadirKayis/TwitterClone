@@ -11,7 +11,6 @@ import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.bhdr.twitterclone.common.Status
-import com.bhdr.twitterclone.common.hubConnection
 import com.bhdr.twitterclone.common.toLongDate
 import com.bhdr.twitterclone.data.model.locale.TweetsRoomModel
 import com.bhdr.twitterclone.data.model.locale.UsersRoomModel
@@ -19,58 +18,40 @@ import com.bhdr.twitterclone.data.model.remote.Posts
 import com.bhdr.twitterclone.domain.repository.TweetRepository
 import com.bhdr.twitterclone.domain.source.locale.LocalDataSource
 import com.bhdr.twitterclone.domain.source.remote.main.RemoteDataSourceMain
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
-import com.microsoft.signalr.HubConnectionState
+import com.google.firebase.storage.FirebaseStorage
 import com.mikepenz.materialdrawer.util.ifNotNull
 import kotlinx.coroutines.*
 import java.io.File
+import javax.inject.Inject
+import javax.inject.Named
 
 
-class TweetRepositoryImpl(
+class TweetRepositoryImpl (
    private val localSource: LocalDataSource,
    private val application: Application,
    private val remoteSource: RemoteDataSourceMain,
+   @Named("IO") private val coContextIO: CoroutineDispatcher,
+   private val FirebaseStorage: FirebaseStorage
 ) : TweetRepository {
 
-   private val db = Firebase.storage
-
-   val mainStatus = MutableLiveData<Status>()
-
-   val tweets = MutableLiveData<List<Posts>?>()
-
-   val tweetsRoomList = MutableLiveData<List<TweetsRoomModel>?>()
-
-   val tweetAdded = MutableLiveData<Boolean>()
+   private var mainStatus = MutableLiveData<Status?>()
 
    private lateinit var imageUri: String
-   private var haveImageUri: Boolean = false
 
-   val mutableFollowNewTweetHashMap = MutableLiveData<HashMap<Int, String>>()
+   private var haveImageUri: Boolean = false
 
    private var hashMapFollowNewTweetHashMap: HashMap<Int, String> = HashMap()
 
-   //SignalR
-   private val job = Job()
-   private val coroutineContext = Dispatchers.IO + job
-   private val cIoScope = CoroutineScope(coroutineContext)
+   private var job: Job? = null
 
    private var followedUserIdList: List<Int>? = null
 
-   var mutableFollowNewTweet: MutableLiveData<HashMap<Int, String>> = MutableLiveData()
-
-   var mutableNotificationList = MutableLiveData<List<Any>>()
-
-   override suspend fun getTweets(id: Int) {
+   override suspend fun getTweets(id: Int): List<Posts>? {
       try {
 
          val request = remoteSource.getTweets(id)
          if (request.isSuccessful) {
-
-            tweets.value = request.body()!!
-            isNewTweet(request.body()!!, tweetsRoomList.value)
-            Log.e("TweetRepoGetPosts", request.body().toString())
-
+            return request.body()!!
          } else if (!request.isSuccessful) {
             mainStatus.value = Status.ERROR
          }
@@ -83,7 +64,7 @@ class TweetRepositoryImpl(
             getTweets(id)
          }
       }
-
+      return null
    }
 
    override suspend fun tweetLiked(id: Int, count: Int, userId: Int) {
@@ -109,17 +90,19 @@ class TweetRepositoryImpl(
       tweetText: String,
       tweetImageName: String,
       tweetImage: Uri?
-   ) {
+   ): Boolean {
       mainStatus.value = Status.LOADING
+      var isTweetAdded = false
+
       try {
-         val reference = db.reference
+         val reference = FirebaseStorage.reference
          if (tweetImage != null) {
 
             val imagesReference = reference.child("tweetpictures").child(tweetImageName)
             imagesReference.putFile(tweetImage).addOnSuccessListener {
 
                val uploadedPictureReference =
-                  db.reference.child("tweetpictures").child(tweetImageName)
+                  FirebaseStorage.reference.child("tweetpictures").child(tweetImageName)
                uploadedPictureReference.downloadUrl.addOnSuccessListener { uri ->
                   val tweetPictureUrl = uri.toString()
 
@@ -131,10 +114,10 @@ class TweetRepositoryImpl(
                         )
                      if (addTweetResult.isSuccessful) {
                         mainStatus.value = Status.DONE
-                        tweetAdded.value = addTweetResult.body()
+                        isTweetAdded = addTweetResult.body()!!
                      } else if (!addTweetResult.isSuccessful) {
                         mainStatus.value = Status.ERROR
-                        tweetAdded.value = false
+                        isTweetAdded = false
                      }
                      Log.e("AddTweet-errorBody", addTweetResult.errorBody().toString())
                   }
@@ -151,56 +134,50 @@ class TweetRepositoryImpl(
                )
             if (addTweetResult.isSuccessful) {
                mainStatus.value = Status.DONE
-               tweetAdded.value = addTweetResult.body()
+               isTweetAdded = addTweetResult.body()!!
             } else if (!addTweetResult.isSuccessful) {
                mainStatus.value = Status.ERROR
-               tweetAdded.value = false
-
+               isTweetAdded = false
             }
 
          }
       } catch (e: Exception) {
          mainStatus.value = Status.ERROR
-         tweetAdded.value = false
+         isTweetAdded = false
          Log.e("RepositoryAdT-EX", e.toString())
       }
-
+      return isTweetAdded
    }
 
    //room
-   override suspend fun tweetsInsert(tweets: List<TweetsRoomModel?>) {
-      try {
-         localSource.addTweet(tweets)
-         delay(500)
-         getTweetsRoom()
-      } catch (e: Exception) {
-
-         Log.e("tweetsInsert-Ex", e.toString())
-      }
+   override suspend fun tweetsInsert(tweets: List<TweetsRoomModel?>): List<TweetsRoomModel>? {
+      localSource.addTweet(tweets)
+      delay(500)
+      return getTweetsRoom()
    }
 
-   override suspend fun tweetsUpdate(tweets: List<Posts>) {
+   override suspend fun tweetsUpdate(tweets: List<Posts>): List<TweetsRoomModel>? {
       tweets.forEach {
          localSource.updateTweet(it.id!!, it.postLike!!)
       }
-      getTweetsRoom()
+      return getTweetsRoom()
    }
 
-   override suspend fun getTweetsRoom() {
+   override suspend fun getTweetsRoom(): List<TweetsRoomModel>? {
       mainStatus.value = Status.LOADING
       val tweetsRoomModelList = localSource.allTweet()
       Log.i("tweetsRoomModelList", tweetsRoomModelList.toString())
       if (tweetsRoomModelList != null) {
-         tweetsRoomList.value = tweetsRoomModelList
 
          mainStatus.value = Status.DONE
-      } else {
-         tweetsRoomList.value = null
+         return tweetsRoomModelList
+
 
       }
+      return null
    }
 
-   override suspend fun tweetsRoomConvertAndAdd(lTweet: List<Posts?>) {
+   override suspend fun tweetsRoomConvertAndAdd(lTweet: List<Posts?>): List<TweetsRoomModel> {
 
       val tweetsAddRoom: MutableList<TweetsRoomModel> = mutableListOf()
       try {
@@ -229,7 +206,8 @@ class TweetRepositoryImpl(
                      val bmp = getBitmap(it.postImageUrl.toString())//fotoğraf indiriliyor
                      bmp.ifNotNull { storeBitmap(bmp) }//fotoğraf kayıt ediliyor
                   }
-               } else {
+               }
+               else {
                   imageUri = "null"
                }
                tweetsAddRoom.add(
@@ -244,13 +222,16 @@ class TweetRepositoryImpl(
                   )
                )
             }
-            tweetsInsert(tweetsAddRoom)
+
          }
          mainStatus.value = Status.DONE
+         return tweetsAddRoom
 
       } catch (e: Exception) {
          Log.e("RoomConvertAndAdd-Ex", e.toString())
       }
+      throw Exception("")
+
    }
 
    override suspend fun getBitmap(url: String): Bitmap {
@@ -287,13 +268,18 @@ class TweetRepositoryImpl(
    }
 
 
-   override suspend fun isNewTweet(cloudTweet: List<Posts>, roomTweet: List<TweetsRoomModel>?) {
+   override suspend fun isNewTweet(
+      cloudTweet: List<Posts>,
+      roomTweet: List<TweetsRoomModel>?
+   ): Pair<List<Posts>?, List<Posts>?> {
 
       val tweetRoomUpdateList: MutableList<Posts> = mutableListOf()
       val tweetCloudAddToRoomList: MutableList<Posts> = mutableListOf()
+
       try {
          if (roomTweet?.size == 0) {
-            newTweetButton(cloudTweet, tweetRoomUpdateList)
+            return (cloudTweet to cloudTweet)
+            // newTweetButton(cloudTweet, tweetRoomUpdateList)
          } else {
             if (cloudTweet.isNotEmpty()) {
                if (roomTweet!!.size != cloudTweet.size) {
@@ -310,35 +296,20 @@ class TweetRepositoryImpl(
                         tweetRoomUpdateList.add(cloudTweet[itCloud.id!!])
                      }
                   }
-                  newTweetButton(tweetCloudAddToRoomList, tweetRoomUpdateList)
+                  return (tweetCloudAddToRoomList to tweetRoomUpdateList)
+                  // newTweetButton(tweetCloudAddToRoomList, tweetRoomUpdateList)
                } else {
-                  newTweetButton(null, cloudTweet)
+                  return (null to tweetRoomUpdateList)
+                  //  newTweetButton(null, cloudTweet)
                }
             }
          }
       } catch (e: Exception) {
          Log.e("isNewTweet-Ex", e.toString())
       }
+      return (null to null)
    }
 
-   override suspend fun newTweetButton(addTweet: List<Posts>?, updateTweet: List<Posts>?) {
-      try {
-         if (updateTweet != null) {
-            tweetsUpdate(updateTweet)
-         }
-         if (hashMapFollowNewTweetHashMap.size != 0) {
-            mutableFollowNewTweetHashMap.value = hashMapFollowNewTweetHashMap
-            tweets.value = addTweet
-         } else {
-            if (addTweet != null) {
-               tweetsRoomConvertAndAdd(addTweet)
-            }
-         }
-
-      } catch (e: Exception) {
-         Log.e("newTweetButton-Ex", e.toString())
-      }
-   }
 
    ////////////////
    override suspend fun getFollowedUserIdList(userId: Int) {
@@ -349,65 +320,22 @@ class TweetRepositoryImpl(
       Log.i("getFollowedUserIdList", response.body().toString())
    }
 
-   override fun tweetSignalR() {
-      try {
-         if (hubConnection.connectionState == HubConnectionState.DISCONNECTED) {
-            hubConnection.start()
-         }
-         Log.i("tweetSignalR", hubConnection.connectionState.toString())
-         //NewTweet follow & not follow
-         try {
-            hubConnection.on(
-               "newTweets",
-               { id, imageUrl, name ->
-                  Log.e("id", id.toString())
-                  Log.e("imageUrl", imageUrl.toString())
-                  Log.e("imageUrl", name.toString())
-                  try {
-                     cIoScope.launch {
-                        signalRControl(
-                           id.toInt(),
-                           imageUrl,
-                        )
-                     }
-
-                  } catch (e: Throwable) {
-
-                     Log.e("newTweets-Ex", e.toString())
-                  }
-               },
-               String::class.java,
-               String::class.java,
-               String::class.java
-
-            )
-
-         } catch (e: Throwable) {
-
-            Log.e("newTweets", e.toString())
-         }
-
-
-      } catch (e: Exception) {
-         Log.e("tweetSignalR-Ex", e.toString())
-      }
-   }
 
    override fun signalRControl(
       id: Int,
       imageUrl: String
-   ) {
+   ): HashMap<Int, String> {
       try {
          if (id != 0) {
             //NewTweet follow
-            cIoScope.launch {
+            job = CoroutineScope(coContextIO).launch {
                CoroutineScope(Dispatchers.Main).launch {
 
                   val userId = followedUserIdList?.find { it == id }
 
                   if (userId != null) {
                      hashMapFollowNewTweetHashMap[id] = imageUrl
-                     mutableFollowNewTweet.value = hashMapFollowNewTweetHashMap
+                     //mutableFollowNewTweetSignalR.value = hashMapFollowNewTweetHashMap
                   }
                }
             }
@@ -415,15 +343,19 @@ class TweetRepositoryImpl(
       } catch (e: Exception) {
          Log.e("signalRControl-Ex", e.toString())
       }
+      return hashMapFollowNewTweetHashMap
    }
 
    //NotificationScreen
 
-   override suspend fun notificationList() {
+   override suspend fun notificationList(): List<Any> {
       val tweetList: MutableList<Any> = mutableListOf()
       tweetList.addAll(localSource.notificationListLike())
       tweetList.addAll(localSource.notificationListTweet())
-      mutableNotificationList.value = tweetList
+      return tweetList
    }
+
+
+
 }
 

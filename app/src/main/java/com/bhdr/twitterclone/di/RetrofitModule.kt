@@ -2,8 +2,8 @@ package com.bhdr.twitterclone.di
 
 import com.bhdr.twitterclone.common.Constants.BASE_URL_LOGIN
 import com.bhdr.twitterclone.common.Constants.BASE_URL_MAIN
-import com.bhdr.twitterclone.data.source.remote.login.TweetRemoteServiceLOGIN
-import com.bhdr.twitterclone.data.source.remote.main.TweetRemoteServiceMAIN
+import com.bhdr.twitterclone.data.source.remote.login.TweetRemoteServiceLogin
+import com.bhdr.twitterclone.data.source.remote.main.TweetRemoteServiceMain
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,17 +17,17 @@ import javax.inject.Singleton
 object RetrofitModule {
    @Provides
    @Singleton
-   fun provideLogInService(): TweetRemoteServiceLOGIN = Retrofit.Builder()
+   fun provideLogInService(): TweetRemoteServiceLogin = Retrofit.Builder()
       .baseUrl(BASE_URL_LOGIN)
       .addConverterFactory(GsonConverterFactory.create())
       .build()
-      .create(TweetRemoteServiceLOGIN::class.java)
+      .create(TweetRemoteServiceLogin::class.java)
 
    @Provides
    @Singleton
-   fun provideMainService(): TweetRemoteServiceMAIN = Retrofit.Builder()
+   fun provideMainService(): TweetRemoteServiceMain = Retrofit.Builder()
       .baseUrl(BASE_URL_MAIN)
       .addConverterFactory(GsonConverterFactory.create())
       .build()
-      .create(TweetRemoteServiceMAIN::class.java)
+      .create(TweetRemoteServiceMain::class.java)
 }
