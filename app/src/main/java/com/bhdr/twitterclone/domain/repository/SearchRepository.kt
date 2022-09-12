@@ -7,6 +7,7 @@ interface SearchRepository {
    suspend fun getTags(): List<String>
    suspend fun postUserFollow(userId: Int, followId: Int): Boolean
    suspend fun followUserList(userId: Int): List<Int>?
+   suspend fun searchUser(userName: String): List<Users>?
 
 
 }

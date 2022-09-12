@@ -2,7 +2,6 @@ package com.bhdr.twitterclone.ui.activity
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
@@ -19,7 +18,6 @@ import androidx.navigation.ui.NavigationUI
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.common.*
 import com.bhdr.twitterclone.databinding.ActivityMainBinding
-import com.bhdr.twitterclone.ui.main.MainScreenFragment
 import com.canerture.e_commerce_app.common.delegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import de.hdodenhof.circleimageview.CircleImageView
@@ -27,7 +25,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace {
+class MainActivity : AppCompatActivity(), OpenMenu {
    private val binding by viewBinding(ActivityMainBinding::inflate)
    private lateinit var navController: NavController
    lateinit var toggle: ActionBarDrawerToggle
@@ -148,13 +146,10 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
          })
          notificationCount.observe(this@MainActivity) {
 
-            try {
-               binding.notificationCount.text = it.toString()
-               binding.notificationCount.visible()
-            } catch (e: Exception) {
-               Log.e("Exception", e.toString())
-               e.printStackTrace()
-            }
+
+            binding.notificationCount.text = it.toString()
+            binding.notificationCount.visible()
+
          }
 
       }
@@ -168,9 +163,6 @@ class MainActivity : AppCompatActivity(), MainScreenFragment.MainScreenInterFace
    }
 
    override fun openDrawerClick() {
-      Log.e("TAG", "openDrawer: ")
-      //  binding.drawerLayout.openDrawer(R.id.drawerLayout)
-      // toggle.onDrawerClosed(binding.drawerLayout)
       binding.drawerLayout.openDrawer(GravityCompat.START)
    }
 

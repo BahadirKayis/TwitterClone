@@ -1,17 +1,21 @@
 package com.bhdr.twitterclone.ui.search
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.common.*
-import com.bhdr.twitterclone.databinding.FragmentSearchBinding
 import com.bhdr.twitterclone.data.model.remote.Users
+import com.bhdr.twitterclone.databinding.FragmentSearchBinding
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.ClickedUserFollow {
@@ -20,9 +24,21 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
    private val binding by viewBinding(FragmentSearchBinding::bind)
    lateinit var dataFollow: MutableList<Users>
    private lateinit var myAdapter: WhoToFollowAdapter
+   private lateinit var searchUserAdapter: SearchUserAdapter
+   private var userProfileClickListener: OpenMenu? = null
+
+   override fun onAttach(context: Context) {
+      super.onAttach(context)
+      if (context is OpenMenu) {
+         userProfileClickListener = context
+      } else {
+         throw RuntimeException(context.toString())
+      }
+   }
 
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
       super.onViewCreated(view, savedInstanceState)
+      searchUserAdapter = SearchUserAdapter(requireContext(), R.layout.autocompletetextview_search)
 
       viewModel.getSearchNotFollowUser(requireContext().userId())
       binding()
@@ -61,6 +77,14 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
                adapter = myAdapter
             }
          }
+         searchUser.observe(viewLifecycleOwner) {
+            if (it != null) {
+               Log.i("searchUserResponse", it.toString())
+               searchUserAdapter.notifyDataChanged(it)
+            }
+
+         }
+
       }
    }
 
@@ -80,9 +104,30 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
                .navigate(R.id.action_searchFragment_to_addTweetFragment)
          }
          profilePicture.picasso(requireContext().userPhotoUrl())
+         profilePicture.setOnClickListener {
+            userProfileClickListener?.openDrawerClick()
+         }
+
+         autoCompleteTextView.setAdapter(searchUserAdapter)
+
+         //Cloud Filter
+         autoCompleteTextView.doOnTextChanged { text, start, before, count ->
+            viewModel.searchUser(
+               text.toString()
+            )
+         }
+         //Local Filter
+         // viewModel.searchUser("allUsers")
+
+         searchUserAdapter.onClickItem = ::autoCompleteTextViewItemSelect
+
+
       }
    }
 
+   private fun autoCompleteTextViewItemSelect(userName: String) {
+      binding.autoCompleteTextView.setText(userName)
+   }
 
    private fun deleteItem(index: Int) {
       if (::dataFollow.isInitialized && ::myAdapter.isInitialized) {
@@ -107,4 +152,6 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
    override fun followButtonsListener(followId: Int) {
       viewModel.getSearchFollowUser(requireContext().userId(), followId)
    }
+
+
 }

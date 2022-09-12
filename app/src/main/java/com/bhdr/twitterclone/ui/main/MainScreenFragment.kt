@@ -28,11 +28,11 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
    private val binding by viewBinding(FragmentMainScreenBinding::bind)
    private val viewModel: TweetViewModel by viewModels()
    private val tweetAdapter by lazy { TweetsAdapter(this) }
-   private var userProfileClickListener: MainScreenInterFace? = null
+   private var userProfileClickListener: OpenMenu? = null
 
    override fun onAttach(context: Context) {
       super.onAttach(context)
-      if (context is MainScreenInterFace) {
+      if (context is OpenMenu) {
          userProfileClickListener = context
       } else {
          throw RuntimeException(context.toString())
@@ -184,9 +184,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
       }
    }
 
-   interface MainScreenInterFace {
-      fun openDrawerClick()
-   }
+
 }
 
 

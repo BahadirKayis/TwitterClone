@@ -45,7 +45,7 @@ class TweetViewModel @Inject constructor(
          allRoomTweetsM.value = tweetRepositoryImpl.getTweetsRoom()
          if (!toStartSignalRTweet) {
             toStartSignalRTweet = true
-            delay(10000)
+            delay(5000)
             tweetSignalR()
          }
 
@@ -146,11 +146,11 @@ class TweetViewModel @Inject constructor(
                   try {
                      job = CoroutineScope(coContextIO).launch {
                         CoroutineScope(Dispatchers.Main).launch {
-                        mutableFollowNewTweetSignalR.value = tweetRepositoryImpl.signalRControl(
-                           id.toInt(),
-                           imageUrl,
-                        )
-                     }
+                           mutableFollowNewTweetSignalR.value = tweetRepositoryImpl.signalRControl(
+                              id.toInt(),
+                              imageUrl,
+                           )
+                        }
                      }
 
                   } catch (e: Throwable) {

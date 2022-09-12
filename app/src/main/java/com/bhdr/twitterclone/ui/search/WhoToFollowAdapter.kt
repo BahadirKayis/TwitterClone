@@ -3,9 +3,9 @@ package com.bhdr.twitterclone.ui.search
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bhdr.twitterclone.databinding.WhoToFollowCardBinding
 import com.bhdr.twitterclone.common.picasso
 import com.bhdr.twitterclone.data.model.remote.Users
+import com.bhdr.twitterclone.databinding.WhoToFollowCardBinding
 
 class WhoToFollowAdapter(
    private val clickedUserFollow: ClickedUserFollow, private val userList: List<Users>,

@@ -20,6 +20,7 @@ object Constants {
    const val FOLLOW_COUNT = "followCount"
    const val FOLLOWED_COUNT = "followedCount"
    const val TWEETS_ONE = "TweetNew"
+   const val SEARCH_USER="searchUserName"
 
 
 }

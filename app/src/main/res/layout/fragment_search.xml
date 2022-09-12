@@ -23,61 +23,71 @@
             app:buttonGravity="center_vertical"
             app:layout_scrollFlags="scroll|enterAlways">
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="250dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                app:cardCornerRadius="100dp"
-                tools:layout_editor_absoluteX="16dp"
-                tools:layout_editor_absoluteY="5dp">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    app:boxBackgroundColor="#E3E3E3"
-                    app:boxBackgroundMode="filled"
-                    app:boxStrokeColor="#03A9F4"
-                    app:boxStrokeWidth="0dp"
-                    app:endIconTint="#03A9F4"
-                    app:hintTextColor="#03A9F4"
-                    app:startIconTint="#03A9F4"
-                    tools:layout_editor_absoluteX="16dp">
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="2dp"
+                    app:cardCornerRadius="250dp"
+                    app:cardElevation="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/imageView2"
+                    app:layout_constraintStart_toEndOf="@id/cardView"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <AutoCompleteTextView
+                        android:id="@+id/autoCompleteTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:dropDownHeight="250dp"
                         android:hint="Twitter'da Ara"
-                        android:textSize="14sp" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:textColor="@color/black"
+                        android:theme="@style/MaterialBaseBaseTheme.Light"
+                        android:textSize="16sp" />
 
-            </androidx.cardview.widget.CardView>
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="end"
-                android:layout_marginEnd="5dp"
-                android:src="@drawable/settings"
-                tools:layout_editor_absoluteX="376dp"
-                tools:layout_editor_absoluteY="7dp" />
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardView"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="start"
-                app:cardCornerRadius="250dp"
-                app:cardElevation="0dp">
+                </androidx.cardview.widget.CardView>
 
                 <ImageView
-                    android:id="@+id/profilePicture"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop" />
-            </androidx.cardview.widget.CardView>
+                    android:id="@+id/imageView2"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="5dp"
+                    android:src="@drawable/settings"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:layout_editor_absoluteX="376dp"
+                    tools:layout_editor_absoluteY="7dp" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardView"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    app:cardCornerRadius="250dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/profilePicture"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop" />
+                </androidx.cardview.widget.CardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
@@ -278,6 +288,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottiAnim"
             android:layout_width="250dp"

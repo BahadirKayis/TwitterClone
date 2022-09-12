@@ -3,7 +3,6 @@ package com.bhdr.twitterclone.data.repos
 import com.bhdr.twitterclone.data.model.remote.Users
 import com.bhdr.twitterclone.domain.repository.SearchRepository
 import com.bhdr.twitterclone.domain.source.remote.main.RemoteDataSourceMain
-import javax.inject.Inject
 
 class SearchRepositoryImpl(private val remoteSource: RemoteDataSourceMain) :
    SearchRepository {
@@ -21,5 +20,8 @@ class SearchRepositoryImpl(private val remoteSource: RemoteDataSourceMain) :
 
    override suspend fun followUserList(userId: Int): List<Int>? =
       remoteSource.getFollowedUserIdList(userId).body()
+
+   override suspend fun searchUser(userName: String): List<Users>? =
+      remoteSource.getSearchUser(userName)?.body()
 
 }

@@ -40,4 +40,7 @@ class RemoteDataSourceImplMain(private val tweetMain: TweetRemoteServiceMain) :
 
    override suspend fun getTweetNew(tweetId: Int): Response<Posts> =
       tweetMain.getTweetNew(tweetId)
+
+   override suspend fun getSearchUser(userName: String): Response<List<Users>>? =
+      tweetMain.getSearchUser(userName)
 }

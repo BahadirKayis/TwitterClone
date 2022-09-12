@@ -22,11 +22,10 @@ import com.google.firebase.storage.FirebaseStorage
 import com.mikepenz.materialdrawer.util.ifNotNull
 import kotlinx.coroutines.*
 import java.io.File
-import javax.inject.Inject
 import javax.inject.Named
 
 
-class TweetRepositoryImpl (
+class TweetRepositoryImpl(
    private val localSource: LocalDataSource,
    private val application: Application,
    private val remoteSource: RemoteDataSourceMain,
@@ -186,8 +185,8 @@ class TweetRepositoryImpl (
             imageUri =
                createImageUri(it!!.userId.toString() + "_" + it.user?.userName + "_user_profile.png")
             if (!haveImageUri) {
-               val bmp = getBitmap(it.user!!.photoUrl!!)//fotoğraf indiriliyor
-               bmp.ifNotNull { storeBitmap(bmp) }//fotoğraf kayıt ediliyior
+               val bmp = getBitmap(it.user!!.photoUrl!!)//Image download
+               bmp.ifNotNull { storeBitmap(bmp) }//Image save
             }
             it.user?.apply {
                userRoomModel =
@@ -199,15 +198,21 @@ class TweetRepositoryImpl (
                   )
             }
             it.apply {
+
                if (it.postImageUrl != "null") {
                   imageUri =
                      createImageUri(id.toString() + "_" + userId.toString() + "_tweet_content.png")
-                  if (!haveImageUri) {
-                     val bmp = getBitmap(it.postImageUrl.toString())//fotoğraf indiriliyor
-                     bmp.ifNotNull { storeBitmap(bmp) }//fotoğraf kayıt ediliyor
+
+                  if (it.postImageUrl!!.contains(".webm")) {
+                     imageUri = it.postImageUrl.toString()
+                  } else {
+                     if (!haveImageUri) {
+                        val bmp = getBitmap(it.postImageUrl.toString())//Image download
+                        bmp.ifNotNull { storeBitmap(bmp) }//Image save
+                     }
                   }
-               }
-               else {
+
+               } else {
                   imageUri = "null"
                }
                tweetsAddRoom.add(
@@ -354,7 +359,6 @@ class TweetRepositoryImpl (
       tweetList.addAll(localSource.notificationListTweet())
       return tweetList
    }
-
 
 
 }

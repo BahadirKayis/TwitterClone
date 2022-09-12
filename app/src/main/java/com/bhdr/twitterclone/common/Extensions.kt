@@ -9,7 +9,6 @@ import android.os.Build
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
-import androidx.annotation.RequiresApi
 import com.google.android.material.snackbar.Snackbar
 import com.microsoft.signalr.HubConnectionBuilder
 import com.squareup.picasso.Picasso
@@ -18,7 +17,7 @@ import kotlin.time.Duration.Companion.seconds
 
 lateinit var shared: SharedPreferences
 val hubConnection = HubConnectionBuilder.create("http://192.168.3.151:9009/newTweetHub").build()!!
-var toStartSignalRTweet=false
+var toStartSignalRTweet = false
 fun Context.userId(): Int {
    shared = getSharedPreferences("com.bhdr.twitterclone", MODE_PRIVATE)
    return shared.getInt("user_Id", 0)
@@ -56,11 +55,22 @@ fun ImageView.picasso(url: String) {
    Picasso.get().load(url).into(this)
 }
 
-@RequiresApi(Build.VERSION_CODES.M)
+
 fun Context.checkNetworkConnection(): Boolean {
+   var result = false
    val cm = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-   val capabilities = cm.getNetworkCapabilities(cm.activeNetwork)
-   return (capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
+
+   result = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      val capabilities = cm.getNetworkCapabilities(cm.activeNetwork)
+      (capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
+   } else {
+      @Suppress("DEPRECATION")
+      val netInfo = cm.activeNetworkInfo
+      @Suppress("DEPRECATION")
+      netInfo != null && netInfo.isConnectedOrConnecting
+   }
+
+   return result
 }
 
 fun Long.toCalendar(): String {

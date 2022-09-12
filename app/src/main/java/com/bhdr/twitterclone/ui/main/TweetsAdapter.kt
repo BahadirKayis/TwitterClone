@@ -2,6 +2,7 @@ package com.bhdr.twitterclone.ui.main
 
 import android.content.Context
 import android.graphics.Color
+import android.net.Uri
 import android.text.Spannable
 import android.text.style.ForegroundColorSpan
 import android.util.Log
@@ -12,11 +13,16 @@ import androidx.core.text.toSpannable
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bhdr.twitterclone.common.gone
 import com.bhdr.twitterclone.common.picasso
 import com.bhdr.twitterclone.common.toCalendar
 import com.bhdr.twitterclone.data.model.locale.TweetsRoomModel
 import com.bhdr.twitterclone.data.model.locale.UsersRoomModel
 import com.bhdr.twitterclone.databinding.TweetCardBinding
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.source.hls.HlsMediaSource
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.like.LikeButton
 import com.like.OnLikeListener
 
@@ -68,7 +74,7 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
                   it.findNavController()
                      .navigate(
                         MainScreenFragmentDirections.actionMainScreenFragmentToTweetBottomDialog(
-                           "@" + userModel?.userName.toString()
+                           "@" + userModel?.userName.toString().maxOf { 10 }
                         )
                      )
                }
@@ -81,6 +87,7 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
       }
    }
 
+
    inner class TweetViewHolder(val binding: TweetCardBinding) :
       RecyclerView.ViewHolder(binding.root) {
 
@@ -90,7 +97,8 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
                with(binding) {
 
                   tweetText.text = postContent.toString()
-                  tweetImage.picasso(model.tweetImage.toString())
+
+
                   timeText.text = date!!.toLong().toCalendar()
 
                   if (postContent?.contains("#") == true) {
@@ -104,6 +112,29 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
                   }
 
                   favText.text = postLike.toString()
+                  if (model.tweetImage != "null") {
+                     if (model.tweetImage!!.contains(".webm")) {
+                        exoPlayer = ExoPlayer.Builder(context!!).build()
+                        exoPlayer?.playWhenReady = playWhenReady
+                        //binding.playerView.player = exoPlayer
+                        val defaultHttpDataSourceFactory = DefaultHttpDataSource.Factory()
+                        Log.e("TAG", model.tweetImage!!.toString())
+                        val mediaItem =
+                           MediaItem.fromUri("https://www.youtube.com/watch?v=IZm0QX9DI90")
+                        val mediaSource =
+                           HlsMediaSource.Factory(defaultHttpDataSourceFactory)
+                              .createMediaSource(mediaItem)
+
+                        exoPlayer?.setMediaSource(mediaSource)
+                        exoPlayer?.seekTo(playbackPosition)
+                        exoPlayer?.playWhenReady = playWhenReady
+                        exoPlayer?.prepare()
+                        binding.tweetImage.gone()
+                     } else {
+                 //       binding.playerView.gone()
+                        tweetImage.picasso(model.tweetImage.toString())
+                     }
+                  }
                }
             }
          } catch (e: Exception) {
@@ -156,6 +187,35 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
          }
       }
       return spannableFactory
+   }
+
+
+   private var exoPlayer: ExoPlayer? = null
+   private var playbackPosition = 0L
+   private var playWhenReady = true
+
+//   private fun preparePlayer() {
+//      exoPlayer = ExoPlayer.Builder(this).build()
+//      exoPlayer?.playWhenReady = true
+//      binding.playerView.player = exoPlayer
+//      val defaultHttpDataSourceFactory = DefaultHttpDataSource.Factory()
+//      val mediaItem =
+//         MediaItem.fromUri(URL)
+//      val mediaSource =
+//         HlsMediaSource.Factory(defaultHttpDataSourceFactory).createMediaSource(mediaItem)
+//      exoPlayer?.setMediaSource(mediaSource)
+//      exoPlayer?.seekTo(playbackPosition)
+//      exoPlayer?.playWhenReady = playWhenReady
+//      exoPlayer?.prepare()
+//   }
+
+   private fun releasePlayer() {
+      exoPlayer?.let { player ->
+         playbackPosition = player.currentPosition
+         playWhenReady = player.playWhenReady
+         player.release()
+         exoPlayer = null
+      }
    }
 
 }

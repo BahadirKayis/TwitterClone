@@ -7,8 +7,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bhdr.twitterclone.R
-import com.bhdr.twitterclone.databinding.FragmentSplashBinding
+import com.bhdr.twitterclone.common.checkNetworkConnection
 import com.bhdr.twitterclone.common.sharedPref
+import com.bhdr.twitterclone.databinding.FragmentSplashBinding
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,21 +24,33 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
       super.onViewCreated(view, savedInstanceState)
       sharedRequest()
       observable()
-      motionLayoutObject()
+
 
    }
 
    private fun observable() {
       viewModel.loginAuto.observe(viewLifecycleOwner) {
          loginStatus = it
+         motionLayoutObject()
       }
    }
 
    private fun sharedRequest() {
       val userName = requireContext().sharedPref().getString("user_userName", null)
       val password = requireContext().sharedPref().getString("user_userPassword", null)
-      if (userName != null && password != null) {
-         viewModel.getLoginUserNameAndPassword(userName, password)
+      if (requireContext().checkNetworkConnection()) {
+         if (userName != null && password != null) {
+            viewModel.getLoginUserNameAndPassword(userName, password)
+         } else {
+            if (userName != null && password != null) {
+               loginStatus = true
+               motionLayoutObject()
+            } else {
+               motionLayoutObject()
+            }
+
+
+         }
       }
    }
 
