@@ -28,9 +28,13 @@ class AddTweetViewModel @Inject constructor(private val tweetRepositoryImpl: Twe
    fun addTweet(id: Int, tweetText: String, tweetImageName: String, tweetImage: Uri?) {
       mainStatusM.value = Status.LOADING
       viewModelScope.launch {
-         tweetAddedM.value = tweetRepositoryImpl.addTweet(id, tweetText, tweetImageName, tweetImage)
-      }
-      mainStatusM.value = Status.DONE
+         tweetRepositoryImpl.addTweet(id, tweetText, tweetImageName, tweetImage).also {
+            when (it) {
+               true -> mainStatusM.value = Status.DONE
+               false -> mainStatusM.value = Status.ERROR
 
+            }
+         }
+      }
    }
 }

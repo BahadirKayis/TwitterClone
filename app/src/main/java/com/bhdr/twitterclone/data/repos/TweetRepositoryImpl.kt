@@ -6,11 +6,9 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.util.Log
 import androidx.core.content.FileProvider
-import androidx.lifecycle.MutableLiveData
 import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
-import com.bhdr.twitterclone.common.Status
 import com.bhdr.twitterclone.common.toLongDate
 import com.bhdr.twitterclone.data.model.locale.TweetsRoomModel
 import com.bhdr.twitterclone.data.model.locale.UsersRoomModel
@@ -21,6 +19,7 @@ import com.bhdr.twitterclone.domain.source.remote.main.RemoteDataSourceMain
 import com.google.firebase.storage.FirebaseStorage
 import com.mikepenz.materialdrawer.util.ifNotNull
 import kotlinx.coroutines.*
+import okio.IOException
 import java.io.File
 import javax.inject.Named
 
@@ -33,7 +32,6 @@ class TweetRepositoryImpl(
    private val FirebaseStorage: FirebaseStorage
 ) : TweetRepository {
 
-   private var mainStatus = MutableLiveData<Status?>()
 
    private lateinit var imageUri: String
 
@@ -51,15 +49,11 @@ class TweetRepositoryImpl(
          val request = remoteSource.getTweets(id)
          if (request.isSuccessful) {
             return request.body()!!
-         } else if (!request.isSuccessful) {
-            mainStatus.value = Status.ERROR
          }
 
-      } catch (e: Exception) {
+      } catch (e: IOException) {
          Log.e("getTweets-Ex", e.toString())
-
-         mainStatus.value = Status.ERROR
-         if (e.message == "timeout") {
+         if (e.localizedMessage == "timeout") {
             getTweets(id)
          }
       }
@@ -90,7 +84,6 @@ class TweetRepositoryImpl(
       tweetImageName: String,
       tweetImage: Uri?
    ): Boolean {
-      mainStatus.value = Status.LOADING
       var isTweetAdded = false
 
       try {
@@ -112,10 +105,9 @@ class TweetRepositoryImpl(
                            toLongDate().toString()
                         )
                      if (addTweetResult.isSuccessful) {
-                        mainStatus.value = Status.DONE
+
                         isTweetAdded = addTweetResult.body()!!
                      } else if (!addTweetResult.isSuccessful) {
-                        mainStatus.value = Status.ERROR
                         isTweetAdded = false
                      }
                      Log.e("AddTweet-errorBody", addTweetResult.errorBody().toString())
@@ -132,16 +124,14 @@ class TweetRepositoryImpl(
                   toLongDate().toString()
                )
             if (addTweetResult.isSuccessful) {
-               mainStatus.value = Status.DONE
+
                isTweetAdded = addTweetResult.body()!!
             } else if (!addTweetResult.isSuccessful) {
-               mainStatus.value = Status.ERROR
                isTweetAdded = false
             }
 
          }
       } catch (e: Exception) {
-         mainStatus.value = Status.ERROR
          isTweetAdded = false
          Log.e("RepositoryAdT-EX", e.toString())
       }
@@ -163,15 +153,11 @@ class TweetRepositoryImpl(
    }
 
    override suspend fun getTweetsRoom(): List<TweetsRoomModel>? {
-      mainStatus.value = Status.LOADING
+
       val tweetsRoomModelList = localSource.allTweet()
       Log.i("tweetsRoomModelList", tweetsRoomModelList.toString())
       if (tweetsRoomModelList != null) {
-
-         mainStatus.value = Status.DONE
          return tweetsRoomModelList
-
-
       }
       return null
    }
@@ -229,17 +215,17 @@ class TweetRepositoryImpl(
             }
 
          }
-         mainStatus.value = Status.DONE
          return tweetsAddRoom
 
       } catch (e: Exception) {
          Log.e("RoomConvertAndAdd-Ex", e.toString())
       }
-      throw Exception("")
+return tweetsAddRoom
 
    }
 
    override suspend fun getBitmap(url: String): Bitmap {
+      Log.e("TAG", url.toString() )
       try {
          val loading = ImageLoader(application)
          val request = ImageRequest.Builder(application)
@@ -351,7 +337,6 @@ class TweetRepositoryImpl(
       return hashMapFollowNewTweetHashMap
    }
 
-   //NotificationScreen
 
    override suspend fun notificationList(): List<Any> {
       val tweetList: MutableList<Any> = mutableListOf()

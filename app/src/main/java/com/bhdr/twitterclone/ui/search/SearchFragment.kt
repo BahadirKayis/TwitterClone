@@ -153,5 +153,4 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
       viewModel.getSearchFollowUser(requireContext().userId(), followId)
    }
 
-
 }

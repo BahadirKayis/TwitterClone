@@ -6,7 +6,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
     android:padding="10dp">
 
     <androidx.cardview.widget.CardView
@@ -67,8 +66,7 @@
         android:maxLength="10"
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/textView7"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tweetText"
@@ -76,11 +74,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
-        android:textColor="#000000"
-        android:textSize="16sp"
         android:autoLink="web"
         android:linksClickable="true"
+        android:textColor="#000000"
         android:textColorLink="@color/linkColor"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/cardView"
         app:layout_constraintTop_toBottomOf="@+id/nameText" />
@@ -91,10 +89,21 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:focusable="true"
+        android:keepScreenOn="true"
         app:cardCornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/cardView"
         app:layout_constraintTop_toBottomOf="@+id/tweetText">
+
+        <com.google.android.exoplayer2.ui.StyledPlayerView
+            android:id="@+id/playerView"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop" />
+<!--        argType:fastforward_increment="15000"-->
+<!--        argType:rewind_increment="15000"-->
 
         <ImageView
             android:id="@+id/tweetImage"

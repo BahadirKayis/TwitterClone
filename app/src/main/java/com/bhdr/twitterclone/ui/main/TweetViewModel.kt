@@ -34,7 +34,7 @@ class TweetViewModel @Inject constructor(
    val tweets: LiveData<List<Posts>?>
       get() = tweetsM
 
-   var mainStatusM = MutableLiveData<Status>()
+   private var mainStatusM = MutableLiveData<Status>()
    val mainStatusL: LiveData<Status>
       get() = mainStatusM
 
@@ -42,7 +42,9 @@ class TweetViewModel @Inject constructor(
    init {
       mainStatusM.value = Status.LOADING
       viewModelScope.launch {
-         allRoomTweetsM.value = tweetRepositoryImpl.getTweetsRoom()
+         allRoomTweetsM.value =
+            tweetRepositoryImpl.getTweetsRoom().also { mainStatusM.value = Status.DONE }
+
          if (!toStartSignalRTweet) {
             toStartSignalRTweet = true
             delay(5000)
@@ -50,7 +52,7 @@ class TweetViewModel @Inject constructor(
          }
 
       }
-      mainStatusM.value = Status.DONE
+
 
    }
 
@@ -83,11 +85,12 @@ class TweetViewModel @Inject constructor(
    }
 
    fun tweetsRoomConvertAndAdd(ks: List<Posts>) {
+      mainStatusM.value = Status.LOADING
       viewModelScope.launch {
-         mainStatusM.value = Status.LOADING
-         tweetRepositoryImpl.tweetsRoomConvertAndAdd(ks).also { tweet -> tweetsInsert(tweet) }
-         mainStatusM.value = Status.DONE
+         tweetRepositoryImpl.tweetsRoomConvertAndAdd(ks)
+            .also { tweet -> tweetsInsert(tweet); mainStatusM.value = Status.DONE }
       }
+
    }
 
    fun getFollowedUserIdList(userId: Int) {
@@ -177,7 +180,5 @@ class TweetViewModel @Inject constructor(
 
    private suspend fun tweetsInsert(tweets: List<TweetsRoomModel?>) {
       allRoomTweetsM.value = tweetRepositoryImpl.tweetsInsert(tweets)
-
-
    }
 }

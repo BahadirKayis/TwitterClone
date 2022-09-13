@@ -184,6 +184,10 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
       }
    }
 
+   override fun onStop() {
+      super.onStop()
+      tweetAdapter.releasePlayer()
+   }
 
 }
 
