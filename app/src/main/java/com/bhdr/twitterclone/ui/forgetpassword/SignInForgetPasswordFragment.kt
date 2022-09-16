@@ -9,11 +9,10 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.common.Status
-import com.bhdr.twitterclone.databinding.FragmentSigInForgetPasswordBinding
 import com.bhdr.twitterclone.common.gone
 import com.bhdr.twitterclone.common.snackBar
 import com.bhdr.twitterclone.common.visible
-
+import com.bhdr.twitterclone.databinding.FragmentSigInForgetPasswordBinding
 import com.google.android.material.snackbar.Snackbar
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint

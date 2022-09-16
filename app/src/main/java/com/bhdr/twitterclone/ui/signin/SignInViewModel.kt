@@ -13,13 +13,13 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(private val loginRepo: LoginUpRepository) : ViewModel() {
 
-   var userModelM= MutableLiveData<Users>()
-   val userModel: LiveData<Users> =userModelM
+   var userModelM = MutableLiveData<Users>()
+   val userModel: LiveData<Users> = userModelM
 
 
    fun getUserSigIn(userName: String) {
       viewModelScope.launch {
-         userModelM.value=  loginRepo.signIn(userName)
+         userModelM.value = loginRepo.signIn(userName)
       }
    }
 

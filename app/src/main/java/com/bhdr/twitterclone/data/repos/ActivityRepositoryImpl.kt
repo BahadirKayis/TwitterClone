@@ -2,25 +2,24 @@ package com.bhdr.twitterclone.data.repos
 
 import android.util.Log
 import com.bhdr.twitterclone.common.toLongDate
-import com.bhdr.twitterclone.data.model.locale.DataItem
+import com.bhdr.twitterclone.data.model.locale.NotificationsDataItem
 import com.bhdr.twitterclone.data.model.locale.TweetsRoomModel
 import com.bhdr.twitterclone.data.model.locale.UsersRoomModel
 import com.bhdr.twitterclone.data.model.remote.Posts
-import com.bhdr.twitterclone.domain.repository.MainRepository
+import com.bhdr.twitterclone.domain.repository.ActivityRepository
 import com.bhdr.twitterclone.domain.source.locale.LocalDataSource
 import com.bhdr.twitterclone.domain.source.remote.main.RemoteDataSourceMain
 import kotlinx.coroutines.*
 import javax.inject.Named
 
-class MainRepositoryImpl(
-   private val tweetDao: LocalDataSource,
+class ActivityRepositoryImpl(
+   private val localDataSource: LocalDataSource,
    private val remoteSourceMain: RemoteDataSourceMain,
    @Named("IO") private val coContextIO: CoroutineDispatcher
-) : MainRepository {
+) : ActivityRepository {
 
    private var followedUserIdList: List<Int>? = null
 
-   private var notificationCount: Int = 0
 
    private var job: Job? = null
 
@@ -83,29 +82,30 @@ class MainRepositoryImpl(
       name: String,
       postId: Int,
       post: Posts?
-   ): Int {
+   ): Boolean {
+      var notificationCount = false
       try {
          job = CoroutineScope(coContextIO).launch {
             CoroutineScope(Dispatchers.Main).launch {
                if (id == 0) {
                   val rep = remoteSourceMain.getUser(post?.userId!!)
-                  Log.e("TAG", rep.headers().toString())
-                  Log.e("TAG", rep.body().toString())
                   post.user = rep.body()
                   //Like tweeti beğinilmiş modele atılacak
-                  saveNotificationLike(
-                     DataItem.NotificationLike(
-                        null,
-                        id,
-                        imageUrl,
-                        userName,
-                        name,
-                        toLongDate().toString(),
-                        tweetsRoomConvertAndAdd(post)
+                  //tweet önceden locale kayıtlı ise tekrar kayıt etmeyecek
+                  if (!isTweet(postId)) {
+                     saveNotificationLike(
+                        NotificationsDataItem.NotificationLike(
+                           null,
+                           id,
+                           imageUrl,
+                           userName,
+                           name,
+                           toLongDate().toString(),
+                           tweetsRoomConvertAndAdd(post)
+                        )
                      )
-                  )
-
-                  notificationCount.plus(1)
+                  }
+                  notificationCount = true
 
                } else {
                   //NewTweet follow & not follow
@@ -115,7 +115,7 @@ class MainRepositoryImpl(
                      val getPost: Posts = tweetNew(postId)
 
                      saveNotificationTweet(
-                        DataItem.NotificationTweet(
+                        NotificationsDataItem.NotificationTweet(
                            null,
                            id,
                            imageUrl,
@@ -126,7 +126,7 @@ class MainRepositoryImpl(
                         )
                      )
 
-                     notificationCount.plus(1)
+                     notificationCount = true
                   }
                }
             }
@@ -138,17 +138,18 @@ class MainRepositoryImpl(
    }
 
    override suspend fun deleteAllRoom(): Boolean {
-      tweetDao.notificationDeleteLike()
-      tweetDao.notificationDeleteTweet()
-      return tweetDao.deleteTweet() != null
+      localDataSource.notificationDeleteLike()
+      localDataSource.notificationDeleteTweet()
+      return localDataSource.deleteTweet() != null
    }
 
 
-   private suspend fun saveNotificationTweet(it: DataItem.NotificationTweet) =
-      tweetDao.addNotificationTweet(it)
+   private suspend fun saveNotificationTweet(it: NotificationsDataItem.NotificationTweet) =
+      localDataSource.addNotificationTweet(it)
 
-   private suspend fun saveNotificationLike(it: DataItem.NotificationLike) =
-      tweetDao.addNotificationLike(it)
+   private suspend fun saveNotificationLike(it: NotificationsDataItem.NotificationLike) =
+      localDataSource.addNotificationLike(it)
 
-
+   private suspend fun isTweet(tweetId: Int): Boolean =
+      localDataSource.isTweetQuery(tweetId) != null
 }

@@ -142,7 +142,7 @@ class AddTweetFragment : Fragment(R.layout.fragment_add_tweet) {
       with(viewModel) {
          mainStatus.observe(viewLifecycleOwner) {
             when (it!!) {
-              Status.LOADING -> binding.lottiAnim.visible()
+               Status.LOADING -> binding.lottiAnim.visible()
                Status.DONE -> binding.lottiAnim.gone()
                Status.ERROR -> binding.lottiAnim.gone()
             }

@@ -1,11 +1,13 @@
 package com.bhdr.twitterclone.ui.main
 
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bhdr.twitterclone.common.Status
+import com.bhdr.twitterclone.common.checkNetworkConnection
 import com.bhdr.twitterclone.common.hubConnection
 import com.bhdr.twitterclone.common.toStartSignalRTweet
 import com.bhdr.twitterclone.data.model.locale.TweetsRoomModel
@@ -20,6 +22,7 @@ import javax.inject.Named
 @HiltViewModel
 class TweetViewModel @Inject constructor(
    private val tweetRepositoryImpl: TweetRepository,
+   private val application: Application,
    @Named("IO") private val coContextIO: CoroutineDispatcher
 ) :
    ViewModel() {
@@ -40,15 +43,21 @@ class TweetViewModel @Inject constructor(
 
 
    init {
-      mainStatusM.value = Status.LOADING
       viewModelScope.launch {
-         allRoomTweetsM.value =
-            tweetRepositoryImpl.getTweetsRoom().also { mainStatusM.value = Status.DONE }
-
-         if (!toStartSignalRTweet) {
-            toStartSignalRTweet = true
-            delay(5000)
-            tweetSignalR()
+         tweetRepositoryImpl.getTweetsRoom().let {
+            allRoomTweetsM.value = it
+            if (it != null) {
+               mainStatusM.value = Status.DONE
+            } else {
+               mainStatusM.value = Status.LOADING
+            }
+         }
+         if (application.checkNetworkConnection()) {
+            if (!toStartSignalRTweet) {
+               toStartSignalRTweet = true
+               delay(5000)
+               tweetSignalR()
+            }
          }
 
       }
@@ -57,7 +66,7 @@ class TweetViewModel @Inject constructor(
    }
 
    //Kullanıcı tweet ekranındayken yeni tweet gelirse gelenleri buraya alıyorum
-   var mutableFollowNewTweetSignalR = MutableLiveData<HashMap<Int, String>>()
+   private var mutableFollowNewTweetSignalR = MutableLiveData<HashMap<Int, String>>()
    val mutableFollowNewTweet: LiveData<HashMap<Int, String>> =
       mutableFollowNewTweetSignalR
 
@@ -70,7 +79,7 @@ class TweetViewModel @Inject constructor(
 
    fun getTweets(id: Int) {
       viewModelScope.launch {
-         tweetRepositoryImpl.getTweets(id).also { it -> isNewTweet(it!!, allRoomTweetsM.value) }
+         isNewTweet(tweetRepositoryImpl.getTweets(id)!!, allRoomTweetsM.value)
 
 
       }
@@ -100,9 +109,8 @@ class TweetViewModel @Inject constructor(
    }
 
    private suspend fun isNewTweet(cloudTweet: List<Posts>, roomTweet: List<TweetsRoomModel>?) {
-      mainStatusM.value = Status.LOADING
       tweetRepositoryImpl.isNewTweet(cloudTweet, roomTweet)
-         .also { pair -> newTweetButton(pair.first, pair.second) }
+         .let { pair -> newTweetButton(pair.first, pair.second) }
 
    }
 
@@ -124,7 +132,6 @@ class TweetViewModel @Inject constructor(
       } catch (e: Exception) {
          Log.e("newTweetButton-Ex", e.toString())
       }
-      mainStatusM.value = Status.DONE
    }
 
    private suspend fun tweetsUpdate(tweets: List<Posts>) {
@@ -143,9 +150,7 @@ class TweetViewModel @Inject constructor(
             hubConnection.on(
                "newTweets",
                { id, imageUrl, name ->
-                  Log.e("id", id.toString())
-                  Log.e("imageUrl", imageUrl.toString())
-                  Log.e("imageUrl", name.toString())
+
                   try {
                      job = CoroutineScope(coContextIO).launch {
                         CoroutineScope(Dispatchers.Main).launch {

@@ -3,12 +3,16 @@ package com.bhdr.twitterclone.common
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.text.Spannable
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import androidx.core.text.toSpannable
 import com.google.android.material.snackbar.Snackbar
 import com.microsoft.signalr.HubConnectionBuilder
 import com.squareup.picasso.Picasso
@@ -103,6 +107,32 @@ fun toLongDate(): Long {
    } else {
       Calendar.getInstance().time.time
    }
+}
+ fun spannableFactory(): Spannable.Factory {
+   val spannableFactory = object : Spannable.Factory() {
+      override fun newSpannable(source: CharSequence?): Spannable {
+         val spannable = source!!.toSpannable()
+         val len1 = source.split(" ")
+         val getTagIndex = source.indexOf("#")
+         var lastIndex = 0
+         len1.forEach {
+            if (it.contains("#")) {
+
+               lastIndex = it.length
+            }
+
+         }
+         spannable.setSpan(
+            ForegroundColorSpan(Color.parseColor("#03A9F4")),
+            getTagIndex,
+            getTagIndex + lastIndex,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+         )
+
+         return spannable
+      }
+   }
+   return spannableFactory
 }
 
 

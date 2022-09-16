@@ -1,7 +1,6 @@
 package com.bhdr.twitterclone.di
 
 
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import dagger.Module
@@ -15,7 +14,7 @@ import javax.inject.Singleton
 object FirebaseModule {
 
 
-    @Provides
-    @Singleton
-    fun provideFirebaseStorage() = Firebase.storage
+   @Provides
+   @Singleton
+   fun provideFirebaseStorage() = Firebase.storage
 }

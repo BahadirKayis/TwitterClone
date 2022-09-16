@@ -2,21 +2,21 @@ package com.bhdr.twitterclone.data.model.remote
 
 
 import android.os.Parcelable
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class Tags(
-   @Json(name = "date")
+   @SerializedName("date")
    val date: String?,
-   @Json(name = "id")
+   @SerializedName("id")
    val id: Int?,
-   @Json(name = "post")
+   @SerializedName("post")
    val post: String?,
-   @Json(name = "postId")
+   @SerializedName("postId")
    val postId: Int?,
-   @Json(name = "tagName")
+   @SerializedName("tagName")
    val tagName: String?
 ) : Parcelable

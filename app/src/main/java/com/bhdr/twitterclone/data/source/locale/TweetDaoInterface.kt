@@ -1,8 +1,8 @@
 package com.bhdr.twitterclone.data.source.locale
 
 import androidx.room.*
+import com.bhdr.twitterclone.data.model.locale.NotificationsDataItem
 import com.bhdr.twitterclone.data.model.locale.TweetsRoomModel
-import com.bhdr.twitterclone.data.model.locale.DataItem
 
 @Dao
 interface TweetDaoInterface {
@@ -23,16 +23,16 @@ interface TweetDaoInterface {
    suspend fun allTweet(): List<TweetsRoomModel>?
 
    @Insert(onConflict = OnConflictStrategy.REPLACE)
-   suspend fun addNotificationTweet(tweet: DataItem.NotificationTweet)
+   suspend fun addNotificationTweet(tweet: NotificationsDataItem.NotificationTweet)
 
    @Insert(onConflict = OnConflictStrategy.REPLACE)
-   suspend fun addNotificationLike(tweet: DataItem.NotificationLike)
+   suspend fun addNotificationLike(tweet: NotificationsDataItem.NotificationLike)
 
    @Query("SELECT * FROM notificationTweet ORDER BY date DESC")
-   suspend fun notificationListTweet(): List<DataItem.NotificationTweet>
+   suspend fun notificationListTweet(): List<NotificationsDataItem.NotificationTweet>
 
    @Query("SELECT * FROM notificationLike ORDER BY date DESC")
-   suspend fun notificationListLike(): List<DataItem.NotificationLike>
+   suspend fun notificationListLike(): List<NotificationsDataItem.NotificationLike>
 
    @Query("DELETE  FROM notificationLike")
    suspend fun notificationDeleteLike()
@@ -40,5 +40,7 @@ interface TweetDaoInterface {
    @Query("DELETE  FROM notificationTweet")
    suspend fun notificationDeleteTweet()
 
+   @Query("SELECT * FROM notificationLike WHERE id=:tweetId")
+   suspend fun isTweetQuery(tweetId: Int): NotificationsDataItem.NotificationLike?
 
 }

@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-sealed class DataItem {
+sealed class NotificationsDataItem {
    @Entity(tableName = "notificationLike")
    data class NotificationLike(
 
@@ -22,7 +22,7 @@ sealed class DataItem {
       var date: String?,
       @ColumnInfo(name = "tweets")
       val tweet: TweetsRoomModel?
-   ) : DataItem()
+   ) : NotificationsDataItem()
 
    @Entity(tableName = "notificationTweet")
    data class NotificationTweet(
@@ -34,6 +34,6 @@ sealed class DataItem {
       var name: String?,
       var date: String?,
       val tweet: TweetsRoomModel?
-   ) : DataItem()
+   ) : NotificationsDataItem()
 
 }

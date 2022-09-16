@@ -1,7 +1,7 @@
 package com.bhdr.twitterclone.data.source.locale
 
+import com.bhdr.twitterclone.data.model.locale.NotificationsDataItem
 import com.bhdr.twitterclone.data.model.locale.TweetsRoomModel
-import com.bhdr.twitterclone.data.model.locale.DataItem
 import com.bhdr.twitterclone.domain.source.locale.LocalDataSource
 import javax.inject.Inject
 
@@ -19,18 +19,19 @@ class LocalDatabaseImpl @Inject constructor(private val localDatabase: TweetDaoI
 
    override suspend fun allTweet(): List<TweetsRoomModel>? = localDatabase.allTweet()
 
-   override suspend fun addNotificationTweet(tweet: DataItem.NotificationTweet) =
+   override suspend fun addNotificationTweet(tweet: NotificationsDataItem.NotificationTweet) =
       localDatabase.addNotificationTweet(tweet)
 
-   override suspend fun addNotificationLike(tweet: DataItem.NotificationLike) =
+   override suspend fun addNotificationLike(tweet: NotificationsDataItem.NotificationLike) =
       localDatabase.addNotificationLike(tweet)
 
-   override suspend fun notificationListTweet(): List<DataItem.NotificationTweet> =
+   override suspend fun notificationListTweet(): List<NotificationsDataItem.NotificationTweet> =
       localDatabase.notificationListTweet()
 
-   override suspend fun notificationListLike(): List<DataItem.NotificationLike> =
+   override suspend fun notificationListLike(): List<NotificationsDataItem.NotificationLike> =
       localDatabase.notificationListLike()
 
    override suspend fun notificationDeleteLike() = localDatabase.notificationDeleteTweet()
    override suspend fun notificationDeleteTweet() = localDatabase.notificationDeleteTweet()
+   override suspend fun isTweetQuery(tweetId: Int): NotificationsDataItem.NotificationLike? = localDatabase.isTweetQuery(tweetId)
 }

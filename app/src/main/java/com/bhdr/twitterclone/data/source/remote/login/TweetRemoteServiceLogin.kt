@@ -6,7 +6,6 @@ import com.bhdr.twitterclone.common.Constants.LOGIN_NAME
 import com.bhdr.twitterclone.common.Constants.LOGIN_NAME_PASSWORD
 import com.bhdr.twitterclone.common.Constants.SIGN_UP
 import com.bhdr.twitterclone.common.Constants.UPDATE_PASSWORD
-import com.bhdr.twitterclone.common.Constants.USER_INFO_ID
 import com.bhdr.twitterclone.data.model.remote.Users
 import retrofit2.Response
 import retrofit2.http.GET
@@ -24,7 +23,6 @@ interface TweetRemoteServiceLogin {
       @Query("photo_url") photoUrl: String,
       @Query("date") date: String?
    ): Response<Boolean>
-
 
 
 //   @GET("userNameAndEmail")

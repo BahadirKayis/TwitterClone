@@ -34,9 +34,7 @@ class SearchViewModel @Inject constructor(private val searchRepositoryImpl: Sear
    private var searchUserM = MutableLiveData<List<Users>>()
    val searchUser: LiveData<List<Users>> = searchUserM
 
-   init {
-      getTags()
-   }
+
 
    fun getSearchNotFollowUser(id: Int) {
       viewModelScope.launch {
@@ -55,7 +53,7 @@ class SearchViewModel @Inject constructor(private val searchRepositoryImpl: Sear
       }
    }
 
-   private fun getTags() {
+    fun getTags() {
       viewModelScope.launch {
          statusM.value = Status.LOADING
          tagsM.value = searchRepositoryImpl.getTags()
@@ -65,7 +63,7 @@ class SearchViewModel @Inject constructor(private val searchRepositoryImpl: Sear
 
    fun searchUser(userName: String) {
       viewModelScope.launch {
-         searchUserM.value=searchRepositoryImpl.searchUser(userName)
+         searchUserM.value = searchRepositoryImpl.searchUser(userName)
       }
    }
 }

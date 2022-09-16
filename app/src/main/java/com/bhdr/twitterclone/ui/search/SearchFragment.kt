@@ -39,10 +39,20 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
       super.onViewCreated(view, savedInstanceState)
       searchUserAdapter = SearchUserAdapter(requireContext(), R.layout.autocompletetextview_search)
-
-      viewModel.getSearchNotFollowUser(requireContext().userId())
+      networkControlRequest()
       binding()
       observable()
+
+   }
+
+   private fun networkControlRequest() {
+      if (requireContext().checkNetworkConnection()) {
+         viewModel.getTags()
+         viewModel.getSearchNotFollowUser(requireContext().userId())
+         binding.lottiAnimNetworkError.gone()
+      } else {
+         binding.lottiAnimNetworkError.visible()
+      }
 
    }
 
@@ -80,7 +90,7 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
          searchUser.observe(viewLifecycleOwner) {
             if (it != null) {
                Log.i("searchUserResponse", it.toString())
-               searchUserAdapter.notifyDataChanged(it)
+               searchUserAdapter.userDataChanged(it)
             }
 
          }
@@ -112,9 +122,12 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
 
          //Cloud Filter
          autoCompleteTextView.doOnTextChanged { text, start, before, count ->
-            viewModel.searchUser(
-               text.toString()
-            )
+            if (requireContext().checkNetworkConnection()) {
+               viewModel.searchUser(
+                  text.toString()
+               )
+            }
+
          }
          //Local Filter
          // viewModel.searchUser("allUsers")

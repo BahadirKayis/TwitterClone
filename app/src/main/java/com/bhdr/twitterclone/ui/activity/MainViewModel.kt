@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bhdr.twitterclone.common.hubConnection
 import com.bhdr.twitterclone.data.model.remote.Posts
-import com.bhdr.twitterclone.domain.repository.MainRepository
+import com.bhdr.twitterclone.domain.repository.ActivityRepository
 import com.microsoft.signalr.HubConnectionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -16,13 +16,13 @@ import javax.inject.Named
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-   private val mainRepositoryImpl: MainRepository,
+   private val activityRepositoryImpl: ActivityRepository,
    @Named("IO") private val coContextIO: CoroutineDispatcher
 ) :
    ViewModel() {
 
-   var notificationCountM = MutableLiveData<Int>()
-   val notificationCount: LiveData<Int> =
+   var notificationCountM = MutableLiveData<Boolean>()
+   val notificationCount: LiveData<Boolean> =
       notificationCountM
 
    var followCountM = MutableLiveData<Int>()
@@ -39,13 +39,13 @@ class MainViewModel @Inject constructor(
 
    fun followCount(userId: Int) {
       viewModelScope.launch {
-         followCountM.value = mainRepositoryImpl.followCount(userId)
+         followCountM.value = activityRepositoryImpl.followCount(userId)
       }
    }
 
    fun followedCount(userId: Int) {
       viewModelScope.launch {
-         followedCountM.value = mainRepositoryImpl.followedCount(userId)
+         followedCountM.value = activityRepositoryImpl.followedCount(userId)
       }
    }
 
@@ -55,13 +55,13 @@ class MainViewModel @Inject constructor(
 
    fun getFollowedUserIdList(id: Int) {
       viewModelScope.launch {
-         mainRepositoryImpl.getFollowedUserIdList(id)
+         activityRepositoryImpl.getFollowedUserIdList(id)
       }
    }
 
    fun roomDelete() {
       viewModelScope.launch {
-         roomDeleteM.value = mainRepositoryImpl.deleteAllRoom()
+         roomDeleteM.value = activityRepositoryImpl.deleteAllRoom()
       }
    }
 
@@ -78,21 +78,18 @@ class MainViewModel @Inject constructor(
             hubConnection.on(
                "newTweets",
                { id, imageUrl, userName, name, post ->
-                  Log.e("id", id.toString())
-                  Log.e("imageUrl", imageUrl.toString())
-                  Log.e("imageUrl", name.toString())
                   try {
                      job = CoroutineScope(coContextIO).launch {
                         CoroutineScope(Dispatchers.Main).launch {
-                        notificationCountM.value = mainRepositoryImpl.signalRControl(
-                           id.toInt(),
-                           imageUrl,
-                           userName,
-                           name,
-                           post.toInt(),
-                           null
-                        )
-                     }
+                           notificationCountM.value = activityRepositoryImpl.signalRControl(
+                              id.toInt(),
+                              imageUrl,
+                              userName,
+                              name,
+                              post.toInt(),
+                              null
+                           )
+                        }
                      }
 
                   } catch (e: Throwable) {
@@ -116,9 +113,9 @@ class MainViewModel @Inject constructor(
             userId.toString(), { imageUrl, userName, name, post ->
                job = CoroutineScope(coContextIO).launch {
                   CoroutineScope(Dispatchers.Main).launch {
-                  notificationCountM.value =
-                     mainRepositoryImpl.signalRControl(0, imageUrl, userName, name, 0, post)
-               }
+                     notificationCountM.value =
+                        activityRepositoryImpl.signalRControl(0, imageUrl, userName, name, 0, post)
+                  }
                }
             }, String::class.java,
             String::class.java,

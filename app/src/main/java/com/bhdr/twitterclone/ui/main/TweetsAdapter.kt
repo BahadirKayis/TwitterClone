@@ -12,10 +12,7 @@ import androidx.core.text.toSpannable
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bhdr.twitterclone.common.gone
-import com.bhdr.twitterclone.common.picasso
-import com.bhdr.twitterclone.common.toCalendar
-import com.bhdr.twitterclone.common.visible
+import com.bhdr.twitterclone.common.*
 import com.bhdr.twitterclone.data.model.locale.TweetsRoomModel
 import com.bhdr.twitterclone.data.model.locale.UsersRoomModel
 import com.bhdr.twitterclone.databinding.TweetCardBinding
@@ -36,7 +33,7 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
    }
 
    override fun onBindViewHolder(holder: TweetViewHolder, position: Int) {
-      Log.e("TAG", position.toString())
+
       with(holder) {
          with(binding) {
 
@@ -108,22 +105,25 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
                         postContent.replace("-n", "\n"),
                         TextView.BufferType.SPANNABLE
                      )
+                  } else {
+                     tweetText.text = postContent!!.replace("-n", "\n")
                   }
+
                   favText.text = postLike.toString()
                   if (model.tweetImage != "null") {
-                     if (model.tweetImage!!.contains(".webm")) {
-                        //Firebase boyutu bitmesin diye
-//                        //setup
-//                        exoPlayer = ExoPlayer.Builder(context!!).build()
-//                        exoPlayer?.playWhenReady = false
-//                        binding.playerView.player = exoPlayer
-//                        //file
-//                        val mediaItem =
-//                           MediaItem.fromUri(model.tweetImage!!.toString())
-//                        exoPlayer?.addMediaItem(mediaItem)
-//
-//                        exoPlayer?.playWhenReady = playWhenReady
-//                        exoPlayer?.prepare()
+                     if (model.tweetImage!!.contains("video")) {
+                        //Firebase kullanım limiti olduğu için kapalı burası kapalı
+                        //setup
+                        exoPlayer = ExoPlayer.Builder(context!!).build()
+                        exoPlayer?.playWhenReady = false
+                        binding.playerView.player = exoPlayer
+                        //file
+                        val mediaItem =
+                           MediaItem.fromUri(model.tweetImage.toString())
+                        exoPlayer?.addMediaItem(mediaItem)
+
+                        exoPlayer?.playWhenReady = playWhenReady
+                        exoPlayer?.prepare()
                         playerView.visible()
                         binding.tweetImage.gone()
                      } else {
@@ -148,7 +148,13 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
                try {
                   profilePicture.picasso(photo)
                   nameText.text = name
-                  "@$userName".also { usernameText.text = it }
+                  "@$userName".also {
+                     usernameText.text = if (it.length > 11) {
+                        it.substring(0, 9) + "..."
+                     } else {
+                        it
+                     }
+                  }
                } catch (e: Exception) {
                   Log.e("TweetAdapterModelCatch", e.toString())
                }
@@ -161,32 +167,6 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
       fun crfButtonsListener(commentRtFav: String, tweetId: Int, currentlyCRFNumber: Int)
    }
 
-   private fun spannableFactory(): Spannable.Factory {
-      val spannableFactory = object : Spannable.Factory() {
-         override fun newSpannable(source: CharSequence?): Spannable {
-            val spannable = source!!.toSpannable()
-            val len1 = source.split(" ")
-            val getTagIndex = source.indexOf("#")
-            var lastIndex = 0
-            len1.forEach {
-               if (it.contains("#")) {
-
-                  lastIndex = it.length
-               }
-
-            }
-            spannable.setSpan(
-               ForegroundColorSpan(Color.parseColor("#03A9F4")),
-               getTagIndex,
-               getTagIndex + lastIndex,
-               Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-
-            return spannable
-         }
-      }
-      return spannableFactory
-   }
 
 
    private var exoPlayer: ExoPlayer? = null

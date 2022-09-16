@@ -23,8 +23,8 @@ class ForgetPasswordSecondViewModel @Inject constructor(private val loginRepo: L
 
 
    fun userChangePassword(userId: Int, password: String) {
+      status.value = Status.LOADING
       viewModelScope.launch {
-         status.value = Status.LOADING
          userChangePasswordM.value = loginRepo.userChangePassword(userId, password)
          status.value = Status.DONE
       }

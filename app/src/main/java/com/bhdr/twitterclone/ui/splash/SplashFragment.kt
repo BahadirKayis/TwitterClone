@@ -16,14 +16,13 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class SplashFragment : Fragment(R.layout.fragment_splash) {
    private val binding by viewBinding(FragmentSplashBinding::bind)
-
    private val viewModel: SplashViewModel by viewModels()
-   var loginStatus: Boolean? = null
+   var loginStatus: Boolean = false
 
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
       super.onViewCreated(view, savedInstanceState)
-      sharedRequest()
       observable()
+      sharedRequest()
 
 
    }
@@ -42,15 +41,19 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
          if (userName != null && password != null) {
             viewModel.getLoginUserNameAndPassword(userName, password)
          } else {
-            if (userName != null && password != null) {
-               loginStatus = true
-               motionLayoutObject()
-            } else {
-               motionLayoutObject()
-            }
-
-
+            loginStatus = false
+            motionLayoutObject()
          }
+
+      } else {
+         if (userName != null && password != null) {
+            loginStatus = true
+            motionLayoutObject()
+         } else {
+            loginStatus = false
+            motionLayoutObject()
+         }
+
       }
    }
 
@@ -77,7 +80,7 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
             when (loginStatus) {
                true -> findNavController().navigate(R.id.action_splashFragment_to_main_nav)
                false -> findNavController().navigate(R.id.action_splashFragment_to_logInFragment)
-               else -> findNavController().navigate(R.id.action_splashFragment_to_logInFragment)
+
             }
          }
 

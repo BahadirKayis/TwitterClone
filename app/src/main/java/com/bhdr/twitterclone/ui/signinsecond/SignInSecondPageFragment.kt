@@ -8,9 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bhdr.twitterclone.R
-import com.bhdr.twitterclone.databinding.FragmentSigInSecondPageBinding
 import com.bhdr.twitterclone.common.sharedPref
 import com.bhdr.twitterclone.data.model.remote.Users
+import com.bhdr.twitterclone.databinding.FragmentSigInSecondPageBinding
 import com.google.android.material.snackbar.Snackbar
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint

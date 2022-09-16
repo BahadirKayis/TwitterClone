@@ -102,8 +102,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:scaleType="centerCrop" />
-<!--        argType:fastforward_increment="15000"-->
-<!--        argType:rewind_increment="15000"-->
+
 
         <ImageView
             android:id="@+id/tweetImage"

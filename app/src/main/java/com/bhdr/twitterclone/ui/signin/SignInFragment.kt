@@ -7,8 +7,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.bhdr.twitterclone.R
-import com.bhdr.twitterclone.databinding.FragmentSigInBinding
 import com.bhdr.twitterclone.common.snackBar
+import com.bhdr.twitterclone.databinding.FragmentSigInBinding
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 

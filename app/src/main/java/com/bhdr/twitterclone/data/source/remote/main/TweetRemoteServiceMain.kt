@@ -14,7 +14,6 @@ import com.bhdr.twitterclone.common.Constants.USER_FOLLOW
 import com.bhdr.twitterclone.common.Constants.USER_INFO_ID
 import com.bhdr.twitterclone.data.model.remote.Posts
 import com.bhdr.twitterclone.data.model.remote.Users
-import com.google.firebase.firestore.auth.User
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.POST

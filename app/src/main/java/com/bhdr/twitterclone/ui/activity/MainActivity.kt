@@ -18,7 +18,6 @@ import androidx.navigation.ui.NavigationUI
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.common.*
 import com.bhdr.twitterclone.databinding.ActivityMainBinding
-import com.canerture.e_commerce_app.common.delegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.delay
@@ -31,8 +30,8 @@ class MainActivity : AppCompatActivity(), OpenMenu {
    lateinit var toggle: ActionBarDrawerToggle
    private val viewModel: MainViewModel by viewModels()
    var itemsLayout: View? = null
-
    var signalRStart = false
+   var notification: Int = 0
    override fun onCreate(savedInstanceState: Bundle?) {
 
       super.onCreate(savedInstanceState)
@@ -111,15 +110,17 @@ class MainActivity : AppCompatActivity(), OpenMenu {
    }
 
    private fun userRequest() {
-      if (!signalRStart) {
-         signalRStart = true
-         observable()
-         shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
-         viewModel.startSignalR(this@MainActivity.userId())
+      if (this.checkNetworkConnection()) {
+         if (!signalRStart) {
+            signalRStart = true
+            observable()
+            shared = getSharedPreferences("com.bhdr.twitterclone", Context.MODE_PRIVATE)
+            viewModel.startSignalR(this@MainActivity.userId())
+         }
+         viewModel.followCount(this.userId())
+         viewModel.followedCount(this.userId())
+         viewModel.getFollowedUserIdList(this.userId())
       }
-      viewModel.followCount(this.userId())
-      viewModel.followedCount(this.userId())
-      viewModel.getFollowedUserIdList(this.userId())
    }
 
 
@@ -135,9 +136,6 @@ class MainActivity : AppCompatActivity(), OpenMenu {
             val userName = "@ ${this@MainActivity.sharedPref().getString("user_userName", "")}"
             itemsLayout!!.findViewById<TextView>(R.id.userName).text = userName
 
-
-
-
             itemsLayout!!.findViewById<CircleImageView>(R.id.circleImageView)
                .picasso(this@MainActivity.userPhotoUrl())
          })
@@ -145,10 +143,17 @@ class MainActivity : AppCompatActivity(), OpenMenu {
             itemsLayout!!.findViewById<TextView>(R.id.userFollowed).text = it.toString()
          })
          notificationCount.observe(this@MainActivity) {
+            when (it) {
+               true -> notification += 1
 
+               else -> {}
+            }.apply {
+               if (notification > 0) {
+                  binding.notificationCount.visible()
+               }
+            }
 
-            binding.notificationCount.text = it.toString()
-            binding.notificationCount.visible()
+            binding.notificationCount.text = notification.toString()
 
          }
 

@@ -2,8 +2,6 @@ package com.bhdr.twitterclone.domain.repository
 
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.lifecycle.MutableLiveData
-import com.bhdr.twitterclone.common.Status
 import com.bhdr.twitterclone.data.model.locale.TweetsRoomModel
 import com.bhdr.twitterclone.data.model.remote.Posts
 
@@ -37,7 +35,7 @@ interface TweetRepository {
       imageUrl: String
    ): HashMap<Int, String>
 
-   suspend fun notificationList():List<Any>
+   suspend fun notificationList(): List<Any>
 
 
 }

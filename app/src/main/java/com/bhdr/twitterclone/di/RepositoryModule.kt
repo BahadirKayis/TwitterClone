@@ -2,11 +2,11 @@ package com.bhdr.twitterclone.di
 
 import android.app.Application
 import com.bhdr.twitterclone.data.repos.LoginUpRepositoryImpl
-import com.bhdr.twitterclone.data.repos.MainRepositoryImpl
+import com.bhdr.twitterclone.data.repos.ActivityRepositoryImpl
 import com.bhdr.twitterclone.data.repos.SearchRepositoryImpl
-import com.bhdr.twitterclone.data.repos.TweetRepositoryImpl
+import com.bhdr.twitterclone.data.repos.MainTweetRepositoryImpl
 import com.bhdr.twitterclone.domain.repository.LoginUpRepository
-import com.bhdr.twitterclone.domain.repository.MainRepository
+import com.bhdr.twitterclone.domain.repository.ActivityRepository
 import com.bhdr.twitterclone.domain.repository.SearchRepository
 import com.bhdr.twitterclone.domain.repository.TweetRepository
 import com.bhdr.twitterclone.domain.source.locale.LocalDataSource
@@ -36,7 +36,7 @@ object RepositoryModule {
       firebaseStorage: FirebaseStorage
 
    ): TweetRepository =
-      TweetRepositoryImpl(tweetDao, app, remoteSource, coContextIO, firebaseStorage)
+      MainTweetRepositoryImpl(tweetDao, app, remoteSource, coContextIO, firebaseStorage)
 
 
    @Provides
@@ -45,8 +45,8 @@ object RepositoryModule {
       tweetDao: LocalDataSource,
       remoteSourceMain: RemoteDataSourceMain,
       @Named("IO") coContextIO: CoroutineDispatcher
-   ): MainRepository =
-      MainRepositoryImpl(tweetDao, remoteSourceMain, coContextIO)
+   ): ActivityRepository =
+      ActivityRepositoryImpl(tweetDao, remoteSourceMain, coContextIO)
 
    @Provides
    @Singleton

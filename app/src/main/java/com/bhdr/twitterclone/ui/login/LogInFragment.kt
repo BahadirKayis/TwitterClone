@@ -18,7 +18,6 @@ class LogInFragment : Fragment(R.layout.fragment_log_in) {
       super.onViewCreated(view, savedInstanceState)
 
 
-
       binding.signUpButton.setOnClickListener {
          findNavController().navigate(R.id.action_logInFragment_to_signUpFragment)
       }

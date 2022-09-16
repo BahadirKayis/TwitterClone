@@ -11,7 +11,6 @@ import com.bhdr.twitterclone.common.gone
 import com.bhdr.twitterclone.common.snackBar
 import com.bhdr.twitterclone.common.visible
 import com.bhdr.twitterclone.databinding.FragmentSignInForgetPasswordSecondBinding
-import com.bhdr.twitterclone.ui.forgetpassword.ForgetPasswordViewModel
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -56,7 +55,7 @@ class SignInForgetPasswordSecondFragment :
                when (it!!) {
                   Status.LOADING -> lottiAnim.visible()
 
-                 Status.ERROR -> {
+                  Status.ERROR -> {
                      lottiAnim.gone()
                      snackBar(requireView(), "Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz", 1500)
                   }

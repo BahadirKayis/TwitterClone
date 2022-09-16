@@ -16,6 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class NotificationsFragment : Fragment(R.layout.fragment_notifications),
    NotificationsAdapter.ClickedUserFollow {
 
+
    private val viewModel: NotificationViewModel by viewModels()
    private val binding by viewBinding(FragmentNotificationsBinding::bind)
    private val notificationAdapter by lazy { NotificationsAdapter(this) }
@@ -34,16 +35,24 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications),
       // viewModel = ViewModelProvider(requireParentFragment())[NotificationViewModel::class.java]
       super.onViewCreated(view, savedInstanceState)
       binding()
+      networkControlRequest()
       observable()
+   }
+
+   private fun networkControlRequest() {
+      if (requireContext().checkNetworkConnection()) {
+         viewModel.followUserList(requireContext().userId())
+      }
+
    }
 
    private fun observable() {
       with(viewModel) {
-         followUserList(requireContext().userId())
          notificationList()
 
          notificationList.observe(viewLifecycleOwner) {
-            if (it == null) {
+            if (it.isEmpty()) {
+
                snackBar(requireView(), "Bildiriminiz yok ", 1000)
             }
             notificationAdapter.setUserFollowItem(it)
@@ -84,7 +93,6 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications),
             adapter = notificationAdapter
 
          }
-
          profilePicture.picasso(requireContext().userPhotoUrl())
          profilePicture.setOnClickListener {
             userProfileClickListener?.openDrawerClick()

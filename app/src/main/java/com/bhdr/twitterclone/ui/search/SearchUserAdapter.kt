@@ -30,7 +30,7 @@ class SearchUserAdapter(
       return listUser[position].id!!.toLong()
    }
 
-   fun notifyDataChanged(list: List<Users>) {
+   fun userDataChanged(list: List<Users>) {
       //  nList = list //Local Filter
       listUser = list //Cloud Filter
       notifyDataSetChanged()

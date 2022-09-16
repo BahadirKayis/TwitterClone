@@ -1,5 +1,4 @@
-package com.canerture.e_commerce_app.common.delegate
-
+package com.bhdr.twitterclone.common
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

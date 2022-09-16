@@ -1,16 +1,18 @@
 package com.bhdr.twitterclone.ui.notification
 
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bhdr.twitterclone.common.gone
-import com.bhdr.twitterclone.common.picasso
-import com.bhdr.twitterclone.common.toCalendar
-import com.bhdr.twitterclone.data.model.locale.DataItem
+import com.bhdr.twitterclone.common.*
+import com.bhdr.twitterclone.data.model.locale.NotificationsDataItem
 import com.bhdr.twitterclone.databinding.NotificationRecylerviewScreenLikeBinding
 import com.bhdr.twitterclone.databinding.NotificationRecylerviewScreenTweetBinding
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
 
 
 class NotificationsAdapter(
@@ -18,11 +20,12 @@ class NotificationsAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
    private var userFollow: List<Int> = emptyList()
    private var notificationList: List<Any> = emptyList()
+   private var context: Context? = null
 
    inner class LikeViewHolder(private val likeBinding: NotificationRecylerviewScreenLikeBinding) :
       RecyclerView.ViewHolder(likeBinding.root) {
 
-      fun bind(item: DataItem.NotificationLike) {
+      fun bind(item: NotificationsDataItem.NotificationLike) {
          with(likeBinding) {
             with(item) {
                profilePictureLiked.picasso(imageUrl.toString())
@@ -36,17 +39,52 @@ class NotificationsAdapter(
                with(tweet) {
 
                   if (this!!.tweetImage != null) {
-                     likeBinding.tweetImage.picasso(tweetImage!!)
+                     if (tweetImage!!.contains("video")) {
+                        //Firebase boyutu bitmesin diye
+                        //setup
+//                        exoPlayer = ExoPlayer.Builder(likeBinding.root.context).build()
+//                        exoPlayer?.playWhenReady = false
+//                        playerView.player = exoPlayer
+//                        //file
+//                        val mediaItem =
+//                           MediaItem.fromUri(tweetImage.toString())
+//                        exoPlayer?.addMediaItem(mediaItem)
+//
+//                        exoPlayer?.playWhenReady = playWhenReady
+//                        exoPlayer?.prepare()
+                        playerView.visible()
+                        likeBinding.tweetImage.gone()
+                     } else {
+                        playerView.gone()
+                        likeBinding.tweetImage.visible()
+                        likeBinding.tweetImage.picasso(tweetImage.toString())
+                     }
 
                   }
 
                   tweetText.text = postContent
+                  if (postContent?.contains("#") == true) {
 
+                     tweetText.setSpannableFactory(spannableFactory())
+
+                     tweetText.setText(
+                        postContent.replace("-n", "\n"),
+                        TextView.BufferType.SPANNABLE
+                     )
+                  } else {
+                     tweetText.text = postContent!!.replace("-n", "\n")
+                  }
                   with(user!!) {
 
                      profilePicture.picasso(photo)
                      nameText.text = name
-                     "@$userName".also { usernameText.text = it }
+                     "@$userName".also {
+                        usernameText.text = if (it.length > 11) {
+                           it.substring(0, 9) + "..."
+                        } else {
+                           it
+                        }
+                     }
                      timeText.text = date!!.toLong().toCalendar()
 
                   }
@@ -59,7 +97,7 @@ class NotificationsAdapter(
 
    inner class TweetViewHolder(private val tweetBinding: NotificationRecylerviewScreenTweetBinding) :
       RecyclerView.ViewHolder(tweetBinding.root) {
-      fun bind(item: DataItem.NotificationTweet) {
+      fun bind(item: NotificationsDataItem.NotificationTweet) {
          with(tweetBinding) {
             with(item) {
 
@@ -77,7 +115,13 @@ class NotificationsAdapter(
 
                nameText.text = name
 
-               "@$userName".also { usernameText.text = it }
+               "@$userName".also {
+                  usernameText.text = if (it.length > 11) {
+                     it.substring(0, 9) + "..."
+                  } else {
+                     it
+                  }
+               }
 
                timeText.text = date!!.toLong().toCalendar()
 
@@ -85,10 +129,44 @@ class NotificationsAdapter(
                   date!!.toLong().toCalendar()
                } tweetledi".also { dateAndNewTweet.text = it }
 
+
+
                with(tweet) {
+
                   tweetText.text = this!!.postContent
+                  if (postContent?.contains("#") == true) {
+
+                     tweetText.setSpannableFactory(spannableFactory())
+
+                     tweetText.setText(
+                        postContent.replace("-n", "\n"),
+                        TextView.BufferType.SPANNABLE
+                     )
+                  } else {
+                     tweetText.text = postContent!!.replace("-n", "\n")
+                  }
                   if (tweetImage != null) {
-                     tweetBinding.tweetImage.picasso(tweetImage.toString())
+                     if (tweetImage!!.contains("video")) {
+                        //Firebase boyutu bitmesin diye
+                        //setup
+//                        exoPlayer = ExoPlayer.Builder(tweetBinding.root.context!!).build()
+//                        exoPlayer?.playWhenReady = false
+//                        playerView.player = exoPlayer
+//                        //file
+//                        val mediaItem =
+//                           MediaItem.fromUri(tweetImage.toString())
+//                        exoPlayer?.addMediaItem(mediaItem)
+//
+//                        exoPlayer?.playWhenReady = playWhenReady
+//                        exoPlayer?.prepare()
+                        playerView.visible()
+                        tweetBinding.tweetImage.gone()
+                     } else {
+                        playerView.gone()
+                        tweetBinding.tweetImage.visible()
+                        tweetBinding.tweetImage.picasso(tweetImage.toString())
+                     }
+
                   }
                }
             }
@@ -97,6 +175,7 @@ class NotificationsAdapter(
    }
 
    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+      //   context = parent.context
       return when (viewType) {
          Database.TYPE_LIKE.viewType -> LikeViewHolder(
             NotificationRecylerviewScreenLikeBinding.inflate(
@@ -111,17 +190,20 @@ class NotificationsAdapter(
                parent,
                false
             )
+
          )
          else -> throw IllegalStateException("Unknown view type: $viewType")
 
       }
    }
 
-
+   private var exoPlayer: ExoPlayer? = null
+   private var playbackPosition = 0L
+   private var playWhenReady = false
    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
       when (holder) {
-         is TweetViewHolder -> holder.bind(notificationList[position] as DataItem.NotificationTweet)
-         is LikeViewHolder -> holder.bind(notificationList[position] as DataItem.NotificationLike)
+         is TweetViewHolder -> holder.bind(notificationList[position] as NotificationsDataItem.NotificationTweet)
+         is LikeViewHolder -> holder.bind(notificationList[position] as NotificationsDataItem.NotificationLike)
       }
    }
 
@@ -129,8 +211,8 @@ class NotificationsAdapter(
 
    override fun getItemViewType(position: Int): Int {
       return when (notificationList[position]) {
-         is DataItem.NotificationTweet -> Database.TYPE_TWEET.viewType
-         is DataItem.NotificationLike -> Database.TYPE_LIKE.viewType
+         is NotificationsDataItem.NotificationTweet -> Database.TYPE_TWEET.viewType
+         is NotificationsDataItem.NotificationLike -> Database.TYPE_LIKE.viewType
          else -> throw IllegalStateException("Unknown view type: $notificationList")
       }
    }

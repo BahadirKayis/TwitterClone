@@ -2,11 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingStart="15dp"
-    android:paddingEnd="15dp"
+    android:padding="10dp"
     tools:context=".ui.addtweet.AddTweetFragment">
 
     <ImageView
@@ -18,6 +16,7 @@
         android:src="@drawable/cancel"
         app:layout_constraintBottom_toBottomOf="@+id/addTweetButton"
         app:layout_constraintStart_toStartOf="parent"
+
         app:layout_constraintTop_toTopOf="@+id/addTweetButton" />
 
     <Button
@@ -25,11 +24,14 @@
         android:layout_width="100dp"
         android:layout_height="48dp"
         android:layout_marginTop="8dp"
-        android:backgroundTint="#03A9F4"
-        android:fontFamily="@font/roboto"
+
+        android:layout_marginBottom="5dp"
+        android:backgroundTint="@color/menu_tint"
+        android:gravity="center"
         android:text="Tweetle"
-        android:textSize="12sp"
-        app:cornerRadius="100dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textSize="14sp"
+        app:cornerRadius="25dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -52,11 +54,10 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_gravity="center"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="10dp"
         app:cardCornerRadius="250dp"
         app:cardElevation="0dp"
-        app:layout_constraintEnd_toEndOf="@+id/cancel"
-        app:layout_constraintStart_toStartOf="@+id/cancel"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cancel">
 
         <ImageView
@@ -64,7 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            app:srcCompat="@drawable/left_arrow" />
+            tools:srcCompat="@tools:sample/avatars" />
     </androidx.cardview.widget.CardView>
 
     <EditText

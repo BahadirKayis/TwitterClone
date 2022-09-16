@@ -49,13 +49,18 @@ class TweetBottomDialog : BottomSheetDialogFragment() {
             return spannable
          }
       }
-      with (binding) {
+      with(binding) {
          blocktext.setSpannableFactory(spannableFactory)
          followtext.setSpannableFactory(spannableFactory)
          mutetext.setSpannableFactory(spannableFactory)
 
          "$name adlı kişiyi engelle".also { blocktext.setText(it, TextView.BufferType.SPANNABLE) }
-         "$name adlı kişiyi takipten çık".also { followtext.setText(it, TextView.BufferType.SPANNABLE) }
+         "$name adlı kişiyi takipten çık".also {
+            followtext.setText(
+               it,
+               TextView.BufferType.SPANNABLE
+            )
+         }
          "$name adlı kişiyi sustur".also { mutetext.setText(it, TextView.BufferType.SPANNABLE) }
 
       }

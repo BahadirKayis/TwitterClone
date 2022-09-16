@@ -2,7 +2,6 @@ package com.bhdr.twitterclone.domain.source.remote.main
 
 import com.bhdr.twitterclone.data.model.remote.Posts
 import com.bhdr.twitterclone.data.model.remote.Users
-import com.google.firebase.firestore.auth.User
 import retrofit2.Response
 
 interface RemoteDataSourceMain {
@@ -12,6 +11,7 @@ interface RemoteDataSourceMain {
       image_url: String,
       date: String
    ): Response<Boolean>
+
    suspend fun getUser(userId: Int): Response<Users>
    suspend fun postUserFollow(userId: Int, followId: Int): Response<Boolean>
    suspend fun getFollowedUserIdList(userId: Int): Response<List<Int>>
@@ -22,5 +22,5 @@ interface RemoteDataSourceMain {
    suspend fun getFollowCount(userId: Int): Response<Int>
    suspend fun getFollowedCount(userId: Int): Response<Int>
    suspend fun getTweetNew(tweetId: Int): Response<Posts>
-   suspend fun getSearchUser(userName:String): Response<List<Users>>?
+   suspend fun getSearchUser(userName: String): Response<List<Users>>?
 }

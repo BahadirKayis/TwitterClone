@@ -22,8 +22,8 @@ class ForgetPasswordViewModel @Inject constructor(private val loginRepo: LoginUp
    val executeStatus: LiveData<Status> = status
 
    fun userForgetId(userName: String) {
+      status.value = Status.LOADING
       viewModelScope.launch {
-         status.value = Status.LOADING
          userIdM.value = loginRepo.userForgetId(userName)
          status.value = Status.DONE
 

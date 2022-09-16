@@ -38,7 +38,7 @@ class NotificationViewModel @Inject constructor(
 
    fun getSearchFollowUser(userId: Int, followId: Int) {
       viewModelScope.launch {
-         followedUserM.value= searchRepositoryImpl.postUserFollow(userId, followId)
+         followedUserM.value = searchRepositoryImpl.postUserFollow(userId, followId)
       }
    }
 

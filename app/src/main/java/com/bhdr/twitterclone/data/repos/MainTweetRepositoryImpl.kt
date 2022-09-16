@@ -24,7 +24,7 @@ import java.io.File
 import javax.inject.Named
 
 
-class TweetRepositoryImpl(
+class MainTweetRepositoryImpl(
    private val localSource: LocalDataSource,
    private val application: Application,
    private val remoteSource: RemoteDataSourceMain,
@@ -45,7 +45,6 @@ class TweetRepositoryImpl(
 
    override suspend fun getTweets(id: Int): List<Posts>? {
       try {
-
          val request = remoteSource.getTweets(id)
          if (request.isSuccessful) {
             return request.body()!!
@@ -186,12 +185,13 @@ class TweetRepositoryImpl(
             it.apply {
 
                if (it.postImageUrl != "null") {
-                  imageUri =
-                     createImageUri(id.toString() + "_" + userId.toString() + "_tweet_content.png")
 
-                  if (it.postImageUrl!!.contains(".webm")) {
+                  if (it.postImageUrl!!.contains("video")) {
                      imageUri = it.postImageUrl.toString()
                   } else {
+                     imageUri =
+                        createImageUri(id.toString() + "_" + userId.toString() + "_tweet_content.png")
+
                      if (!haveImageUri) {
                         val bmp = getBitmap(it.postImageUrl.toString())//Image download
                         bmp.ifNotNull { storeBitmap(bmp) }//Image save
@@ -220,12 +220,11 @@ class TweetRepositoryImpl(
       } catch (e: Exception) {
          Log.e("RoomConvertAndAdd-Ex", e.toString())
       }
-return tweetsAddRoom
+      return tweetsAddRoom
 
    }
 
    override suspend fun getBitmap(url: String): Bitmap {
-      Log.e("TAG", url.toString() )
       try {
          val loading = ImageLoader(application)
          val request = ImageRequest.Builder(application)
@@ -270,7 +269,6 @@ return tweetsAddRoom
       try {
          if (roomTweet?.size == 0) {
             return (cloudTweet to cloudTweet)
-            // newTweetButton(cloudTweet, tweetRoomUpdateList)
          } else {
             if (cloudTweet.isNotEmpty()) {
                if (roomTweet!!.size != cloudTweet.size) {

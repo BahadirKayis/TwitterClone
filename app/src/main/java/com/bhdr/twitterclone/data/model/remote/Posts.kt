@@ -2,6 +2,7 @@ package com.bhdr.twitterclone.data.model.remote
 
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
@@ -9,22 +10,22 @@ import kotlinx.parcelize.Parcelize
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class Posts(
-   @Json(name = "date")
+   @SerializedName( "date")
    val date: String?,
-   @Json(name = "followers")
+   @SerializedName("followers")
    val followers: List<Followers?>?,
-   @Json(name = "id")
+   @SerializedName( "id")
    val id: Int?,
-   @Json(name = "postContent")
+   @SerializedName( "postContent")
    val postContent: String?,
-   @Json(name = "postImageUrl")
+   @SerializedName( "postImageUrl")
    val postImageUrl: String?,
-   @Json(name = "postLike")
+   @SerializedName( "postLike")
    var postLike: Int?,
-   @Json(name = "tags")
+   @SerializedName( "tags")
    val tags: List<Tags?>?,
-   @Json(name = "user")
+   @SerializedName( "user")
    var user: Users?,
-   @Json(name = "userId")
+   @SerializedName("userId")
    val userId: Int?
 ) : Parcelable

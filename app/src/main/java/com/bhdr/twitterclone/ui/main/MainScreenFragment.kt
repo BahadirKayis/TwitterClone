@@ -2,10 +2,8 @@ package com.bhdr.twitterclone.ui.main
 
 
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
-
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -50,7 +48,6 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
    private fun remoteTweetRequest() {
       lifecycleScope.launch {
          delay(5000)
-         viewModel.getFollowedUserIdList(requireContext().userId())
          netWorkControlAndCloudRequestTweets()
       }
    }
@@ -114,13 +111,11 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
    }
 
    private fun netWorkControlAndCloudRequestTweets() {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-         if (requireContext().checkNetworkConnection()) {
-            viewModel.getTweets(requireContext().userId())
-         }
-      } else {
+      if (requireContext().checkNetworkConnection()) {
+         viewModel.getFollowedUserIdList(requireContext().userId())
          viewModel.getTweets(requireContext().userId())
       }
+
    }
 
    private fun newTweetButton() {

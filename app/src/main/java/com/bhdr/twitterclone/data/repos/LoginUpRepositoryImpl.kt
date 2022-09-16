@@ -5,20 +5,16 @@ import android.util.Log
 import com.bhdr.twitterclone.data.model.remote.Users
 import com.bhdr.twitterclone.domain.repository.LoginUpRepository
 import com.bhdr.twitterclone.domain.source.remote.login.RemoteDataSourceLogin
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.runBlocking
-import javax.inject.Inject
 
 
-class LoginUpRepositoryImpl (
+class LoginUpRepositoryImpl(
    private val remoteSource: RemoteDataSourceLogin,
    private val FirebaseStorage: FirebaseStorage
 ) :
    LoginUpRepository {
-
 
 
    override suspend fun userForgetId(userName: String): Int? =
@@ -46,7 +42,8 @@ class LoginUpRepositoryImpl (
       val imagesReference = reference.child("profilpictures").child(imageName)
       imagesReference.putFile(selectedPicture!!).addOnSuccessListener {
 
-         val uploadedPictureReference = FirebaseStorage.reference.child("profilpictures").child(imageName)
+         val uploadedPictureReference =
+            FirebaseStorage.reference.child("profilpictures").child(imageName)
          uploadedPictureReference.downloadUrl.addOnSuccessListener { uri ->
             val profilePictureUrl = uri.toString()
 
@@ -75,8 +72,7 @@ class LoginUpRepositoryImpl (
 
                   deleteImage(profilePictureUrl)
                   isSaved = false
-                  Log.e("TAG", signUp.message())
-                  Log.e("TAG", signUp.errorBody().toString())
+                  Log.e("signUpError", signUp.errorBody().toString())
 
                }
             }
