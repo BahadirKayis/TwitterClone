@@ -19,18 +19,19 @@ class AddTweetViewModel @Inject constructor(private val tweetRepositoryImpl: Twe
    val tweetAdded: LiveData<Boolean>
       get() = tweetAddedM
 
-   var mainStatusM = MutableLiveData<Status>()
-
-
+   private var mainStatusM = MutableLiveData<Status>()
    val mainStatus: LiveData<Status>
       get() = mainStatusM
 
    fun addTweet(id: Int, tweetText: String, tweetImageName: String, tweetImage: Uri?) {
       mainStatusM.value = Status.LOADING
       viewModelScope.launch {
-         tweetRepositoryImpl.addTweet(id, tweetText, tweetImageName, tweetImage).also {
+         tweetRepositoryImpl.addTweet(id, tweetText, tweetImageName, tweetImage).let {
+            tweetAddedM.value = it
             when (it) {
-               true -> mainStatusM.value = Status.DONE
+               true -> {
+                  mainStatusM.value = Status.DONE
+               }
                false -> mainStatusM.value = Status.ERROR
 
             }

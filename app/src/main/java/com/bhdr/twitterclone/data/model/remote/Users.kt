@@ -3,10 +3,8 @@ package com.bhdr.twitterclone.data.model.remote
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 
-@JsonClass(generateAdapter = true)
 @Parcelize
 data class Users(
    @SerializedName("date")

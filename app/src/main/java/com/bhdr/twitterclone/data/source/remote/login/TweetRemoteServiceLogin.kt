@@ -20,8 +20,7 @@ interface TweetRemoteServiceLogin {
       @Query("name") name: String,
       @Query("email") email: String,
       @Query("phone") phone: String,
-      @Query("photo_url") photoUrl: String,
-      @Query("date") date: String?
+      @Query("photo_url") photoUrl: String
    ): Response<Boolean>
 
 

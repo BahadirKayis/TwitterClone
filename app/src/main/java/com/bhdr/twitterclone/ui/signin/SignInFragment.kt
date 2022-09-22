@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.bhdr.twitterclone.R
+import com.bhdr.twitterclone.common.Status
+import com.bhdr.twitterclone.common.gone
 import com.bhdr.twitterclone.common.snackBar
+import com.bhdr.twitterclone.common.visible
 import com.bhdr.twitterclone.databinding.FragmentSigInBinding
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,7 +26,7 @@ class SignInFragment : Fragment(R.layout.fragment_sig_in) {
 
    private fun observable() {
       with(viewModel) {
-         userModel.observe(viewLifecycleOwner, Observer {
+         userModel.observe(viewLifecycleOwner) {
             if (it != null) {
                findNavController().navigate(
                   SignInFragmentDirections.actionSigInFragmentToSigInSecondPageFragment(it)
@@ -33,7 +35,14 @@ class SignInFragment : Fragment(R.layout.fragment_sig_in) {
                snackBar(requireView(), "Girilen kullanıcı adı bulunamadı", 1500)
             }
 
-         })
+         }
+         statusL.observe(viewLifecycleOwner) {
+            when (it!!) {
+               Status.LOADING -> binding.lottiAnim.visible()
+               Status.ERROR -> binding.lottiAnim.gone()
+               Status.DONE -> binding.lottiAnim.gone()
+            }
+         }
       }
    }
 

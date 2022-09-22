@@ -25,12 +25,12 @@ interface TweetRepository {
    suspend fun isNewTweet(
       cloudTweet: List<Posts>,
       roomTweet: List<TweetsRoomModel>?
-   ): Pair<List<Posts>?, List<Posts>?>
+   ): Triple<List<Posts>?, List<Posts>?, HashMap<Int, String>?>
 
 
    suspend fun getFollowedUserIdList(userId: Int)
 
-   fun signalRControl(
+   suspend fun signalRControl(
       id: Int,
       imageUrl: String
    ): HashMap<Int, String>

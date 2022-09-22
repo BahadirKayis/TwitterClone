@@ -58,6 +58,7 @@
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/notifications.xml" value="0.3425" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/notifications_select.xml" value="0.2215" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/retweet.xml" value="0.3425" />
+        <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/search.xml" value="0.225" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/search_select.xml" value="0.2215" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/settings.xml" value="0.3425" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/drawable/share.xml" value="0.3425" />
@@ -74,7 +75,7 @@
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/fragment_notifiaction.xml" value="0.3037037037037037" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/fragment_notification.xml" value="0.37864583333333335" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/fragment_notifications.xml" value="0.20208333333333334" />
-        <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/fragment_search.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/fragment_search.xml" value="0.18" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/fragment_sig_in.xml" value="0.358695652173913" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/fragment_sig_in_forget_password.xml" value="0.358695652173913" />
         <entry key="..\:/Users/Bahadir/AndroidStudioProjects/TwitterClone/app/src/main/res/layout/fragment_sig_in_second_page.xml" value="0.358695652173913" />

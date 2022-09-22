@@ -173,7 +173,6 @@ class SignUpFragment() : Fragment(R.layout.fragment_sign_up), Parcelable {
                   name,
                   email,
                   phone,
-                  date,
                   imageName,
                   selectedPicture
 
@@ -220,6 +219,8 @@ class SignUpFragment() : Fragment(R.layout.fragment_sign_up), Parcelable {
                   true -> {
                      snackBar(requireView(), "Hesap Oluşturuldu", 2000)
                      lottiAnim.gone()
+                     findNavController().navigate(R.id.action_signUpFragment_to_logInFragment)
+
                   }
 
                   false -> {

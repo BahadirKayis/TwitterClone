@@ -24,7 +24,6 @@ class TagsAdapter(private val tagsList: List<String>) :
       }
 
       //  holder.binding.tweetNumberText.text=tagsList[position].TweetSayısı
-      //tage tıklanınca başka sayfada o tagli postları açacak
    }
 
    override fun getItemCount(): Int {

@@ -8,10 +8,9 @@ import com.bhdr.twitterclone.data.model.remote.Users
 import com.bhdr.twitterclone.databinding.WhoToFollowCardBinding
 
 class WhoToFollowAdapter(
-   private val clickedUserFollow: ClickedUserFollow, private val userList: List<Users>,
-   val onClickDelete: (Int) -> Unit
+   private val clickedUserFollow: ClickedUserFollow, private var userList: MutableList<Users>
 ) : RecyclerView.Adapter<WhoToFollowAdapter.ViewHolder>() {
-   private var user: List<Users> = userList
+
 
    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
       val binding =
@@ -20,12 +19,12 @@ class WhoToFollowAdapter(
    }
 
    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-      val user = user[position]
+      val user = userList[position]
       holder.binding.apply {
          profilePicture.picasso(user.photoUrl.toString())
          nameText.text = user.name
          followButton.setOnClickListener {
-            onClickDelete(position)
+            itemDelete(position)
             clickedUserFollow.followButtonsListener(user.id!!)
          }
          "@${user.userName}".also { idText.text = it }
@@ -33,7 +32,7 @@ class WhoToFollowAdapter(
    }
 
    override fun getItemCount(): Int {
-      return user.size
+      return userList.size
    }
 
    inner class ViewHolder(val binding: WhoToFollowCardBinding) :
@@ -44,9 +43,10 @@ class WhoToFollowAdapter(
       fun followButtonsListener(followId: Int)
    }
 
-   fun setItem(items: List<Users>, position: Int) {
-      user = items
+   private fun itemDelete(position: Int) {
+      userList.removeAt(position)
       notifyItemRemoved(position)
+
    }
 }
 

@@ -53,6 +53,7 @@
         android:layout_marginBottom="5dp"
         android:backgroundTint="@color/menu_tint"
         android:gravity="center"
+        android:visibility="gone"
         android:text="Takip Et"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textSize="13sp"

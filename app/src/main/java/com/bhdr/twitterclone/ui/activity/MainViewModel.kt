@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bhdr.twitterclone.common.hubConnection
+import com.bhdr.twitterclone.common.Constants.hubConnection
 import com.bhdr.twitterclone.data.model.remote.Posts
 import com.bhdr.twitterclone.domain.repository.ActivityRepository
 import com.microsoft.signalr.HubConnectionState
@@ -81,6 +81,7 @@ class MainViewModel @Inject constructor(
                   try {
                      job = CoroutineScope(coContextIO).launch {
                         CoroutineScope(Dispatchers.Main).launch {
+
                            notificationCountM.value = activityRepositoryImpl.signalRControl(
                               id.toInt(),
                               imageUrl,
@@ -113,6 +114,7 @@ class MainViewModel @Inject constructor(
             userId.toString(), { imageUrl, userName, name, post ->
                job = CoroutineScope(coContextIO).launch {
                   CoroutineScope(Dispatchers.Main).launch {
+
                      notificationCountM.value =
                         activityRepositoryImpl.signalRControl(0, imageUrl, userName, name, 0, post)
                   }

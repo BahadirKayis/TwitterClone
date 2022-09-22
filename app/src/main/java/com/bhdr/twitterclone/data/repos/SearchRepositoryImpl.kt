@@ -9,9 +9,17 @@ class SearchRepositoryImpl(private val remoteSource: RemoteDataSourceMain) :
 
 
    override suspend fun getSearchFollowUser(id: Int): List<Users> =
-      remoteSource.getSearchNotFollow(id).body()!!
+      try {
+         remoteSource.getSearchNotFollow(id).body()!!
+      } catch (e: Exception) {
+         throw Exception("")
+      }
 
-   override suspend fun getTags(): List<String> = remoteSource.getPopularTags().body()!!
+   override suspend fun getTags(): List<String> = try {
+      remoteSource.getPopularTags().body()!!
+   } catch (e: Exception) {
+      throw Exception("")
+   }
 
 
    override suspend fun postUserFollow(userId: Int, followId: Int): Boolean =

@@ -1,14 +1,10 @@
 package com.bhdr.twitterclone.ui.main
 
 import android.content.Context
-import android.graphics.Color
-import android.text.Spannable
-import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.text.toSpannable
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -43,28 +39,42 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
             if (posts.isLiked == true) {
                favButton.isLiked = true
             }
+
+
             favButton.setOnLikeListener(object : OnLikeListener {
 
                override fun liked(likeButton: LikeButton?) {
-                  clickedTweetListener.crfButtonsListener("fav", posts.id!!, 1)
-                  with(posts) {
-                     val postCont = 1 + posts.postLike!!
-                     favText.text = postCont.toString()
-                     postLike = postCont
-                     isLiked = true
+                  if (root.context.checkNetworkConnection()) {
+
+                     clickedTweetListener.crfButtonsListener("fav", posts.id!!, 1)
+                     with(posts) {
+                        val postCont = 1 + posts.postLike!!
+                        favText.text = postCont.toString()
+                        postLike = postCont
+                        isLiked = true
+                     }
+                  } else {
+                     snackBar(root.rootView, "İnternet bağlantısı yok", 1000)
                   }
                }
 
                override fun unLiked(likeButton: LikeButton?) {
-                  clickedTweetListener.crfButtonsListener("fav", posts.id!!, -1)
-                  with(posts) {
-                     val postCont = postLike!! - 1
-                     favText.text = postCont.toString()
-                     postLike = postCont
-                     isLiked = false
+                  if (root.context.checkNetworkConnection()) {
+                     clickedTweetListener.crfButtonsListener("fav", posts.id!!, -1)
+                     with(posts) {
+                        val postCont = postLike!! - 1
+                        favText.text = postCont.toString()
+                        postLike = postCont
+                        isLiked = false
+                     }
+                  } else {
+                     snackBar(root.rootView, "İnternet bağlantısı yok", 1000)
                   }
                }
+
             })
+
+
             try {
                tweetMenuText.setOnClickListener {
                   it.findNavController()
@@ -112,18 +122,18 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
                   favText.text = postLike.toString()
                   if (model.tweetImage != "null") {
                      if (model.tweetImage!!.contains("video")) {
-                        //Firebase kullanım limiti olduğu için kapalı burası kapalı
+                        //Firebase kullanım limiti olduğu için kapalı burası
                         //setup
-                        exoPlayer = ExoPlayer.Builder(context!!).build()
-                        exoPlayer?.playWhenReady = false
-                        binding.playerView.player = exoPlayer
-                        //file
-                        val mediaItem =
-                           MediaItem.fromUri(model.tweetImage.toString())
-                        exoPlayer?.addMediaItem(mediaItem)
-
-                        exoPlayer?.playWhenReady = playWhenReady
-                        exoPlayer?.prepare()
+//                        exoPlayer = ExoPlayer.Builder(context!!).build()
+//                        exoPlayer?.playWhenReady = true
+//                        binding.playerView.player = exoPlayer
+//                        //file
+//                        val mediaItem =
+//                           MediaItem.fromUri(model.tweetImage.toString())
+//                        exoPlayer?.addMediaItem(mediaItem)
+//
+//                        exoPlayer?.playWhenReady = playWhenReady
+//                        exoPlayer?.prepare()
                         playerView.visible()
                         binding.tweetImage.gone()
                      } else {
@@ -166,7 +176,6 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
    interface ClickedTweetListener {
       fun crfButtonsListener(commentRtFav: String, tweetId: Int, currentlyCRFNumber: Int)
    }
-
 
 
    private var exoPlayer: ExoPlayer? = null

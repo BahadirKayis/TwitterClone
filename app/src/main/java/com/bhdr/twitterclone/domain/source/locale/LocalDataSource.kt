@@ -15,5 +15,5 @@ interface LocalDataSource {
    suspend fun notificationListLike(): List<NotificationsDataItem.NotificationLike>
    suspend fun notificationDeleteLike()
    suspend fun notificationDeleteTweet()
-   suspend fun isTweetQuery(tweetId: Int): NotificationsDataItem.NotificationLike?
+   suspend fun isTweetQuery(tweetId: Int): List<NotificationsDataItem.NotificationLike>?
 }

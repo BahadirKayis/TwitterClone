@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bhdr.twitterclone.R
 import com.bhdr.twitterclone.common.Status
@@ -43,11 +44,14 @@ class SignInForgetPasswordSecondFragment :
          with(binding) {
             userChangePassword.observe(viewLifecycleOwner) {
                when (it) {
-                  true -> snackBar(requireView(), "Şifre Değiştirildi", 1500)
+                  true -> {
+                     snackBar(requireView(), "Şifre Değiştirildi", 500);
+                     findNavController().navigate(R.id.action_signInForgetPasswordSecondFragment_to_logInFragment)
+                  }
                   false -> snackBar(
                      requireView(),
                      "Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz",
-                     1500
+                     500
                   )
                }
             }

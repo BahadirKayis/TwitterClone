@@ -6,9 +6,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bhdr.twitterclone.common.Constants.hubConnection
 import com.bhdr.twitterclone.common.Status
 import com.bhdr.twitterclone.common.checkNetworkConnection
-import com.bhdr.twitterclone.common.hubConnection
 import com.bhdr.twitterclone.common.toStartSignalRTweet
 import com.bhdr.twitterclone.data.model.locale.TweetsRoomModel
 import com.bhdr.twitterclone.data.model.remote.Posts
@@ -32,7 +32,7 @@ class TweetViewModel @Inject constructor(
       get() = allRoomTweetsM
 
 
-   //Insert işlemi için
+   //For Insert
    private val tweetsM = MutableLiveData<List<Posts>?>()
    val tweets: LiveData<List<Posts>?>
       get() = tweetsM
@@ -44,6 +44,7 @@ class TweetViewModel @Inject constructor(
 
    init {
       viewModelScope.launch {
+         mainStatusM.value = Status.LOADING
          tweetRepositoryImpl.getTweetsRoom().let {
             allRoomTweetsM.value = it
             if (it != null) {
@@ -65,23 +66,20 @@ class TweetViewModel @Inject constructor(
 
    }
 
-   //Kullanıcı tweet ekranındayken yeni tweet gelirse gelenleri buraya alıyorum
+   //Kullanici tweet ekranindayken yeni tweet gelirse gelenleri buraya aliyorum
    private var mutableFollowNewTweetSignalR = MutableLiveData<HashMap<Int, String>>()
    val mutableFollowNewTweet: LiveData<HashMap<Int, String>> =
       mutableFollowNewTweetSignalR
 
 
-   //BU da getTweets istek attığında yeni tweet varsa Tweet atanların id sini ve resmini getiriyor
-   private var hashMapFollowNewTweetHashMap: HashMap<Int, String> = HashMap()
-   private var mutableFollowNewTweetHashMapM = MutableLiveData<HashMap<Int, String>>()
-   val mutableFollowNewTweetHashMapL: LiveData<HashMap<Int, String>>
+   //Bu da getTweets istek attiginda yeni tweet varsa Tweet atanlarin id sini ve resmini getiriyor
+   private var mutableFollowNewTweetHashMapM = MutableLiveData<HashMap<Int, String>?>()
+   val mutableFollowNewTweetHashMapL: LiveData<HashMap<Int, String>?>
       get() = mutableFollowNewTweetHashMapM
 
    fun getTweets(id: Int) {
       viewModelScope.launch {
          isNewTweet(tweetRepositoryImpl.getTweets(id)!!, allRoomTweetsM.value)
-
-
       }
 
    }
@@ -110,21 +108,29 @@ class TweetViewModel @Inject constructor(
 
    private suspend fun isNewTweet(cloudTweet: List<Posts>, roomTweet: List<TweetsRoomModel>?) {
       tweetRepositoryImpl.isNewTweet(cloudTweet, roomTweet)
-         .let { pair -> newTweetButton(pair.first, pair.second) }
+         .let { triple -> newTweetButton(triple.first, triple.second, triple.third) }
 
    }
 
 
-   private suspend fun newTweetButton(addTweet: List<Posts>?, updateTweet: List<Posts>?) {
+   private suspend fun newTweetButton(
+      addTweet: List<Posts>?,
+      updateTweet: List<Posts>?,
+      newTweetButton: HashMap<Int, String>?
+   ) {
       try {
          if (updateTweet != null) {
+
             tweetsUpdate(updateTweet)
          }
-         if (hashMapFollowNewTweetHashMap.size != 0) {
-            mutableFollowNewTweetHashMapM.value = hashMapFollowNewTweetHashMap
+
+         if (newTweetButton != null) {
+
+            mutableFollowNewTweetHashMapM.value = newTweetButton
             tweetsM.value = addTweet
          } else {
             if (addTweet != null) {
+               Log.i("newTweetButton", "addTweet")
                tweetsRoomConvertAndAdd(addTweet)
             }
          }
@@ -139,7 +145,7 @@ class TweetViewModel @Inject constructor(
    }
 
    private var job: Job? = null
-   private fun tweetSignalR() {
+   private suspend fun tweetSignalR() {
       try {
          if (hubConnection.connectionState == HubConnectionState.DISCONNECTED) {
             hubConnection.start()
@@ -149,7 +155,7 @@ class TweetViewModel @Inject constructor(
          try {
             hubConnection.on(
                "newTweets",
-               { id, imageUrl, name ->
+               { id, imageUrl, _ ->
 
                   try {
                      job = CoroutineScope(coContextIO).launch {

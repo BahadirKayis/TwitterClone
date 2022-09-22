@@ -3,16 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:windowSoftInputMode="adjustPan"
     android:background="#F1F1F1">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottiAnimNetworkError"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/white"
         android:backgroundTint="@color/white"
         android:translationZ="90dp"
+
         android:visibility="gone"
-        android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -224,23 +226,29 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="16dp"
-
+                    android:layout_marginTop="5dp"
+                    android:textStyle="bold"
+                    android:text="#VALORANTChampions"
+                    android:textColor="@color/menu_tint"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/contentTextView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_marginBottom="16dp"
-
+                    android:textSize="15sp"
+                    android:text="Ev sahipliği yapmanın gururu, İstanbul'un simgelerinden biri olan Galata Kulesi'nde unutulmaz bir iz olarak kalacak! 👊"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/cardN"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/subjectTextView" />
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/cardN"
                     android:layout_width="75dp"
                     android:layout_height="75dp"
                     android:layout_marginTop="8dp"
@@ -256,7 +264,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:scaleType="centerCrop"
-                        tools:src="@tools:sample/avatars" />
+                        android:src="@drawable/valo_tr" />
                 </androidx.cardview.widget.CardView>
             </androidx.constraintlayout.widget.ConstraintLayout>
 

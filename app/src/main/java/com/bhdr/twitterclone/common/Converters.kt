@@ -7,7 +7,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 class Converters {
-   //bu işlem biraz maliyetli olsada denemek istedim
+   //bu islem biraz maliyetli olsada denemek istedim
    @TypeConverter
    fun fromUser(user: UsersRoomModel): String {
       return Gson().toJson(user)

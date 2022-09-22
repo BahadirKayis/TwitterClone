@@ -2,6 +2,7 @@ package com.bhdr.twitterclone.ui.activity
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
@@ -31,7 +32,7 @@ class MainActivity : AppCompatActivity(), OpenMenu {
    private val viewModel: MainViewModel by viewModels()
    var itemsLayout: View? = null
    var signalRStart = false
-   var notification: Int = 0
+   var notification = 0
    override fun onCreate(savedInstanceState: Bundle?) {
 
       super.onCreate(savedInstanceState)
@@ -144,20 +145,20 @@ class MainActivity : AppCompatActivity(), OpenMenu {
          })
          notificationCount.observe(this@MainActivity) {
             when (it) {
-               true -> notification += 1
+               true -> {
+                  notification += 1;binding.notificationCount.visible(); binding.notificationCount.text =
+                     notification.toString()
+               }
 
-               else -> {}
-            }.apply {
-               if (notification > 0) {
-                  binding.notificationCount.visible()
+               else -> {
+                  Log.i("Return notiSignal", "false")
                }
             }
-
-            binding.notificationCount.text = notification.toString()
-
          }
 
+
       }
+
    }
 
    override fun onOptionsItemSelected(item: MenuItem): Boolean {

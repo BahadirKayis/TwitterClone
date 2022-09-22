@@ -13,7 +13,6 @@ interface LoginUpRepository {
       name: String,
       email: String,
       phone: String,
-      date: String?,
       imageName: String,
       selectedPicture: Uri?
    ): Boolean

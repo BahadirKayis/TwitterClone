@@ -72,12 +72,12 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
 
          mutableFollowNewTweet.observe(viewLifecycleOwner) {
             //SignalR dinliyor ve 2'den fazla tweet atılırsa clouddan tweetleri çekip tweetObserveden devam ediyor
-            Log.i("mutableFollowNewTweet", it.size.toString())
+            Log.i("mutableFollowNewTweetSize", it.toString())
 
             //Test için 1 tweet
             if (it!!.size >= 1) {
                viewModel.getTweets(requireContext().userId())
-               viewModel.mutableFollowNewTweet.value!!.clear()
+              // viewModel.mutableFollowNewTweet.value!!.clear()
                snackBar(requireView(), "Yeni Tweet Paylaşıldı", 2000)
             }
          }
@@ -128,12 +128,12 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen),
                   userPhoto1.gone()
                   userPhoto2.gone()
                   userPhoto3.gone()
-
+                  updateIcon.gone()
                   tweetsRoomConvertAndAdd(tweet!!)
                }
             }
             mutableFollowNewTweetHashMapL.observe(viewLifecycleOwner) {
-               if (it.size == 1) {
+               if (it!!.size == 1) {
                   Picasso.get().load(it.values.toTypedArray()[0]).into(userPhoto1)
                   seeNewTweet.visible()
                   userPhoto1.visible()

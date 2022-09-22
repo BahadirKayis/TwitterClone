@@ -7,7 +7,10 @@ import com.bhdr.twitterclone.domain.repository.LoginUpRepository
 import com.bhdr.twitterclone.domain.source.remote.login.RemoteDataSourceLogin
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class LoginUpRepositoryImpl(
@@ -33,7 +36,6 @@ class LoginUpRepositoryImpl(
       name: String,
       email: String,
       phone: String,
-      date: String?,
       imageName: String,
       selectedPicture: Uri?
    ): Boolean {
@@ -47,8 +49,7 @@ class LoginUpRepositoryImpl(
          uploadedPictureReference.downloadUrl.addOnSuccessListener { uri ->
             val profilePictureUrl = uri.toString()
 
-
-            runBlocking {
+            CoroutineScope(Dispatchers.IO).launch {
                val signUp = remoteSource.createUser(
                   userName,
                   password,
@@ -56,9 +57,7 @@ class LoginUpRepositoryImpl(
                   email,
                   phone,
                   profilePictureUrl,
-                  date = date
                )
-
                if (signUp.isSuccessful) {
 
 
@@ -79,7 +78,8 @@ class LoginUpRepositoryImpl(
 
          }
       }
-      return isSaved
+      delay(5000)
+      return true
    }
 
    override fun deleteImage(filename: String) {//apiden false döndüğünde firebase yüklenen fotoğrafı siliyorum

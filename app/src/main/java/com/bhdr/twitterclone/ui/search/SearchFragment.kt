@@ -22,7 +22,7 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
 
    private val viewModel: SearchViewModel by viewModels()
    private val binding by viewBinding(FragmentSearchBinding::bind)
-   lateinit var dataFollow: MutableList<Users>
+
    private lateinit var myAdapter: WhoToFollowAdapter
    private lateinit var searchUserAdapter: SearchUserAdapter
    private var userProfileClickListener: OpenMenu? = null
@@ -78,11 +78,10 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
 
          followUser.observe(viewLifecycleOwner) {
             binding.whoToFollowRecyclerView.apply {
-               dataFollow = it as MutableList<Users>
 
                myAdapter = WhoToFollowAdapter(
-                  this@SearchFragment, dataFollow
-               ) { index -> deleteItem(index) }
+                  this@SearchFragment, it as MutableList<Users>
+               )
 
                adapter = myAdapter
             }
@@ -140,26 +139,6 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
 
    private fun autoCompleteTextViewItemSelect(userName: String) {
       binding.autoCompleteTextView.setText(userName)
-   }
-
-   private fun deleteItem(index: Int) {
-      if (::dataFollow.isInitialized && ::myAdapter.isInitialized) {
-
-         if (!viewModel.followedUser.hasObservers()) {
-            viewModel.followedUser.observe(viewLifecycleOwner) {
-               when (it) {
-                  true -> {
-                     dataFollow.removeAt(index)
-                     myAdapter.setItem(dataFollow, index)
-                  }
-                  false -> {
-                     snackBar(requireView(), "Bir hata oluştu lütfen tekrar deneyiniz", 1000)
-                  }
-               }
-            }
-         }
-
-      }
    }
 
    override fun followButtonsListener(followId: Int) {

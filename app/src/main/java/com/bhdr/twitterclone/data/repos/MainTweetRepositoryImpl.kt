@@ -96,7 +96,6 @@ class MainTweetRepositoryImpl(
                   FirebaseStorage.reference.child("tweetpictures").child(tweetImageName)
                uploadedPictureReference.downloadUrl.addOnSuccessListener { uri ->
                   val tweetPictureUrl = uri.toString()
-
                   runBlocking {
                      val addTweetResult =
                         remoteSource.addTweet(
@@ -109,7 +108,6 @@ class MainTweetRepositoryImpl(
                      } else if (!addTweetResult.isSuccessful) {
                         isTweetAdded = false
                      }
-                     Log.e("AddTweet-errorBody", addTweetResult.errorBody().toString())
                   }
 
                }
@@ -134,6 +132,7 @@ class MainTweetRepositoryImpl(
          isTweetAdded = false
          Log.e("RepositoryAdT-EX", e.toString())
       }
+      delay(4000)
       return isTweetAdded
    }
 
@@ -225,6 +224,7 @@ class MainTweetRepositoryImpl(
    }
 
    override suspend fun getBitmap(url: String): Bitmap {
+
       try {
          val loading = ImageLoader(application)
          val request = ImageRequest.Builder(application)
@@ -261,42 +261,42 @@ class MainTweetRepositoryImpl(
    override suspend fun isNewTweet(
       cloudTweet: List<Posts>,
       roomTweet: List<TweetsRoomModel>?
-   ): Pair<List<Posts>?, List<Posts>?> {
+   ): Triple<List<Posts>?, List<Posts>?, HashMap<Int, String>?> {
 
       val tweetRoomUpdateList: MutableList<Posts> = mutableListOf()
       val tweetCloudAddToRoomList: MutableList<Posts> = mutableListOf()
 
       try {
          if (roomTweet?.size == 0) {
-            return (cloudTweet to cloudTweet)
+            return Triple(cloudTweet, cloudTweet, null)
          } else {
             if (cloudTweet.isNotEmpty()) {
                if (roomTweet!!.size != cloudTweet.size) {
-                  roomTweet.forEach { itCloud ->
-                     val tweet: Posts? = cloudTweet.find { itRoom ->
-                        itCloud.id != itRoom.id
-                     }
-                     if (tweet != null) {
-                        hashMapFollowNewTweetHashMap[tweet.userId!!] =
-                           tweet.user?.photoUrl.toString()
-                        tweetCloudAddToRoomList.add(tweet)
 
-                     } else {
-                        tweetRoomUpdateList.add(cloudTweet[itCloud.id!!])
-                     }
+                  val roomTweetObjectIds = roomTweet.map { it.id }.toSet()
+                  val addTweet = cloudTweet.filter { !roomTweetObjectIds.contains(it.id) }
+                  val updateTweet = cloudTweet.filter { roomTweetObjectIds.contains(it.id) }
+
+                  addTweet.forEach {
+                     hashMapFollowNewTweetHashMap[it.userId!!] =
+                        it.user?.photoUrl.toString()
+                     tweetCloudAddToRoomList.add(it)
                   }
-                  return (tweetCloudAddToRoomList to tweetRoomUpdateList)
-                  // newTweetButton(tweetCloudAddToRoomList, tweetRoomUpdateList)
+                  updateTweet.forEach { tweetRoomUpdateList.add(it) }
+                  return Triple(
+                     tweetCloudAddToRoomList,
+                     tweetRoomUpdateList,
+                     hashMapFollowNewTweetHashMap
+                  )
                } else {
-                  return (null to tweetRoomUpdateList)
-                  //  newTweetButton(null, cloudTweet)
+                  return Triple(null, tweetRoomUpdateList, null)
                }
             }
          }
       } catch (e: Exception) {
          Log.e("isNewTweet-Ex", e.toString())
       }
-      return (null to null)
+      return Triple(null, null, hashMapFollowNewTweetHashMap)
    }
 
 
@@ -310,7 +310,7 @@ class MainTweetRepositoryImpl(
    }
 
 
-   override fun signalRControl(
+   override suspend fun signalRControl(
       id: Int,
       imageUrl: String
    ): HashMap<Int, String> {
@@ -325,6 +325,7 @@ class MainTweetRepositoryImpl(
                   if (userId != null) {
                      hashMapFollowNewTweetHashMap[id] = imageUrl
                      //mutableFollowNewTweetSignalR.value = hashMapFollowNewTweetHashMap
+                     Log.e("TAG1", hashMapFollowNewTweetHashMap.size.toString())
                   }
                }
             }
@@ -332,6 +333,7 @@ class MainTweetRepositoryImpl(
       } catch (e: Exception) {
          Log.e("signalRControl-Ex", e.toString())
       }
+delay(200)
       return hashMapFollowNewTweetHashMap
    }
 

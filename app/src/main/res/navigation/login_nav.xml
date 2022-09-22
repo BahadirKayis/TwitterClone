@@ -81,6 +81,9 @@
         <argument
             android:name="userId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_signInForgetPasswordSecondFragment_to_logInFragment"
+            app:destination="@id/logInFragment" />
     </fragment>
     <include app:graph="@navigation/main_nav" />
     <fragment

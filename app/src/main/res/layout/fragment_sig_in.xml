@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingStart="15dp"
     android:paddingEnd="15dp"
     tools:context=".ui.signin.SignInFragment">
-
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottiAnim"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:backgroundTint="@color/white"
+android:translationZ="90dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        android:visibility="gone"
+        app:lottie_rawRes="@raw/twitter_loading" />
     <ImageView
         android:id="@+id/cancel"
         android:layout_width="20dp"
@@ -15,10 +28,10 @@
 
         android:src="@drawable/cancel"
 
-       app:layout_constraintStart_toStartOf="parent"
-     app:layout_constraintTop_toTopOf="@id/twitterLogo"
         app:layout_constraintBottom_toBottomOf="@id/twitterLogo"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/twitterLogo" />
+
     <ImageView
         android:id="@+id/twitterLogo"
         android:layout_width="30dp"
@@ -28,6 +41,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/textViewInfo"
         android:layout_width="match_parent"
@@ -40,6 +54,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/twitterLogo" />
+
     <EditText
         android:id="@+id/emailphonenicknameEditText"
         android:layout_width="match_parent"
@@ -49,8 +64,8 @@
         android:fontFamily="@font/roboto"
         android:hint="Telefon numarası, e-posta veya kullanıcı adı"
         android:inputType="textPersonName"
-        android:minHeight="48dp"
         android:maxLength="15"
+        android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewInfo" />

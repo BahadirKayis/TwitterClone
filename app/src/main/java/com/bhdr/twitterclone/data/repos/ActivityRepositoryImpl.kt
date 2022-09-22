@@ -1,7 +1,9 @@
 package com.bhdr.twitterclone.data.repos
 
+import android.app.Application
 import android.util.Log
 import com.bhdr.twitterclone.common.toLongDate
+import com.bhdr.twitterclone.common.userId
 import com.bhdr.twitterclone.data.model.locale.NotificationsDataItem
 import com.bhdr.twitterclone.data.model.locale.TweetsRoomModel
 import com.bhdr.twitterclone.data.model.locale.UsersRoomModel
@@ -15,7 +17,8 @@ import javax.inject.Named
 class ActivityRepositoryImpl(
    private val localDataSource: LocalDataSource,
    private val remoteSourceMain: RemoteDataSourceMain,
-   @Named("IO") private val coContextIO: CoroutineDispatcher
+   @Named("IO") private val coContextIO: CoroutineDispatcher,
+   private val application: Application
 ) : ActivityRepository {
 
    private var followedUserIdList: List<Int>? = null
@@ -83,7 +86,7 @@ class ActivityRepositoryImpl(
       postId: Int,
       post: Posts?
    ): Boolean {
-      var notificationCount = false
+      var notificationCount = true
       try {
          job = CoroutineScope(coContextIO).launch {
             CoroutineScope(Dispatchers.Main).launch {
@@ -92,7 +95,7 @@ class ActivityRepositoryImpl(
                   post.user = rep.body()
                   //Like tweeti beğinilmiş modele atılacak
                   //tweet önceden locale kayıtlı ise tekrar kayıt etmeyecek
-                  if (!isTweet(postId)) {
+                  if (!isTweet(id, post.id!!)) {
                      saveNotificationLike(
                         NotificationsDataItem.NotificationLike(
                            null,
@@ -104,13 +107,16 @@ class ActivityRepositoryImpl(
                            tweetsRoomConvertAndAdd(post)
                         )
                      )
+                  } else {
+                     notificationCount = false
                   }
-                  notificationCount = true
+
 
                } else {
                   //NewTweet follow & not follow
                   val haveId = followedUserIdList?.find { it == id }
-                  if (haveId == null) {
+
+                  if (haveId == null && application.userId() != id) {
                      //Takipe etmiyor bildirim ekranında gösterilecek modelde olacak
                      val getPost: Posts = tweetNew(postId)
 
@@ -126,7 +132,9 @@ class ActivityRepositoryImpl(
                         )
                      )
 
-                     notificationCount = true
+
+                  } else {
+                     notificationCount = false
                   }
                }
             }
@@ -134,6 +142,7 @@ class ActivityRepositoryImpl(
       } catch (e: Exception) {
          Log.e("signalRControlEx", e.toString())
       }
+delay(1000)
       return notificationCount
    }
 
@@ -150,6 +159,12 @@ class ActivityRepositoryImpl(
    private suspend fun saveNotificationLike(it: NotificationsDataItem.NotificationLike) =
       localDataSource.addNotificationLike(it)
 
-   private suspend fun isTweet(tweetId: Int): Boolean =
-      localDataSource.isTweetQuery(tweetId) != null
+   private suspend fun isTweet(userId: Int, tweetId: Int): Boolean {
+      val list = localDataSource.isTweetQuery(userId)
+      if (list != null) {
+         val roomTweetObjectIds = list.map { it.tweet!!.id }.toSet()
+         return roomTweetObjectIds.contains(tweetId)
+      }
+      return false
+   }
 }

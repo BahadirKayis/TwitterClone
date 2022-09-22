@@ -20,7 +20,6 @@ class NotificationsAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
    private var userFollow: List<Int> = emptyList()
    private var notificationList: List<Any> = emptyList()
-   private var context: Context? = null
 
    inner class LikeViewHolder(private val likeBinding: NotificationRecylerviewScreenLikeBinding) :
       RecyclerView.ViewHolder(likeBinding.root) {
@@ -42,16 +41,16 @@ class NotificationsAdapter(
                      if (tweetImage!!.contains("video")) {
                         //Firebase boyutu bitmesin diye
                         //setup
-//                        exoPlayer = ExoPlayer.Builder(likeBinding.root.context).build()
-//                        exoPlayer?.playWhenReady = false
-//                        playerView.player = exoPlayer
-//                        //file
-//                        val mediaItem =
-//                           MediaItem.fromUri(tweetImage.toString())
-//                        exoPlayer?.addMediaItem(mediaItem)
-//
-//                        exoPlayer?.playWhenReady = playWhenReady
-//                        exoPlayer?.prepare()
+                        exoPlayer = ExoPlayer.Builder(likeBinding.root.context).build()
+                        exoPlayer?.playWhenReady = false
+                        playerView.player = exoPlayer
+                        //file
+                        val mediaItem =
+                           MediaItem.fromUri(tweetImage.toString())
+                        exoPlayer?.addMediaItem(mediaItem)
+
+                        exoPlayer?.playWhenReady = playWhenReady
+                        exoPlayer?.prepare()
                         playerView.visible()
                         likeBinding.tweetImage.gone()
                      } else {
@@ -109,6 +108,7 @@ class NotificationsAdapter(
 
                followUserButton.setOnClickListener {
                   clickedUserFollow.followButtonsListener(id!!)
+                  followUserButton.gone()
                }
 
                profilePicture.picasso(imageUrl.toString())
@@ -149,16 +149,16 @@ class NotificationsAdapter(
                      if (tweetImage!!.contains("video")) {
                         //Firebase boyutu bitmesin diye
                         //setup
-//                        exoPlayer = ExoPlayer.Builder(tweetBinding.root.context!!).build()
-//                        exoPlayer?.playWhenReady = false
-//                        playerView.player = exoPlayer
-//                        //file
-//                        val mediaItem =
-//                           MediaItem.fromUri(tweetImage.toString())
-//                        exoPlayer?.addMediaItem(mediaItem)
-//
-//                        exoPlayer?.playWhenReady = playWhenReady
-//                        exoPlayer?.prepare()
+                        exoPlayer = ExoPlayer.Builder(tweetBinding.root.context!!).build()
+                        exoPlayer?.playWhenReady = false
+                        playerView.player = exoPlayer
+                        //file
+                        val mediaItem =
+                           MediaItem.fromUri(tweetImage.toString())
+                        exoPlayer?.addMediaItem(mediaItem)
+
+                        exoPlayer?.playWhenReady = playWhenReady
+                        exoPlayer?.prepare()
                         playerView.visible()
                         tweetBinding.tweetImage.gone()
                      } else {
@@ -198,7 +198,7 @@ class NotificationsAdapter(
    }
 
    private var exoPlayer: ExoPlayer? = null
-   private var playbackPosition = 0L
+
    private var playWhenReady = false
    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
       when (holder) {

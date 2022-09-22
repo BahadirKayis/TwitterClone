@@ -11,7 +11,6 @@ interface RemoteDataSourceLogin {
       email: String,
       phone: String,
       photoUrl: String,
-      date: String?
    ): Response<Boolean>
 
 

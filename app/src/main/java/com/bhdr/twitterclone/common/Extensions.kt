@@ -20,7 +20,7 @@ import java.util.*
 import kotlin.time.Duration.Companion.seconds
 
 lateinit var shared: SharedPreferences
-val hubConnection = HubConnectionBuilder.create("http://192.168.3.151:9009/newTweetHub").build()!!
+
 var toStartSignalRTweet = false
 fun Context.userId(): Int {
    shared = getSharedPreferences("com.bhdr.twitterclone", MODE_PRIVATE)
@@ -61,10 +61,10 @@ fun ImageView.picasso(url: String) {
 
 
 fun Context.checkNetworkConnection(): Boolean {
-   var result = false
+
    val cm = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-   result = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+  val result = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       val capabilities = cm.getNetworkCapabilities(cm.activeNetwork)
       (capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
    } else {

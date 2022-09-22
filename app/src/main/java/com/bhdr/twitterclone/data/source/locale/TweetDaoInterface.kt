@@ -41,6 +41,6 @@ interface TweetDaoInterface {
    suspend fun notificationDeleteTweet()
 
    @Query("SELECT * FROM notificationLike WHERE id=:tweetId")
-   suspend fun isTweetQuery(tweetId: Int): NotificationsDataItem.NotificationLike?
+   suspend fun isTweetQuery(tweetId: Int): List<NotificationsDataItem.NotificationLike>?
 
 }

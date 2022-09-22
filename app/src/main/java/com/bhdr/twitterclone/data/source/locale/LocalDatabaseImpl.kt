@@ -33,5 +33,5 @@ class LocalDatabaseImpl @Inject constructor(private val localDatabase: TweetDaoI
 
    override suspend fun notificationDeleteLike() = localDatabase.notificationDeleteTweet()
    override suspend fun notificationDeleteTweet() = localDatabase.notificationDeleteTweet()
-   override suspend fun isTweetQuery(tweetId: Int): NotificationsDataItem.NotificationLike? = localDatabase.isTweetQuery(tweetId)
+   override suspend fun isTweetQuery(tweetId: Int): List<NotificationsDataItem.NotificationLike>? = localDatabase.isTweetQuery(tweetId)
 }

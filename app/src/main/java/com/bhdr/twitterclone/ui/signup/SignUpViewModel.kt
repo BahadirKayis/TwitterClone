@@ -15,7 +15,7 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(private var loginRepo: LoginUpRepository) :
    ViewModel() {
 
- private  var userSavedM = MutableLiveData<Boolean>()
+   private var userSavedM = MutableLiveData<Boolean>()
    val userSaved: LiveData<Boolean> = userSavedM
 
 
@@ -28,25 +28,27 @@ class SignUpViewModel @Inject constructor(private var loginRepo: LoginUpReposito
       name: String,
       email: String,
       phone: String,
-      date: String?,
       imageName: String,
       selectedPicture: Uri?
    ) {
       viewModelScope.launch {
          userSavedStatusM.value = Status.LOADING
-         userSavedM.value = loginRepo.signUP(
+         loginRepo.signUP(
             userName,
             password,
             name,
             email,
             phone,
-            date,
             imageName,
             selectedPicture
-         ).also {
+         ).let {
             when (it) {
-               true -> userSavedStatusM.value = Status.DONE
+
+               true -> {
+                  userSavedStatusM.value = Status.DONE; userSavedM.value = it
+               }
                false -> userSavedStatusM.value = Status.ERROR
+
             }
          }
 

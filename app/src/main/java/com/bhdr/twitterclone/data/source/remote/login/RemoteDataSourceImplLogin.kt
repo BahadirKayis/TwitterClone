@@ -13,9 +13,8 @@ class RemoteDataSourceImplLogin constructor(private val tweetInterFace: TweetRem
       email: String,
       phone: String,
       photoUrl: String,
-      date: String?
    ): Response<Boolean> =
-      tweetInterFace.createUser(userName, password, name, email, phone, photoUrl, date)
+      tweetInterFace.createUser(userName, password, name, email, phone, photoUrl)
 
    override suspend fun signIn(userName: String): Response<Users> = tweetInterFace.signIn(userName)
 
@@ -28,7 +27,7 @@ class RemoteDataSourceImplLogin constructor(private val tweetInterFace: TweetRem
       tweetInterFace.getForgetChangePassword(userId, password)
 
    override suspend fun getForgetPassword(userName: String): Response<Int> =
-      getForgetPassword(userName)
+      tweetInterFace.getForgetPassword(userName)
 
 
 }
