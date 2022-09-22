@@ -21,13 +21,13 @@
 
 ## Screens
 
-| Splash | First Page| Sign In |
+| Splash | First Page| Sign Up |
 | ------ | ---- | ------ |
 |<img src="https://github.com/BahadirKayis/TwitterClone/blob/master/screenshots/gif/splashgif.gif" width="225" height="500"/>|<img src="https://github.com/BahadirKayis/TwitterClone/blob/master/screenshots/firstpage.png" width="225" height="500"/>|<img src="https://github.com/BahadirKayis/TwitterClone/blob/master/screenshots/creatUser.png" height="500"/>|
 
 </br>
 
-| Sign Up | Sign Up | Forget Password |
+| Sign In | Sign In | Forget Password |
 | ------ | ------ | ------- |
 |<img src="https://github.com/BahadirKayis/TwitterClone/blob/master/screenshots/signin.png" width="225" height="500"/>|<img src="https://github.com/BahadirKayis/TwitterClone/blob/master/screenshots/signsecond.png" width="225" height="500"/>|<img src="https://github.com/BahadirKayis/TwitterClone/blob/master/screenshots/forgetpassword.png" height="500"/>|
 
