@@ -17,15 +17,15 @@ class SignInViewModel @Inject constructor(private val loginRepo: LoginUpReposito
    private var userModelM = MutableLiveData<Users>()
    val userModel: LiveData<Users> = userModelM
 
-   private var status = MutableLiveData<Status>()
-   val statusL: LiveData<Status> = status
+   private var statusM = MutableLiveData<Status>()
+   val statusL: LiveData<Status> = statusM
 
    fun getUserSigIn(userName: String) {
       viewModelScope.launch {
-         status.value = Status.LOADING
+         statusM.value = Status.LOADING
          loginRepo.signIn(userName).let {
             userModelM.value = it
-            status.value = Status.DONE
+            statusM.value = Status.DONE
          }
       }
    }

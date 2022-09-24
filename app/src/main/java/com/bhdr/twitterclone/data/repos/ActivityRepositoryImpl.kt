@@ -18,7 +18,7 @@ import javax.inject.Named
 class ActivityRepositoryImpl(
    private val localDataSource: LocalDataSource,
    private val remoteSourceMain: RemoteDataSourceMain,
-   @Named("IO") private val coContextIO: CoroutineDispatcher,
+   private val coContextIO: CoroutineDispatcher,
    private val application: Application
 ) : ActivityRepository {
 
@@ -86,7 +86,7 @@ class ActivityRepositoryImpl(
    ) {
       try {
          job = CoroutineScope(coContextIO).launch {
-            CoroutineScope(Dispatchers.Main).launch {
+
                if (id == 0) {
                   val rep = remoteSourceMain.getUser(post?.userId!!)
                   post.user = rep.body()
@@ -129,7 +129,7 @@ class ActivityRepositoryImpl(
                      result(true)
                   }
                }
-            }
+
          }
       } catch (e: Exception) {
          Log.e("signalRControlEx", e.toString())

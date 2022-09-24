@@ -39,7 +39,6 @@ class MainViewModel @Inject constructor(
       get() = roomDeleteM
 
 
-
    fun followCount(userId: Int) {
       viewModelScope.launch {
          followCountM.value = activityRepositoryImpl.followCount(userId)
@@ -90,7 +89,7 @@ class MainViewModel @Inject constructor(
                            name,
                            post.toInt(),
                            null
-                        ) { notificationCountM.value = it }
+                        ) { notificationCountM.postValue(it) }
                      }
 
                   } catch (e: Throwable) {
@@ -120,7 +119,7 @@ class MainViewModel @Inject constructor(
                      name,
                      0,
                      post
-                  ) { notificationCountM.value = it }
+                  ) { notificationCountM.postValue(it) }
 
                }
             }, String::class.java,

@@ -23,14 +23,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.File
-import javax.inject.Named
 
 
 class MainTweetRepositoryImpl(
    private val localSource: LocalDataSource,
    private val application: Application,
    private val remoteSource: RemoteDataSourceMain,
-   @Named("Main") private val coContextIO: CoroutineDispatcher,
+   private val coContextIO: CoroutineDispatcher,
    private val FirebaseStorage: FirebaseStorage
 ) : TweetRepository {
 
@@ -226,38 +225,60 @@ class MainTweetRepositoryImpl(
    override suspend fun isNewTweet(
       cloudTweet: List<Posts>,
       roomTweet: List<TweetsRoomModel>?
-   ): Pair<List<Posts>, List<Posts>?> {
+   ): Triple<List<Posts>?, List<Posts>?, HashMap<Int, String>?> {
 
       val tweetRoomUpdateList: MutableList<Posts> = mutableListOf()
       val tweetCloudAddToRoomList: MutableList<Posts> = mutableListOf()
 
       try {
-         if (roomTweet == null || roomTweet.isEmpty()) {
-            Log.e("roomTweetif", "")
-            return cloudTweet to null
+         if (roomTweet?.size == 0) {
+
+            return Triple(cloudTweet, cloudTweet, null)
          } else {
             if (cloudTweet.isNotEmpty()) {
-               if (roomTweet.size != cloudTweet.size) {
+               if (roomTweet!!.size != cloudTweet.size) {
+                  roomTweet.forEach { itCloud ->
+                     val tweet: Posts? = cloudTweet.find { itRoom ->
+                        itCloud.id != itRoom.id
+                     }
+                     if (tweet != null) {
+                        followNewTweet[tweet.userId!!] =
+                           tweet.user?.photoUrl.toString()
+                        tweetCloudAddToRoomList.add(tweet)
 
-                  val roomTweetObjectIds = roomTweet.map { it.id }.toSet()
-                  val addTweet = cloudTweet.filter { !roomTweetObjectIds.contains(it.id) }
-                  val updateTweet = cloudTweet.filter { roomTweetObjectIds.contains(it.id) }
+                     } else {
+                        tweetRoomUpdateList.add(cloudTweet[itCloud.id!!])
+                     }
+                     val roomTweetObjectIds = roomTweet.map { it.id }.toSet()
+                     val addTweet = cloudTweet.filter { !roomTweetObjectIds.contains(it.id) }
+                     val updateTweet = cloudTweet.filter { roomTweetObjectIds.contains(it.id) }
 
-                  addTweet.forEach {
-                     followNewTweet[it.userId!!] =
-                        it.user?.photoUrl.toString()
-                     tweetCloudAddToRoomList.add(it)
+                     addTweet.forEach {
+                        followNewTweet[it.userId!!] =
+                           it.user?.photoUrl.toString()
+                        tweetCloudAddToRoomList.add(it)
+                     }
+                     // newTweetButton(tweetCloudAddToRoomList, tweetRoomUpdateList)
+                     updateTweet.forEach { tweetRoomUpdateList.add(it) }
+                     return Triple(
+                        tweetCloudAddToRoomList,
+                        tweetRoomUpdateList,
+                        followNewTweet
+                     )
                   }
-                  updateTweet.forEach { tweetRoomUpdateList.add(it) }
-                  followNewTweetM.value = followNewTweet
-
                }
+            } else {
+               //  newTweetButton(null, cloudTweet)
+               return Triple(null, tweetRoomUpdateList, null)
             }
          }
       } catch (e: Exception) {
          Log.e("isNewTweet-Ex", e.toString())
       }
-      return tweetCloudAddToRoomList to tweetRoomUpdateList
+
+      return Triple(null, null, followNewTweet)
+
+
    }
 
 
@@ -277,12 +298,14 @@ class MainTweetRepositoryImpl(
       try {
          if (id != 0) {
             //NewTweet follow
+
             job = CoroutineScope(coContextIO).launch {
 
                val userId = followedUserIdList?.find { it == id }
                if (userId != null) {
-                  followNewTweet[id] = imageUrl
-                  followNewTweetM.value = followNewTweet
+                  followNewTweet[userId] = imageUrl
+                  followNewTweetM.postValue(followNewTweet)
+
                }
             }
          }

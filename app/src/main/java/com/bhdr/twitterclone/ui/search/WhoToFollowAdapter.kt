@@ -27,6 +27,9 @@ class WhoToFollowAdapter(
             itemDelete(position)
             clickedUserFollow.followButtonsListener(user.id!!)
          }
+         imageView5.setOnClickListener {
+            itemDelete(position)
+         }
          "@${user.userName}".also { idText.text = it }
       }
    }

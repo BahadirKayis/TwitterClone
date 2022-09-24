@@ -9,6 +9,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Named
 
@@ -16,10 +17,9 @@ import javax.inject.Named
 class LoginUpRepositoryImpl(
    private val remoteSource: RemoteDataSourceLogin,
    private val FirebaseStorage: FirebaseStorage,
-   @Named("IO") private val coContextIO: CoroutineDispatcher
+    private val coContextIO: CoroutineDispatcher
 ) :
    LoginUpRepository {
-
 
 
    override suspend fun userForgetId(userName: String): Int? =
@@ -31,7 +31,7 @@ class LoginUpRepositoryImpl(
 
    override suspend fun signIn(userName: String): Users? = remoteSource.signIn(userName).body()
 
-
+   private var job: Job? = null
    override suspend fun signUP(
       userName: String,
       password: String,
@@ -50,7 +50,7 @@ class LoginUpRepositoryImpl(
          uploadedPictureReference.downloadUrl.addOnSuccessListener { uri ->
             val profilePictureUrl = uri.toString()
 
-            CoroutineScope(coContextIO).launch {
+            job = CoroutineScope(coContextIO).launch {
                val signUp = remoteSource.createUser(
                   userName,
                   password,

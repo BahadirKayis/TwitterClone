@@ -120,7 +120,7 @@ class SearchFragment : Fragment(R.layout.fragment_search), WhoToFollowAdapter.Cl
          autoCompleteTextView.setAdapter(searchUserAdapter)
 
          //Cloud Filter
-         autoCompleteTextView.doOnTextChanged { text, start, before, count ->
+         autoCompleteTextView.doOnTextChanged { text, _, _, _ ->
             if (requireContext().checkNetworkConnection()) {
                viewModel.searchUser(
                   text.toString()

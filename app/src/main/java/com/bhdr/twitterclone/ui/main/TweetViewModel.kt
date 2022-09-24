@@ -15,7 +15,10 @@ import com.bhdr.twitterclone.data.model.remote.Posts
 import com.bhdr.twitterclone.domain.repository.TweetRepository
 import com.microsoft.signalr.HubConnectionState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -56,17 +59,19 @@ class TweetViewModel @Inject constructor(
          if (application.checkNetworkConnection()) {
             if (!toStartSignalRTweet) {
                toStartSignalRTweet = true
-               delay(5000)
                tweetSignalR()
             }
          }
 
       }
 
-
    }
 
-   val followNewTweetList: LiveData<HashMap<Int, String>>
+   private var mutableFollowNewTweetHashMapM = MutableLiveData<HashMap<Int, String>?>()
+   val followNewTweetList: LiveData<HashMap<Int, String>?>
+      get() = mutableFollowNewTweetHashMapM
+
+   val followNewTweetListSignalR: LiveData<HashMap<Int, String>>
       get() = tweetRepositoryImpl.hashMapNewTweet()
 
    fun getTweets(id: Int) {
@@ -79,7 +84,7 @@ class TweetViewModel @Inject constructor(
    private fun isNewTweet(cloudTweet: List<Posts>, roomTweet: List<TweetsRoomModel>?) {
       viewModelScope.launch {
          tweetRepositoryImpl.isNewTweet(cloudTweet, roomTweet)
-            .let { triple -> newTweetButton(triple.first, triple.second) }
+            .let { triple -> newTweetButton(triple.first, triple.second, triple.third) }
 
       }
    }
@@ -87,29 +92,28 @@ class TweetViewModel @Inject constructor(
    private suspend fun newTweetButton(
       addTweet: List<Posts>?,
       updateTweet: List<Posts>?,
+      newTweetButton: HashMap<Int, String>?
    ) {
       try {
-         Log.e("sss", "")
-         if (updateTweet != null && updateTweet.isNotEmpty()) {
-            Log.e("updateTweet", "")
+         if (updateTweet != null) {
+
             tweetsUpdate(updateTweet)
          }
-         if (tweetRepositoryImpl.hashMapNewTweet().value?.size != null) {
-            Log.e("tweetRepositoryImpl", "")
-            tweetsM.value = addTweet
 
+         if (newTweetButton != null) {
+
+            mutableFollowNewTweetHashMapM.value = newTweetButton
+            tweetsM.value = addTweet
          } else {
-            if (addTweet != null && addTweet.isNotEmpty()) {
-               Log.e("addTweet", "")
+            if (addTweet != null) {
                tweetsRoomConvertAndAdd(addTweet)
             }
          }
-
       } catch (e: Exception) {
-
          Log.e("newTweetButton-Ex", e.toString())
       }
    }
+
 
    private suspend fun tweetsUpdate(tweets: List<Posts>) {
       allRoomTweetsM.value = tweetRepositoryImpl.tweetsUpdate(tweets)
@@ -156,13 +160,9 @@ class TweetViewModel @Inject constructor(
 
                   try {
                      job = CoroutineScope(coContextIO).launch {
-                        CoroutineScope(Dispatchers.Main).launch {
 
-                           tweetRepositoryImpl.signalRControl(
-                              id.toInt(),
-                              imageUrl,
-                           )
-                        }
+
+                        tweetRepositoryImpl.signalRControl(id.toInt(), imageUrl)
                      }
 
                   } catch (e: Throwable) {

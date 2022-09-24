@@ -32,7 +32,7 @@ object RepositoryModule {
       tweetDao: LocalDataSource,
       app: Application,
       remoteSource: RemoteDataSourceMain,
-      @Named("Main") coContextIO: CoroutineDispatcher,
+      @Named("IO") coContextIO: CoroutineDispatcher,
       firebaseStorage: FirebaseStorage
 
    ): TweetRepository =

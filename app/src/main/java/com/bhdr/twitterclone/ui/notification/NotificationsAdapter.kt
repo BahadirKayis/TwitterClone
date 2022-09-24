@@ -4,18 +4,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bhdr.twitterclone.common.*
 import com.bhdr.twitterclone.data.model.locale.NotificationsDataItem
 import com.bhdr.twitterclone.databinding.NotificationRecylerviewScreenLikeBinding
 import com.bhdr.twitterclone.databinding.NotificationRecylerviewScreenTweetBinding
-import com.google.android.exoplayer2.ExoPlayer
 
 
 class NotificationsAdapter(
    private val clickedUserFollow: ClickedUserFollow
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
    private var userFollow: List<Int> = emptyList()
    private var notificationList: List<Any> = emptyList()
 
@@ -25,18 +24,23 @@ class NotificationsAdapter(
       fun bind(item: NotificationsDataItem.NotificationLike) {
          with(likeBinding) {
             with(item) {
-               profilePictureLiked.picasso(imageUrl.toString())
+               try {
 
-               nameTextLiked.text = name
 
-               "@$userName".also { usernameTextLiked.text = it }
+                  profilePictureLiked.picasso(imageUrl.toString())
 
-               "tweetini ${date!!.toLong().toCalendar()} beğendi".also { timeTextLiked.text = it }
+                  nameTextLiked.text = name
 
-               with(tweet) {
+                  "@$userName".also { usernameTextLiked.text = it }
 
-                  if (this!!.tweetImage != null) {
-                     if (tweetImage!!.contains("video")) {
+                  "tweetini ${date!!.toLong().toCalendar()} beğendi".also {
+                     timeTextLiked.text = it
+                  }
+
+                  with(tweet) {
+
+                     if (this!!.tweetImage != null) {
+                        if (tweetImage!!.contains("video")) {
 //                      //Firebase veri kullanımını azaltmak için kapalı
 //                        //setup
 //                        exoPlayer = ExoPlayer.Builder(likeBinding.root.context).build()
@@ -49,41 +53,45 @@ class NotificationsAdapter(
 //
 //                        exoPlayer?.playWhenReady = playWhenReady
 //                        exoPlayer?.prepare()
-                        playerView.visible()
-                        likeBinding.tweetImage.gone()
+                           playerView.visible()
+                           likeBinding.tweetImage.gone()
+                        } else {
+                           playerView.gone()
+                           likeBinding.tweetImage.visible()
+                           likeBinding.tweetImage.picasso(tweetImage.toString())
+                        }
+
+                     }
+
+                     tweetText.text = postContent
+                     if (postContent?.contains("#") == true) {
+
+                        tweetText.setSpannableFactory(spannableFactory())
+
+                        tweetText.setText(
+                           postContent.replace("-n", "\n"),
+                           TextView.BufferType.SPANNABLE
+                        )
                      } else {
-                        playerView.gone()
-                        likeBinding.tweetImage.visible()
-                        likeBinding.tweetImage.picasso(tweetImage.toString())
+                        tweetText.text = postContent!!.replace("-n", "\n")
+                     }
+                     with(user!!) {
+
+                        profilePicture.picasso(photo)
+                        nameText.text = name
+                        "@$userName".also {
+                           usernameText.text = it
+                        }
+                        timeText.text = date!!.toLong().toCalendar()
+
                      }
 
                   }
-
-                  tweetText.text = postContent
-                  if (postContent?.contains("#") == true) {
-
-                     tweetText.setSpannableFactory(spannableFactory())
-
-                     tweetText.setText(
-                        postContent.replace("-n", "\n"),
-                        TextView.BufferType.SPANNABLE
-                     )
-                  } else {
-                     tweetText.text = postContent!!.replace("-n", "\n")
-                  }
-                  with(user!!) {
-
-                     profilePicture.picasso(photo)
-                     nameText.text = name
-                     "@$userName".also {
-                        usernameText.text =it
-                     }
-                     timeText.text = date!!.toLong().toCalendar()
-
-                  }
-
+               } catch (e: Exception) {
+                  Log.e("LikeViewHolder", "$e")
                }
             }
+
          }
       }
    }
@@ -94,10 +102,11 @@ class NotificationsAdapter(
          with(tweetBinding) {
             with(item) {
 
-               userFollow.find { it == id }.let {
+               val userFollow = userFollow.find { it == id }
+
+               if (userFollow != null) {
                   followUserButton.gone()
                }
-
                followUserButton.setOnClickListener {
                   clickedUserFollow.followButtonsListener(id!!)
                   followUserButton.gone()
@@ -108,7 +117,7 @@ class NotificationsAdapter(
                nameText.text = name
 
                "@$userName".also {
-                  usernameText.text =it
+                  usernameText.text = it
                }
 
                timeText.text = date!!.toLong().toCalendar()
@@ -166,9 +175,7 @@ class NotificationsAdapter(
       return when (viewType) {
          Database.TYPE_LIKE.viewType -> LikeViewHolder(
             NotificationRecylerviewScreenLikeBinding.inflate(
-               LayoutInflater.from(
-                  parent.context
-               ), parent, false
+               LayoutInflater.from(parent.context), parent, false
             )
          )
          Database.TYPE_TWEET.viewType -> TweetViewHolder(
@@ -183,12 +190,16 @@ class NotificationsAdapter(
       }
    }
 
-   private var exoPlayer: ExoPlayer? = null
-   private var playWhenReady = false
+   //   private var exoPlayer: ExoPlayer? = null
+//   private var playWhenReady = false
    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
       when (holder) {
-         is TweetViewHolder -> holder.bind(notificationList[position] as NotificationsDataItem.NotificationTweet)
-         is LikeViewHolder -> holder.bind(notificationList[position] as NotificationsDataItem.NotificationLike)
+         is TweetViewHolder ->
+            holder.bind(notificationList[position] as NotificationsDataItem.NotificationTweet)
+         is LikeViewHolder ->
+            holder.bind(notificationList[position] as NotificationsDataItem.NotificationLike)
+
       }
    }
 
@@ -204,21 +215,13 @@ class NotificationsAdapter(
 
 
    fun setUserFollowUpdate(newList: List<Int>) {
-      try {
-         val diffUtil = SetUserFollowCallBack(newList, userFollow)
-         val diffResults = DiffUtil.calculateDiff(diffUtil)
-         userFollow = newList
-         diffResults.dispatchUpdatesTo(this)
-      } catch (e: IndexOutOfBoundsException) {
-         Log.e("setUserFollow-Ex", e.toString())
-      }
-
+      userFollow = newList
+      notifyDataSetChanged()
    }
 
    fun setUserFollowItemsUpdate(newList: List<Any>) {
       notificationList = newList
       notifyDataSetChanged()
-
    }
 
    interface ClickedUserFollow {

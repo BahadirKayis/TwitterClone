@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bhdr.twitterclone.domain.repository.LoginUpRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,7 +37,7 @@ class SignUpViewModel @Inject constructor(private var loginRepo: LoginUpReposito
             imageName,
             selectedPicture
          ) {
-            mss.value = it
+               mss.postValue(it)
          }
       }
 

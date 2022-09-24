@@ -15,25 +15,21 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(private val searchRepositoryImpl: SearchRepository) :
    ViewModel() {
 
-   var statusM = MutableLiveData<Status>()
+   private var statusM = MutableLiveData<Status>()
    val status: LiveData<Status>
       get() = statusM
 
-   var followUserM = MutableLiveData<List<Users>>()
+   private var followUserM = MutableLiveData<List<Users>>()
    val followUser: LiveData<List<Users>>
       get() = followUserM
 
-   var followedUserM = MutableLiveData<Boolean>()
-   val followedUser: LiveData<Boolean>
-      get() = followedUserM
 
-   var tagsM = MutableLiveData<List<String>>()
+   private var tagsM = MutableLiveData<List<String>>()
    val tags: LiveData<List<String>>
       get() = tagsM
 
    private var searchUserM = MutableLiveData<List<Users>>()
    val searchUser: LiveData<List<Users>> = searchUserM
-
 
 
    fun getSearchNotFollowUser(id: Int) {
@@ -48,12 +44,12 @@ class SearchViewModel @Inject constructor(private val searchRepositoryImpl: Sear
    fun getSearchFollowUser(userId: Int, followId: Int) {
       viewModelScope.launch {
          statusM.value = Status.LOADING
-         followedUserM.value = searchRepositoryImpl.postUserFollow(userId, followId)
+         searchRepositoryImpl.postUserFollow(userId, followId)
          statusM.value = Status.DONE
       }
    }
 
-    fun getTags() {
+   fun getTags() {
       viewModelScope.launch {
          statusM.value = Status.LOADING
          tagsM.value = searchRepositoryImpl.getTags()

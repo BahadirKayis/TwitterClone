@@ -16,7 +16,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class NotificationsFragment : Fragment(R.layout.fragment_notifications),
    NotificationsAdapter.ClickedUserFollow {
 
-
    private val viewModel: NotificationViewModel by viewModels()
    private val binding by viewBinding(FragmentNotificationsBinding::bind)
    private val notificationAdapter by lazy { NotificationsAdapter(this) }
@@ -33,6 +32,7 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications),
 
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
       super.onViewCreated(view, savedInstanceState)
+
       binding()
       networkControlRequest()
       observable()
@@ -82,7 +82,12 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications),
 
    private fun binding() {
       with(binding) {
-         recyclerView.apply {
+
+         profilePicture.picasso(requireContext().userPhotoUrl())
+         profilePicture.setOnClickListener {
+            userProfileClickListener?.openDrawerClick()
+         }
+         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(
                this.context,
                LinearLayoutManager.VERTICAL,
@@ -90,10 +95,6 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications),
             )
             adapter = notificationAdapter
 
-         }
-         profilePicture.picasso(requireContext().userPhotoUrl())
-         profilePicture.setOnClickListener {
-            userProfileClickListener?.openDrawerClick()
          }
       }
 

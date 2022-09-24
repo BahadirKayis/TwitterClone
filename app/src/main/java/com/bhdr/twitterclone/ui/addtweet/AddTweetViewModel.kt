@@ -25,7 +25,7 @@ class AddTweetViewModel @Inject constructor(private val tweetRepositoryImpl: Twe
             tweetText,
             tweetImageName,
             tweetImage
-         ) { tweetAddedM.value = it }
+         ) { tweetAddedM.postValue(it) }
       }
    }
 }
