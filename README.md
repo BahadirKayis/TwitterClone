@@ -1,6 +1,10 @@
 <img src="https://github.com/BahadirKayis/TwitterClone/blob/master/screenshots/Twitter%20social%20icons%20-%20circle%20-%20blue.png" align="left" width="100" height="100"/></br><div align="left|center">**TwitterClone**</div>
 </br>
 
+</br>
+
+   [API](https://github.com/BahadirKayis/TwitterCloneApi)
+
  ## 🛠 Project Features
  
 - [MVVM with Clean Architecture](https://www.toptal.com/android/android-apps-mvvm-with-clean-architecture)
