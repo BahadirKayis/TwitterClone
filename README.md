@@ -4,7 +4,7 @@
 </br>
 
    [API](https://github.com/BahadirKayis/TwitterCloneApi)
-
+ -
  ## 🛠 Project Features
  
 - [MVVM with Clean Architecture](https://www.toptal.com/android/android-apps-mvvm-with-clean-architecture)
@@ -23,6 +23,7 @@
 - [LikeButton](https://github.com/jd-alexander/LikeButton)
 - [Coil](https://coil-kt.github.io/coil/)
 
+ User Information= bahadir - bahadir123;valorantTR-valorant123;barisakarsu-baris123
 ## Screens
 
 | Splash | First Page| Sign Up |
