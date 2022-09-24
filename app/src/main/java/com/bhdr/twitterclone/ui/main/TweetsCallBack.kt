@@ -11,6 +11,4 @@ class TweetsCallBack : DiffUtil.ItemCallback<TweetsRoomModel>() {
    override fun areContentsTheSame(oldItem: TweetsRoomModel, newItem: TweetsRoomModel): Boolean {
       return oldItem == newItem
    }
-
-
 }

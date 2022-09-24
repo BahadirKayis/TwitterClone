@@ -50,18 +50,17 @@ class AddTweetFragment : Fragment(R.layout.fragment_add_tweet) {
       val tweetImageName = "$uuid.jpg"
       if (tweetText.isNotEmpty()) {
          if (tweetImage != null) {
-
+            binding.lottiAnim.visible()
             viewModel.addTweet(
                requireContext().userId(),
                tweetText,
                tweetImageName,
                tweetImage!!
             )
-            //    Navigation.findNavController(requireView()).navigate(R.id.action_addTweetFragment_to_homeFragment)
 
          } else {
+            binding.lottiAnim.visible()
             viewModel.addTweet(requireContext().userId(), tweetText, "null", null)
-            //  Navigation.findNavController(requireView()).navigate(R.id.action_addTweetFragment_to_homeFragment)
          }
       } else {
          Snackbar.make(requireView(), "Lütfen metin giriniz!", 1000).show()
@@ -140,19 +139,24 @@ class AddTweetFragment : Fragment(R.layout.fragment_add_tweet) {
 
    private fun observable() {
       with(viewModel) {
-         mainStatus.observe(viewLifecycleOwner) {
-            when (it!!) {
-               Status.LOADING -> binding.lottiAnim.visible()
-               Status.DONE -> binding.lottiAnim.gone()
-               Status.ERROR -> binding.lottiAnim.gone()
-            }
-
-         }
          tweetAdded.observe(viewLifecycleOwner) {
             when (it) {
-               true -> Navigation.findNavController(requireView())
-                  .navigate(R.id.action_addTweetFragment_to_mainScreenFragment)
-               else -> snackBar(requireView(), "Sorun oluştu lütfen tekrar deneyiniz", 1000)
+
+               true
+               -> {
+
+                  binding.lottiAnim.gone()
+                  Navigation.findNavController(requireView())
+                     .navigate(R.id.action_addTweetFragment_to_mainScreenFragment)
+               }
+               false -> {
+                  binding.lottiAnim.gone()
+                  snackBar(
+                     requireView(),
+                     "Sorun oluştu lütfen tekrar deneyiniz",
+                     1000
+                  )
+               }
             }
          }
       }

@@ -32,7 +32,7 @@ object RepositoryModule {
       tweetDao: LocalDataSource,
       app: Application,
       remoteSource: RemoteDataSourceMain,
-      @Named("IO") coContextIO: CoroutineDispatcher,
+      @Named("Main") coContextIO: CoroutineDispatcher,
       firebaseStorage: FirebaseStorage
 
    ): TweetRepository =
@@ -53,9 +53,10 @@ object RepositoryModule {
    @Singleton
    fun provideLoginUpRepository(
       remoteSource: RemoteDataSourceLogin,
-      firebaseStorage: FirebaseStorage
+      firebaseStorage: FirebaseStorage,
+      @Named("IO") coContextIO: CoroutineDispatcher
    ):
-           LoginUpRepository = LoginUpRepositoryImpl(remoteSource, firebaseStorage)
+           LoginUpRepository = LoginUpRepositoryImpl(remoteSource, firebaseStorage, coContextIO)
 
 
    @Provides

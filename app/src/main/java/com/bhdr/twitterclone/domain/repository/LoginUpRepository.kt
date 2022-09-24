@@ -14,8 +14,8 @@ interface LoginUpRepository {
       email: String,
       phone: String,
       imageName: String,
-      selectedPicture: Uri?
-   ): Boolean
+      selectedPicture: Uri?, result: (Boolean) -> Unit
+   )
 
    suspend fun getLoginUserNameAndPassword(userName: String, password: String): Boolean?
    fun deleteImage(filename: String)

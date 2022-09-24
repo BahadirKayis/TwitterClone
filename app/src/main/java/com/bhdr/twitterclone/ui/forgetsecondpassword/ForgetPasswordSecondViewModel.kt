@@ -18,15 +18,10 @@ class ForgetPasswordSecondViewModel @Inject constructor(private val loginRepo: L
    private var userChangePasswordM = MutableLiveData<Boolean>()
    val userChangePassword: LiveData<Boolean> = userChangePasswordM
 
-   var status = MutableLiveData<Status>()
-   val executeStatus: LiveData<Status> = status
-
 
    fun userChangePassword(userId: Int, password: String) {
-      status.value = Status.LOADING
       viewModelScope.launch {
          userChangePasswordM.value = loginRepo.userChangePassword(userId, password)
-         status.value = Status.DONE
       }
 
    }

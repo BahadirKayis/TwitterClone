@@ -2,6 +2,7 @@ package com.bhdr.twitterclone.data.repos
 
 import android.app.Application
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.bhdr.twitterclone.common.toLongDate
 import com.bhdr.twitterclone.common.userId
 import com.bhdr.twitterclone.data.model.locale.NotificationsDataItem
@@ -22,8 +23,6 @@ class ActivityRepositoryImpl(
 ) : ActivityRepository {
 
    private var followedUserIdList: List<Int>? = null
-
-
    private var job: Job? = null
 
 
@@ -43,7 +42,6 @@ class ActivityRepositoryImpl(
 
 
    override fun tweetsRoomConvertAndAdd(tweet: Posts): TweetsRoomModel {
-
       try {
          var userRoomModel: UsersRoomModel? = null
          tweet.user?.apply {
@@ -84,9 +82,8 @@ class ActivityRepositoryImpl(
       userName: String,
       name: String,
       postId: Int,
-      post: Posts?
-   ): Boolean {
-      var notificationCount = true
+      post: Posts?,result: (Boolean) -> Unit
+   ) {
       try {
          job = CoroutineScope(coContextIO).launch {
             CoroutineScope(Dispatchers.Main).launch {
@@ -107,9 +104,8 @@ class ActivityRepositoryImpl(
                            tweetsRoomConvertAndAdd(post)
                         )
                      )
-                  } else {
-                     notificationCount = false
                   }
+               result(true)
 
 
                } else {
@@ -119,7 +115,6 @@ class ActivityRepositoryImpl(
                   if (haveId == null && application.userId() != id) {
                      //Takipe etmiyor bildirim ekranında gösterilecek modelde olacak
                      val getPost: Posts = tweetNew(postId)
-
                      saveNotificationTweet(
                         NotificationsDataItem.NotificationTweet(
                            null,
@@ -131,10 +126,7 @@ class ActivityRepositoryImpl(
                            tweetsRoomConvertAndAdd(getPost)
                         )
                      )
-
-
-                  } else {
-                     notificationCount = false
+                     result(true)
                   }
                }
             }
@@ -142,8 +134,7 @@ class ActivityRepositoryImpl(
       } catch (e: Exception) {
          Log.e("signalRControlEx", e.toString())
       }
-delay(1000)
-      return notificationCount
+
    }
 
    override suspend fun deleteAllRoom(): Boolean {

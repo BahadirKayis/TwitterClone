@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bhdr.twitterclone.common.Status
 import com.bhdr.twitterclone.domain.repository.LoginUpRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -14,13 +13,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(private var loginRepo: LoginUpRepository) :
    ViewModel() {
-
-   private var userSavedM = MutableLiveData<Boolean>()
-   val userSaved: LiveData<Boolean> = userSavedM
-
-
-   var userSavedStatusM = MutableLiveData<Status>()
-   val userSavedStatus: LiveData<Status> = userSavedStatusM
+   private var mss = MutableLiveData<Boolean>()
+   val userSaved: LiveData<Boolean> = mss
 
    fun createUser(
       userName: String,
@@ -32,7 +26,6 @@ class SignUpViewModel @Inject constructor(private var loginRepo: LoginUpReposito
       selectedPicture: Uri?
    ) {
       viewModelScope.launch {
-         userSavedStatusM.value = Status.LOADING
          loginRepo.signUP(
             userName,
             password,
@@ -41,19 +34,11 @@ class SignUpViewModel @Inject constructor(private var loginRepo: LoginUpReposito
             phone,
             imageName,
             selectedPicture
-         ).let {
-            when (it) {
-
-               true -> {
-                  userSavedStatusM.value = Status.DONE; userSavedM.value = it
-               }
-               false -> userSavedStatusM.value = Status.ERROR
-
-            }
+         ) {
+            mss.value = it
          }
-
       }
 
-
    }
+
 }

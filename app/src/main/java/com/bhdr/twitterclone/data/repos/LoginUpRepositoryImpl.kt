@@ -7,17 +7,19 @@ import com.bhdr.twitterclone.domain.repository.LoginUpRepository
 import com.bhdr.twitterclone.domain.source.remote.login.RemoteDataSourceLogin
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Named
 
 
 class LoginUpRepositoryImpl(
    private val remoteSource: RemoteDataSourceLogin,
-   private val FirebaseStorage: FirebaseStorage
+   private val FirebaseStorage: FirebaseStorage,
+   @Named("IO") private val coContextIO: CoroutineDispatcher
 ) :
    LoginUpRepository {
+
 
 
    override suspend fun userForgetId(userName: String): Int? =
@@ -37,11 +39,10 @@ class LoginUpRepositoryImpl(
       email: String,
       phone: String,
       imageName: String,
-      selectedPicture: Uri?
-   ): Boolean {
-      var isSaved = false
-      val reference = FirebaseStorage.reference
-      val imagesReference = reference.child("profilpictures").child(imageName)
+      selectedPicture: Uri?, result: (Boolean) -> Unit
+   ) {
+
+      val imagesReference = FirebaseStorage.reference.child("profilpictures").child(imageName)
       imagesReference.putFile(selectedPicture!!).addOnSuccessListener {
 
          val uploadedPictureReference =
@@ -49,7 +50,7 @@ class LoginUpRepositoryImpl(
          uploadedPictureReference.downloadUrl.addOnSuccessListener { uri ->
             val profilePictureUrl = uri.toString()
 
-            CoroutineScope(Dispatchers.IO).launch {
+            CoroutineScope(coContextIO).launch {
                val signUp = remoteSource.createUser(
                   userName,
                   password,
@@ -59,35 +60,25 @@ class LoginUpRepositoryImpl(
                   profilePictureUrl,
                )
                if (signUp.isSuccessful) {
-
-
-                  isSaved = signUp.body()!!
-                  if (!isSaved) {
-                     deleteImage(profilePictureUrl)
-
-                  }
-
+                  result(signUp.body()!!)
                } else if (!signUp.isSuccessful) {
 
                   deleteImage(profilePictureUrl)
-                  isSaved = false
-                  Log.e("signUpError", signUp.errorBody().toString())
+                  result(false)
 
                }
             }
 
          }
       }
-      delay(5000)
-      return true
    }
 
-   override fun deleteImage(filename: String) {//apiden false döndüğünde firebase yüklenen fotoğrafı siliyorum
 
+   override fun deleteImage(filename: String) {//apiden false döndüğünde firebase yüklenen fotoğrafı siliyorum
       val photoRef: StorageReference = FirebaseStorage.getReferenceFromUrl(filename)
       photoRef.delete().addOnSuccessListener {
          // File deleted successfully
-         Log.e("ImageAddUser", "Photo is delete")
+         Log.i("ImageAddUser", "Photo is delete")
       }.addOnFailureListener { // Uh-oh, an error occurred!
          Log.e("deleteImageAddUser", "Failed to delete photo")
       }

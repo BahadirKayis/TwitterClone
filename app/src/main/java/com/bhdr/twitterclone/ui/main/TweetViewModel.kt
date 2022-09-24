@@ -6,9 +6,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bhdr.twitterclone.common.Constants.hubConnection
 import com.bhdr.twitterclone.common.Status
 import com.bhdr.twitterclone.common.checkNetworkConnection
+import com.bhdr.twitterclone.common.hubConnection
 import com.bhdr.twitterclone.common.toStartSignalRTweet
 import com.bhdr.twitterclone.data.model.locale.TweetsRoomModel
 import com.bhdr.twitterclone.data.model.remote.Posts
@@ -26,7 +26,8 @@ class TweetViewModel @Inject constructor(
    @Named("IO") private val coContextIO: CoroutineDispatcher
 ) :
    ViewModel() {
-   //room
+   private var job: Job? = null
+
    private val allRoomTweetsM = MutableLiveData<List<TweetsRoomModel>?>()
    val allRoomTweets: LiveData<List<TweetsRoomModel>?>
       get() = allRoomTweetsM
@@ -40,7 +41,6 @@ class TweetViewModel @Inject constructor(
    private var mainStatusM = MutableLiveData<Status>()
    val mainStatusL: LiveData<Status>
       get() = mainStatusM
-
 
    init {
       viewModelScope.launch {
@@ -66,22 +66,67 @@ class TweetViewModel @Inject constructor(
 
    }
 
-   //Kullanici tweet ekranindayken yeni tweet gelirse gelenleri buraya aliyorum
-   private var mutableFollowNewTweetSignalR = MutableLiveData<HashMap<Int, String>>()
-   val mutableFollowNewTweet: LiveData<HashMap<Int, String>> =
-      mutableFollowNewTweetSignalR
-
-
-   //Bu da getTweets istek attiginda yeni tweet varsa Tweet atanlarin id sini ve resmini getiriyor
-   private var mutableFollowNewTweetHashMapM = MutableLiveData<HashMap<Int, String>?>()
-   val mutableFollowNewTweetHashMapL: LiveData<HashMap<Int, String>?>
-      get() = mutableFollowNewTweetHashMapM
+   val followNewTweetList: LiveData<HashMap<Int, String>>
+      get() = tweetRepositoryImpl.hashMapNewTweet()
 
    fun getTweets(id: Int) {
       viewModelScope.launch {
          isNewTweet(tweetRepositoryImpl.getTweets(id)!!, allRoomTweetsM.value)
       }
 
+   }
+
+   private fun isNewTweet(cloudTweet: List<Posts>, roomTweet: List<TweetsRoomModel>?) {
+      viewModelScope.launch {
+         tweetRepositoryImpl.isNewTweet(cloudTweet, roomTweet)
+            .let { triple -> newTweetButton(triple.first, triple.second) }
+
+      }
+   }
+
+   private suspend fun newTweetButton(
+      addTweet: List<Posts>?,
+      updateTweet: List<Posts>?,
+   ) {
+      try {
+         Log.e("sss", "")
+         if (updateTweet != null && updateTweet.isNotEmpty()) {
+            Log.e("updateTweet", "")
+            tweetsUpdate(updateTweet)
+         }
+         if (tweetRepositoryImpl.hashMapNewTweet().value?.size != null) {
+            Log.e("tweetRepositoryImpl", "")
+            tweetsM.value = addTweet
+
+         } else {
+            if (addTweet != null && addTweet.isNotEmpty()) {
+               Log.e("addTweet", "")
+               tweetsRoomConvertAndAdd(addTweet)
+            }
+         }
+
+      } catch (e: Exception) {
+
+         Log.e("newTweetButton-Ex", e.toString())
+      }
+   }
+
+   private suspend fun tweetsUpdate(tweets: List<Posts>) {
+      allRoomTweetsM.value = tweetRepositoryImpl.tweetsUpdate(tweets)
+   }
+
+   fun tweetsRoomConvertAndAdd(ks: List<Posts>) {
+      mainStatusM.value = Status.LOADING
+      viewModelScope.launch {
+         tweetRepositoryImpl.tweetsRoomConvertAndAdd(ks)
+            ?.let { tweetsInsert(it);mainStatusM.value = Status.DONE }
+      }
+
+   }
+
+   private suspend fun tweetsInsert(tweets: List<TweetsRoomModel>) {
+
+      allRoomTweetsM.value = tweetRepositoryImpl.tweetsInsert(tweets)
    }
 
    fun postLiked(id: Int, count: Int, userId: Int) {
@@ -91,61 +136,13 @@ class TweetViewModel @Inject constructor(
       }
    }
 
-   fun tweetsRoomConvertAndAdd(ks: List<Posts>) {
-      mainStatusM.value = Status.LOADING
-      viewModelScope.launch {
-         tweetRepositoryImpl.tweetsRoomConvertAndAdd(ks)
-            .also { tweet -> tweetsInsert(tweet); mainStatusM.value = Status.DONE }
-      }
-
-   }
-
    fun getFollowedUserIdList(userId: Int) {
       viewModelScope.launch {
          tweetRepositoryImpl.getFollowedUserIdList(userId)
       }
    }
 
-   private suspend fun isNewTweet(cloudTweet: List<Posts>, roomTweet: List<TweetsRoomModel>?) {
-      tweetRepositoryImpl.isNewTweet(cloudTweet, roomTweet)
-         .let { triple -> newTweetButton(triple.first, triple.second, triple.third) }
-
-   }
-
-
-   private suspend fun newTweetButton(
-      addTweet: List<Posts>?,
-      updateTweet: List<Posts>?,
-      newTweetButton: HashMap<Int, String>?
-   ) {
-      try {
-         if (updateTweet != null) {
-
-            tweetsUpdate(updateTweet)
-         }
-
-         if (newTweetButton != null) {
-
-            mutableFollowNewTweetHashMapM.value = newTweetButton
-            tweetsM.value = addTweet
-         } else {
-            if (addTweet != null) {
-               Log.i("newTweetButton", "addTweet")
-               tweetsRoomConvertAndAdd(addTweet)
-            }
-         }
-
-      } catch (e: Exception) {
-         Log.e("newTweetButton-Ex", e.toString())
-      }
-   }
-
-   private suspend fun tweetsUpdate(tweets: List<Posts>) {
-      allRoomTweetsM.value = tweetRepositoryImpl.tweetsUpdate(tweets)
-   }
-
-   private var job: Job? = null
-   private suspend fun tweetSignalR() {
+   private fun tweetSignalR() {
       try {
          if (hubConnection.connectionState == HubConnectionState.DISCONNECTED) {
             hubConnection.start()
@@ -160,7 +157,8 @@ class TweetViewModel @Inject constructor(
                   try {
                      job = CoroutineScope(coContextIO).launch {
                         CoroutineScope(Dispatchers.Main).launch {
-                           mutableFollowNewTweetSignalR.value = tweetRepositoryImpl.signalRControl(
+
+                           tweetRepositoryImpl.signalRControl(
                               id.toInt(),
                               imageUrl,
                            )
@@ -189,7 +187,4 @@ class TweetViewModel @Inject constructor(
       }
    }
 
-   private suspend fun tweetsInsert(tweets: List<TweetsRoomModel?>) {
-      allRoomTweetsM.value = tweetRepositoryImpl.tweetsInsert(tweets)
-   }
 }

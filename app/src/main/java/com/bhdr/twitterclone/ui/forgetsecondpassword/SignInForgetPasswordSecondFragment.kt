@@ -7,7 +7,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bhdr.twitterclone.R
-import com.bhdr.twitterclone.common.Status
 import com.bhdr.twitterclone.common.gone
 import com.bhdr.twitterclone.common.snackBar
 import com.bhdr.twitterclone.common.visible
@@ -23,11 +22,10 @@ class SignInForgetPasswordSecondFragment :
    private val viewModel: ForgetPasswordSecondViewModel by viewModels()
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
       super.onViewCreated(view, savedInstanceState)
-
       binding.passwordUpdateButton.setOnClickListener {
+         binding.lottiAnim.visible()
          passwordUpdate()
       }
-
    }
 
    private fun passwordUpdate() {
@@ -45,27 +43,20 @@ class SignInForgetPasswordSecondFragment :
             userChangePassword.observe(viewLifecycleOwner) {
                when (it) {
                   true -> {
-                     snackBar(requireView(), "Şifre Değiştirildi", 500);
+                     lottiAnim.gone()
+                     snackBar(requireView(), "Şifre Değiştirildi", 500)
                      findNavController().navigate(R.id.action_signInForgetPasswordSecondFragment_to_logInFragment)
                   }
-                  false -> snackBar(
-                     requireView(),
-                     "Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz",
-                     500
-                  )
-               }
-            }
-            executeStatus.observe(viewLifecycleOwner) {
-               when (it!!) {
-                  Status.LOADING -> lottiAnim.visible()
-
-                  Status.ERROR -> {
-                     lottiAnim.gone()
-                     snackBar(requireView(), "Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz", 1500)
+                  false -> {
+                     snackBar(
+                        requireView(),
+                        "Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz",
+                        500
+                     );lottiAnim.gone()
                   }
-                  Status.DONE -> lottiAnim.gone()
                }
             }
+
          }
       }
    }

@@ -6,6 +6,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.util.Log
 import androidx.core.content.FileProvider
+import androidx.lifecycle.MutableLiveData
 import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
@@ -17,9 +18,10 @@ import com.bhdr.twitterclone.domain.repository.TweetRepository
 import com.bhdr.twitterclone.domain.source.locale.LocalDataSource
 import com.bhdr.twitterclone.domain.source.remote.main.RemoteDataSourceMain
 import com.google.firebase.storage.FirebaseStorage
-import com.mikepenz.materialdrawer.util.ifNotNull
-import kotlinx.coroutines.*
-import okio.IOException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Named
 
@@ -28,36 +30,22 @@ class MainTweetRepositoryImpl(
    private val localSource: LocalDataSource,
    private val application: Application,
    private val remoteSource: RemoteDataSourceMain,
-   @Named("IO") private val coContextIO: CoroutineDispatcher,
+   @Named("Main") private val coContextIO: CoroutineDispatcher,
    private val FirebaseStorage: FirebaseStorage
 ) : TweetRepository {
 
 
    private lateinit var imageUri: String
-
    private var haveImageUri: Boolean = false
-
-   private var hashMapFollowNewTweetHashMap: HashMap<Int, String> = HashMap()
-
    private var job: Job? = null
-
    private var followedUserIdList: List<Int>? = null
 
-   override suspend fun getTweets(id: Int): List<Posts>? {
-      try {
-         val request = remoteSource.getTweets(id)
-         if (request.isSuccessful) {
-            return request.body()!!
-         }
 
-      } catch (e: IOException) {
-         Log.e("getTweets-Ex", e.toString())
-         if (e.localizedMessage == "timeout") {
-            getTweets(id)
-         }
-      }
-      return null
-   }
+   private var followNewTweet: HashMap<Int, String> = HashMap()
+   private var followNewTweetM = MutableLiveData<HashMap<Int, String>>()
+
+
+   override suspend fun getTweets(id: Int): List<Posts>? = remoteSource.getTweets(id).body()
 
    override suspend fun tweetLiked(id: Int, count: Int, userId: Int) {
       try {
@@ -81,9 +69,8 @@ class MainTweetRepositoryImpl(
       id: Int,
       tweetText: String,
       tweetImageName: String,
-      tweetImage: Uri?
-   ): Boolean {
-      var isTweetAdded = false
+      tweetImage: Uri?, result: (Boolean) -> Unit
+   ) {
 
       try {
          val reference = FirebaseStorage.reference
@@ -96,18 +83,13 @@ class MainTweetRepositoryImpl(
                   FirebaseStorage.reference.child("tweetpictures").child(tweetImageName)
                uploadedPictureReference.downloadUrl.addOnSuccessListener { uri ->
                   val tweetPictureUrl = uri.toString()
-                  runBlocking {
+                  job = CoroutineScope(coContextIO).launch {
                      val addTweetResult =
                         remoteSource.addTweet(
                            id, tweetText, tweetPictureUrl,
                            toLongDate().toString()
                         )
-                     if (addTweetResult.isSuccessful) {
-
-                        isTweetAdded = addTweetResult.body()!!
-                     } else if (!addTweetResult.isSuccessful) {
-                        isTweetAdded = false
-                     }
+                     result(addTweetResult.body()!!)
                   }
 
                }
@@ -120,26 +102,18 @@ class MainTweetRepositoryImpl(
                   "null",
                   toLongDate().toString()
                )
-            if (addTweetResult.isSuccessful) {
-
-               isTweetAdded = addTweetResult.body()!!
-            } else if (!addTweetResult.isSuccessful) {
-               isTweetAdded = false
-            }
+            result(addTweetResult.body()!!)
 
          }
       } catch (e: Exception) {
-         isTweetAdded = false
+         result(false)
          Log.e("RepositoryAdT-EX", e.toString())
       }
-      delay(4000)
-      return isTweetAdded
    }
 
-   //room
+
    override suspend fun tweetsInsert(tweets: List<TweetsRoomModel?>): List<TweetsRoomModel>? {
       localSource.addTweet(tweets)
-      delay(500)
       return getTweetsRoom()
    }
 
@@ -150,29 +124,25 @@ class MainTweetRepositoryImpl(
       return getTweetsRoom()
    }
 
-   override suspend fun getTweetsRoom(): List<TweetsRoomModel>? {
+   override suspend fun getTweetsRoom(): List<TweetsRoomModel>? = localSource.allTweet()
 
-      val tweetsRoomModelList = localSource.allTweet()
-      Log.i("tweetsRoomModelList", tweetsRoomModelList.toString())
-      if (tweetsRoomModelList != null) {
-         return tweetsRoomModelList
-      }
-      return null
-   }
 
-   override suspend fun tweetsRoomConvertAndAdd(lTweet: List<Posts?>): List<TweetsRoomModel> {
+   override suspend fun tweetsRoomConvertAndAdd(
+      lTweet: List<Posts?>
+   ): List<TweetsRoomModel> {
 
       val tweetsAddRoom: MutableList<TweetsRoomModel> = mutableListOf()
       try {
          lTweet.forEach {
-            var userRoomModel: UsersRoomModel? = null
+            var userRoomModel: UsersRoomModel?
             imageUri =
                createImageUri(it!!.userId.toString() + "_" + it.user?.userName + "_user_profile.png")
-            if (!haveImageUri) {
-               val bmp = getBitmap(it.user!!.photoUrl!!)//Image download
-               bmp.ifNotNull { storeBitmap(bmp) }//Image save
+            if (!haveImageUri) {//yol var ise fotoğrafta var demek tekrar indirmiyor
+               storeBitmap(getBitmap(it.user!!.photoUrl!!))
+//               val bmp = getBitmap(it.user!!.photoUrl!!)//Image download
+//               bmp.ifNotNull { }//Image save
             }
-            it.user?.apply {
+            with(it.user!!) {
                userRoomModel =
                   UsersRoomModel(
                      id,
@@ -181,8 +151,8 @@ class MainTweetRepositoryImpl(
                      name
                   )
             }
-            it.apply {
-
+            with(it)
+            {
                if (it.postImageUrl != "null") {
 
                   if (it.postImageUrl!!.contains("video")) {
@@ -190,11 +160,7 @@ class MainTweetRepositoryImpl(
                   } else {
                      imageUri =
                         createImageUri(id.toString() + "_" + userId.toString() + "_tweet_content.png")
-
-                     if (!haveImageUri) {
-                        val bmp = getBitmap(it.postImageUrl.toString())//Image download
-                        bmp.ifNotNull { storeBitmap(bmp) }//Image save
-                     }
+                     storeBitmap(getBitmap(it.postImageUrl.toString()))
                   }
 
                } else {
@@ -212,15 +178,14 @@ class MainTweetRepositoryImpl(
                   )
                )
             }
-
          }
-         return tweetsAddRoom
+         return (tweetsAddRoom)
 
       } catch (e: Exception) {
          Log.e("RoomConvertAndAdd-Ex", e.toString())
       }
-      return tweetsAddRoom
 
+      return (tweetsAddRoom)
    }
 
    override suspend fun getBitmap(url: String): Bitmap {
@@ -261,42 +226,38 @@ class MainTweetRepositoryImpl(
    override suspend fun isNewTweet(
       cloudTweet: List<Posts>,
       roomTweet: List<TweetsRoomModel>?
-   ): Triple<List<Posts>?, List<Posts>?, HashMap<Int, String>?> {
+   ): Pair<List<Posts>, List<Posts>?> {
 
       val tweetRoomUpdateList: MutableList<Posts> = mutableListOf()
       val tweetCloudAddToRoomList: MutableList<Posts> = mutableListOf()
 
       try {
-         if (roomTweet?.size == 0) {
-            return Triple(cloudTweet, cloudTweet, null)
+         if (roomTweet == null || roomTweet.isEmpty()) {
+            Log.e("roomTweetif", "")
+            return cloudTweet to null
          } else {
             if (cloudTweet.isNotEmpty()) {
-               if (roomTweet!!.size != cloudTweet.size) {
+               if (roomTweet.size != cloudTweet.size) {
 
                   val roomTweetObjectIds = roomTweet.map { it.id }.toSet()
                   val addTweet = cloudTweet.filter { !roomTweetObjectIds.contains(it.id) }
                   val updateTweet = cloudTweet.filter { roomTweetObjectIds.contains(it.id) }
 
                   addTweet.forEach {
-                     hashMapFollowNewTweetHashMap[it.userId!!] =
+                     followNewTweet[it.userId!!] =
                         it.user?.photoUrl.toString()
                      tweetCloudAddToRoomList.add(it)
                   }
                   updateTweet.forEach { tweetRoomUpdateList.add(it) }
-                  return Triple(
-                     tweetCloudAddToRoomList,
-                     tweetRoomUpdateList,
-                     hashMapFollowNewTweetHashMap
-                  )
-               } else {
-                  return Triple(null, tweetRoomUpdateList, null)
+                  followNewTweetM.value = followNewTweet
+
                }
             }
          }
       } catch (e: Exception) {
          Log.e("isNewTweet-Ex", e.toString())
       }
-      return Triple(null, null, hashMapFollowNewTweetHashMap)
+      return tweetCloudAddToRoomList to tweetRoomUpdateList
    }
 
 
@@ -309,32 +270,26 @@ class MainTweetRepositoryImpl(
       Log.i("getFollowedUserIdList", response.body().toString())
    }
 
-
    override suspend fun signalRControl(
       id: Int,
       imageUrl: String
-   ): HashMap<Int, String> {
+   ) {
       try {
          if (id != 0) {
             //NewTweet follow
             job = CoroutineScope(coContextIO).launch {
-               CoroutineScope(Dispatchers.Main).launch {
 
-                  val userId = followedUserIdList?.find { it == id }
-
-                  if (userId != null) {
-                     hashMapFollowNewTweetHashMap[id] = imageUrl
-                     //mutableFollowNewTweetSignalR.value = hashMapFollowNewTweetHashMap
-                     Log.e("TAG1", hashMapFollowNewTweetHashMap.size.toString())
-                  }
+               val userId = followedUserIdList?.find { it == id }
+               if (userId != null) {
+                  followNewTweet[id] = imageUrl
+                  followNewTweetM.value = followNewTweet
                }
             }
          }
       } catch (e: Exception) {
          Log.e("signalRControl-Ex", e.toString())
       }
-delay(200)
-      return hashMapFollowNewTweetHashMap
+
    }
 
 
@@ -345,6 +300,7 @@ delay(200)
       return tweetList
    }
 
+   override fun hashMapNewTweet(): MutableLiveData<HashMap<Int, String>> = followNewTweetM
 
 }
 

@@ -1,6 +1,5 @@
 package com.bhdr.twitterclone.ui.main
 
-import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -13,18 +12,16 @@ import com.bhdr.twitterclone.data.model.locale.TweetsRoomModel
 import com.bhdr.twitterclone.data.model.locale.UsersRoomModel
 import com.bhdr.twitterclone.databinding.TweetCardBinding
 import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
 import com.like.LikeButton
 import com.like.OnLikeListener
 
 
 class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
    ListAdapter<TweetsRoomModel, TweetsAdapter.TweetViewHolder>(TweetsCallBack()) {
-   private var context: Context? = null
+
    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TweetViewHolder {
       val binding =
          TweetCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-      context = parent.context
       return TweetViewHolder(binding)
    }
 
@@ -32,7 +29,6 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
 
       with(holder) {
          with(binding) {
-
             val posts = getItem(position)
             val userModel = posts.user
 
@@ -40,9 +36,7 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
                favButton.isLiked = true
             }
 
-
             favButton.setOnLikeListener(object : OnLikeListener {
-
                override fun liked(likeButton: LikeButton?) {
                   if (root.context.checkNetworkConnection()) {
 
@@ -74,21 +68,17 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
 
             })
 
-
-            try {
-               tweetMenuText.setOnClickListener {
-                  it.findNavController()
-                     .navigate(
-                        MainScreenFragmentDirections.actionMainScreenFragmentToTweetBottomDialog(
-                           "@" + userModel?.userName.toString().maxOf { 10 }
-                        )
+            tweetDetailText.setOnClickListener {
+               it.findNavController()
+                  .navigate(
+                     MainScreenFragmentDirections.actionMainScreenFragmentToTweetBottomDialog(
+                        "@" + userModel?.userName.toString()
                      )
-               }
-               post(posts)
-               userModel(userModel!!)
-            } catch (e: Exception) {
-               Log.e("TweetAdapterHolderCatch", e.toString())
+                  )
             }
+
+            post(posts)
+            userModel(userModel!!)
          }
       }
    }
@@ -103,7 +93,6 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
                with(binding) {
 
                   tweetText.text = postContent.toString()
-
 
                   timeText.text = date!!.toLong().toCalendar()
 
@@ -159,14 +148,10 @@ class TweetsAdapter(private val clickedTweetListener: ClickedTweetListener) :
                   profilePicture.picasso(photo)
                   nameText.text = name
                   "@$userName".also {
-                     usernameText.text = if (it.length > 11) {
-                        it.substring(0, 9) + "..."
-                     } else {
-                        it
-                     }
+                     usernameText.text = it.userNameCount()
                   }
                } catch (e: Exception) {
-                  Log.e("TweetAdapterModelCatch", e.toString())
+                  Log.e("TweetViewHolder", "userModel: $e")
                }
             }
          }

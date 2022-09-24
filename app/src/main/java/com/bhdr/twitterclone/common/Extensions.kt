@@ -22,6 +22,9 @@ import kotlin.time.Duration.Companion.seconds
 lateinit var shared: SharedPreferences
 
 var toStartSignalRTweet = false
+val hubConnection =
+   HubConnectionBuilder.create(Constants.HUB_CONNECTION_URL).build()!!
+
 fun Context.userId(): Int {
    shared = getSharedPreferences("com.bhdr.twitterclone", MODE_PRIVATE)
    return shared.getInt("user_Id", 0)
@@ -64,7 +67,7 @@ fun Context.checkNetworkConnection(): Boolean {
 
    val cm = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-  val result = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+   val result = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       val capabilities = cm.getNetworkCapabilities(cm.activeNetwork)
       (capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
    } else {
@@ -108,7 +111,8 @@ fun toLongDate(): Long {
       Calendar.getInstance().time.time
    }
 }
- fun spannableFactory(): Spannable.Factory {
+
+fun spannableFactory(): Spannable.Factory {
    val spannableFactory = object : Spannable.Factory() {
       override fun newSpannable(source: CharSequence?): Spannable {
          val spannable = source!!.toSpannable()
@@ -133,6 +137,14 @@ fun toLongDate(): Long {
       }
    }
    return spannableFactory
+}
+
+fun String.userNameCount(): String {
+   return if (this.length > 11) {
+      this.substring(0, 9) + "..."
+   } else {
+      this
+   }
 }
 
 

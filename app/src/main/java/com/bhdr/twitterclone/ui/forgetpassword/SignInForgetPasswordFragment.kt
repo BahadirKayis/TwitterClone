@@ -33,7 +33,13 @@ class SignInForgetPasswordFragment : Fragment(R.layout.fragment_sig_in_forget_pa
          with(binding) {
             userId.observe(viewLifecycleOwner) {
                when (it!!) {
-                  0 -> snackBar(requireView(), "Girilen Bilgiye Ait Hesap Bulunamadı", 1500)
+                  0 -> {
+                     snackBar(
+                        requireView(),
+                        "Girilen Bilgiye Ait Hesap Bulunamadı",
+                        1500
+                     ); lottiAnim.gone()
+                  }
                   else -> {
                      try {
                         findNavController().navigate(
@@ -49,23 +55,11 @@ class SignInForgetPasswordFragment : Fragment(R.layout.fragment_sig_in_forget_pa
 
                }
             }
-            executeStatus.observe(viewLifecycleOwner) {
-               when (it!!) {
-                  Status.LOADING -> lottiAnim.visible()
-                  Status.ERROR -> {
-                     lottiAnim.gone();Snackbar.make(
-                        requireView(),
-                        "Hata Oluştu Lütfen Daha Sonra Tekrar Deneyiniz",
-                        1500
-                     ).show()
-                  }
-                  Status.DONE -> lottiAnim.gone()
-               }
-            }
+
             searchButton.setOnClickListener {
 
                if (emailphonenicknameEditText.text.isNotEmpty()) {
-
+                  lottiAnim.visible()
                   viewModel.userForgetId(emailphonenicknameEditText.text.toString())
 
                } else {

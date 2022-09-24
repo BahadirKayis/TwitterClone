@@ -23,4 +23,9 @@ object CoroutineModule {
    @Singleton
    @Named("Default")
    fun provideCoContextDefault(): CoroutineDispatcher = Dispatchers.Default
+
+   @Provides
+   @Singleton
+   @Named("Main")
+   fun provideCoContextMain(): CoroutineDispatcher = Dispatchers.Main
 }

@@ -1,5 +1,6 @@
 package com.bhdr.twitterclone.domain.repository
 
+import androidx.lifecycle.MutableLiveData
 import com.bhdr.twitterclone.data.model.locale.TweetsRoomModel
 import com.bhdr.twitterclone.data.model.remote.Posts
 
@@ -18,8 +19,8 @@ interface ActivityRepository {
       userName: String,
       name: String,
       postId: Int,
-      post: Posts?
-   ): Boolean
+      post: Posts?,result: (Boolean) -> Unit
+   )
 
 
 }

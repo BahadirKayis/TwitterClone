@@ -21,7 +21,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bhdr.twitterclone.R
-import com.bhdr.twitterclone.common.*
+import com.bhdr.twitterclone.common.gone
+import com.bhdr.twitterclone.common.snackBar
+import com.bhdr.twitterclone.common.visible
 import com.bhdr.twitterclone.databinding.FragmentSignUpBinding
 import com.google.android.material.snackbar.Snackbar
 import com.zhuinden.fragmentviewbindingdelegatekt.viewBinding
@@ -37,8 +39,8 @@ class SignUpFragment() : Fragment(R.layout.fragment_sign_up), Parcelable {
    private val viewModel: SignUpViewModel by viewModels()
    private lateinit var permissionLauncher: ActivityResultLauncher<String>
    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
-   var selectedPicture: Uri? = null
-   var selectedBitmap: Bitmap? = null
+   private var selectedPicture: Uri? = null
+   private var selectedBitmap: Bitmap? = null
 
    constructor(parcel: Parcel) : this() {
       selectedPicture = parcel.readParcelable(Uri::class.java.classLoader)
@@ -74,7 +76,7 @@ class SignUpFragment() : Fragment(R.layout.fragment_sign_up), Parcelable {
                nameEditText.text.toString(),
                emailEditText.text.toString(),
                phoneEditText.text.toString(),
-               toLongDate().toString()
+
             )
          }
 
@@ -97,10 +99,10 @@ class SignUpFragment() : Fragment(R.layout.fragment_sign_up), Parcelable {
                requireView(),
                "Permission needed for gallery",
                Snackbar.LENGTH_INDEFINITE
-            ).setAction("Give Permission",
-               View.OnClickListener {
-                  permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-               }).show()
+            ).setAction("Give Permission"
+            ) {
+               permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+            }.show()
          } else {
             permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
          }
@@ -159,7 +161,6 @@ class SignUpFragment() : Fragment(R.layout.fragment_sign_up), Parcelable {
       name: String,
       email: String,
       phone: String,
-      date: String
    ) {
       if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
          if (name.isNotEmpty() && password.isNotEmpty() && email.isNotEmpty() && phone.isNotEmpty() && userName.isNotEmpty()) {
@@ -167,6 +168,7 @@ class SignUpFragment() : Fragment(R.layout.fragment_sign_up), Parcelable {
             val imageName = "$uuid.jpg"
 
             if (selectedPicture != null) {
+               binding.lottiAnim.visible()
                viewModel.createUser(
                   userName,
                   password,
@@ -200,19 +202,6 @@ class SignUpFragment() : Fragment(R.layout.fragment_sign_up), Parcelable {
       with(viewModel) {
          with(binding) {
 
-            userSavedStatus.observe(viewLifecycleOwner) {
-               when (it!!) {
-                  Status.LOADING -> lottiAnim.visible()
-                  Status.ERROR -> {
-                     lottiAnim.gone()
-                     snackBar(requireView(), "Hata oluştu lütfen daha sonra tekrar deneyiniz", 2000)
-                  }
-                  Status.DONE -> {
-                     lottiAnim.gone()
-                  }
-               }
-
-            }
 
             userSaved.observe(viewLifecycleOwner) {
                when (it) {

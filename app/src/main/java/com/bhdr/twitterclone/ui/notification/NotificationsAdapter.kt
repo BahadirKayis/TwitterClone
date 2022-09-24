@@ -1,6 +1,5 @@
 package com.bhdr.twitterclone.ui.notification
 
-import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import com.bhdr.twitterclone.data.model.locale.NotificationsDataItem
 import com.bhdr.twitterclone.databinding.NotificationRecylerviewScreenLikeBinding
 import com.bhdr.twitterclone.databinding.NotificationRecylerviewScreenTweetBinding
 import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
 
 
 class NotificationsAdapter(
@@ -39,18 +37,18 @@ class NotificationsAdapter(
 
                   if (this!!.tweetImage != null) {
                      if (tweetImage!!.contains("video")) {
-                        //Firebase boyutu bitmesin diye
-                        //setup
-                        exoPlayer = ExoPlayer.Builder(likeBinding.root.context).build()
-                        exoPlayer?.playWhenReady = false
-                        playerView.player = exoPlayer
-                        //file
-                        val mediaItem =
-                           MediaItem.fromUri(tweetImage.toString())
-                        exoPlayer?.addMediaItem(mediaItem)
-
-                        exoPlayer?.playWhenReady = playWhenReady
-                        exoPlayer?.prepare()
+//                      //Firebase veri kullanımını azaltmak için kapalı
+//                        //setup
+//                        exoPlayer = ExoPlayer.Builder(likeBinding.root.context).build()
+//                        exoPlayer?.playWhenReady = false
+//                        playerView.player = exoPlayer
+//                        //file
+//                        val mediaItem =
+//                           MediaItem.fromUri(tweetImage.toString())
+//                        exoPlayer?.addMediaItem(mediaItem)
+//
+//                        exoPlayer?.playWhenReady = playWhenReady
+//                        exoPlayer?.prepare()
                         playerView.visible()
                         likeBinding.tweetImage.gone()
                      } else {
@@ -78,11 +76,7 @@ class NotificationsAdapter(
                      profilePicture.picasso(photo)
                      nameText.text = name
                      "@$userName".also {
-                        usernameText.text = if (it.length > 11) {
-                           it.substring(0, 9) + "..."
-                        } else {
-                           it
-                        }
+                        usernameText.text =it
                      }
                      timeText.text = date!!.toLong().toCalendar()
 
@@ -100,10 +94,8 @@ class NotificationsAdapter(
          with(tweetBinding) {
             with(item) {
 
-               userFollow.find { it == id }.apply {
-                  if (this != null) {
-                     followUserButton.gone()
-                  }
+               userFollow.find { it == id }.let {
+                  followUserButton.gone()
                }
 
                followUserButton.setOnClickListener {
@@ -116,11 +108,7 @@ class NotificationsAdapter(
                nameText.text = name
 
                "@$userName".also {
-                  usernameText.text = if (it.length > 11) {
-                     it.substring(0, 9) + "..."
-                  } else {
-                     it
-                  }
+                  usernameText.text =it
                }
 
                timeText.text = date!!.toLong().toCalendar()
@@ -147,18 +135,18 @@ class NotificationsAdapter(
                   }
                   if (tweetImage != null) {
                      if (tweetImage!!.contains("video")) {
-                        //Firebase boyutu bitmesin diye
-                        //setup
-                        exoPlayer = ExoPlayer.Builder(tweetBinding.root.context!!).build()
-                        exoPlayer?.playWhenReady = false
-                        playerView.player = exoPlayer
-                        //file
-                        val mediaItem =
-                           MediaItem.fromUri(tweetImage.toString())
-                        exoPlayer?.addMediaItem(mediaItem)
-
-                        exoPlayer?.playWhenReady = playWhenReady
-                        exoPlayer?.prepare()
+//                        //Firebase veri kullanımını azaltmak için kapalı
+//                        //setup
+//                        exoPlayer = ExoPlayer.Builder(tweetBinding.root.context!!).build()
+//                        exoPlayer?.playWhenReady = false
+//                        playerView.player = exoPlayer
+//                        //file
+//                        val mediaItem =
+//                           MediaItem.fromUri(tweetImage.toString())
+//                        exoPlayer?.addMediaItem(mediaItem)
+//
+//                        exoPlayer?.playWhenReady = playWhenReady
+//                        exoPlayer?.prepare()
                         playerView.visible()
                         tweetBinding.tweetImage.gone()
                      } else {
@@ -175,7 +163,6 @@ class NotificationsAdapter(
    }
 
    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-      //   context = parent.context
       return when (viewType) {
          Database.TYPE_LIKE.viewType -> LikeViewHolder(
             NotificationRecylerviewScreenLikeBinding.inflate(
@@ -190,7 +177,6 @@ class NotificationsAdapter(
                parent,
                false
             )
-
          )
          else -> throw IllegalStateException("Unknown view type: $viewType")
 
@@ -198,7 +184,6 @@ class NotificationsAdapter(
    }
 
    private var exoPlayer: ExoPlayer? = null
-
    private var playWhenReady = false
    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
       when (holder) {
@@ -218,7 +203,7 @@ class NotificationsAdapter(
    }
 
 
-   fun setUserFollow(newList: List<Int>) {
+   fun setUserFollowUpdate(newList: List<Int>) {
       try {
          val diffUtil = SetUserFollowCallBack(newList, userFollow)
          val diffResults = DiffUtil.calculateDiff(diffUtil)
@@ -230,7 +215,7 @@ class NotificationsAdapter(
 
    }
 
-   fun setUserFollowItem(newList: List<Any>) {
+   fun setUserFollowItemsUpdate(newList: List<Any>) {
       notificationList = newList
       notifyDataSetChanged()
 

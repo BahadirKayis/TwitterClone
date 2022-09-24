@@ -32,7 +32,6 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications),
    }
 
    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-      // viewModel = ViewModelProvider(requireParentFragment())[NotificationViewModel::class.java]
       super.onViewCreated(view, savedInstanceState)
       binding()
       networkControlRequest()
@@ -52,16 +51,15 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications),
 
          notificationList.observe(viewLifecycleOwner) {
             if (it.isEmpty()) {
-
                snackBar(requireView(), "Bildiriminiz yok ", 1000)
             }
-            notificationAdapter.setUserFollowItem(it)
+            notificationAdapter.setUserFollowItemsUpdate(it)
          }
 
 
          followedCount.observe(viewLifecycleOwner) {
 
-            notificationAdapter.setUserFollow(it)
+            notificationAdapter.setUserFollowUpdate(it)
          }
 
          followedUser.observe(viewLifecycleOwner) {

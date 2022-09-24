@@ -13,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor(private val loginRepo: LoginUpRepository) : ViewModel() {
 
-   var loginAutoM = MutableLiveData<Boolean>()
+   private var loginAutoM = MutableLiveData<Boolean>()
    val loginAuto: LiveData<Boolean> = loginAutoM
    fun getLoginUserNameAndPassword(userName: String, password: String) {
       viewModelScope.launch {

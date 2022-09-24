@@ -15,7 +15,7 @@ interface TweetDaoInterface {
    @Query("UPDATE tweets SET postLike=:postLikeCount , is_liked=:liked WHERE id=:tweetId")
    suspend fun tweetIsLiked(tweetId: Int, postLikeCount: Int, liked: Boolean)
 
-   @Transaction
+
    @Query("DELETE FROM tweets")
    suspend fun deleteTweet(): Int?
 

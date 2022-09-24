@@ -113,7 +113,7 @@
     </androidx.cardview.widget.CardView>
 
     <TextView
-        android:id="@+id/tweetMenuText"
+        android:id="@+id/tweetDetailText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:rotation="270"
