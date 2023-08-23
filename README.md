@@ -22,6 +22,8 @@
 - [CircleImageview](https://github.com/hdodenhof/CircleImageView)
 - [LikeButton](https://github.com/jd-alexander/LikeButton)
 - [Coil](https://coil-kt.github.io/coil/)
+- [ExoPlayer](https://github.com/google/ExoPlayer)
+
 
  User Information= bahadir - bahadir123;valorantTR-valorant123;barisakarsu-baris123
 ## Screens
